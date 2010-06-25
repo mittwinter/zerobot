@@ -6,6 +6,8 @@
 #include "../plugins/pingpong.hpp"
 #include "zerobot.hpp"
 
+#include "../irc/message.hpp"
+
 int main(int argc, char *argv[]) {
 	if(argc < 3) {
 		std::cerr << "Usage:" << std::endl

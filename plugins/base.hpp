@@ -13,7 +13,7 @@ class PlugInResult {
 	public:
 		PlugInResult();
 
-		std::list< std::string > messages;
+		std::list< IRC::Message * > messages;
 		state_t newState;
 };
 
@@ -24,9 +24,9 @@ class PlugIn {
 		unsigned int getPriority() const { return priority; }
 		std::string const &getName() const { return name; }
 
-		virtual std::auto_ptr< PlugInResult > onConnect(IRC::Message const &_message) = 0;
-		virtual std::auto_ptr< PlugInResult > onPacket(IRC::Message const &_message) = 0;
-		virtual std::auto_ptr< PlugInResult > onDisconnect(IRC::Message const &_message) = 0;
+		virtual std::auto_ptr< PlugInResult > onConnect(state_t _state) = 0;
+		virtual std::auto_ptr< PlugInResult > onPacket(state_t _state, IRC::Message const &_message) = 0;
+		virtual std::auto_ptr< PlugInResult > onDisconnect(state_t _state) = 0;
 
 	protected:
 		const unsigned int priority;

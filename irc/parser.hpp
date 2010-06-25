@@ -34,7 +34,7 @@ class RawParser {
 
 class Parser {
 	public:
-		Parser();
+		Parser(bool _debug = false);
 		virtual ~Parser() {}
 
 		std::auto_ptr< Message > parseMessage(std::string _message) const;

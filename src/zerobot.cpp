@@ -1,11 +1,12 @@
 #include <iostream> // TODO: remove after debugging
 #include <memory>
+#include <sstream>
 
 #include "zerobot.hpp"
 
 namespace zerobot {
 
-ZeroBot::ZeroBot(std::string const &_serverName, int _serverPort) : socket(_serverName, _serverPort) {
+ZeroBot::ZeroBot(std::string const &_serverName, int _serverPort) : socket(_serverName, _serverPort), parser(true) {
 	state = STATE_CONNECTING;
 }
 
@@ -33,6 +34,22 @@ bool ZeroBot::unregisterPlugIn(std::string const &_name) {
 
 void ZeroBot::run() {
 	while(state != STATE_DISCONNECTED) {
+		switch(state) {
+			case STATE_CONNECTING:
+			case STATE_CONNECTED:
+				for(data::PriorityQueue< int, PlugIn & >::iterator it = plugIns.begin(); it != plugIns.end(); it++) {
+					(it->second).onConnect(state);
+				}
+				break;
+			case STATE_DISCONNECTING:
+			case STATE_DISCONNECTED:
+				for(data::PriorityQueue< int, PlugIn & >::iterator it = plugIns.begin(); it != plugIns.end(); it++) {
+					(it->second).onDisconnect(state);
+				}
+				break;
+			default:
+				break;
+		}
 		processMessage(receiveMessage());
 	}
 }
@@ -55,34 +72,29 @@ std::string ZeroBot::receiveMessage() {
 }
 
 void ZeroBot::processMessage(std::string _message) {
-	// parse message:
+	// Try to parse message:
 	try {
 		std::auto_ptr< IRC::Message > message = parser.parseMessage(_message);
-		// process message with plug-ins:
-		for(data::PriorityQueue< int, PlugIn & >::iterator it = plugIns.begin(); it != plugIns.end(); it++) {
-			std::auto_ptr< PlugInResult > result(NULL);
-			switch(state) {
-				case STATE_CONNECTING:
-					result = (it->second).onConnect(*message);
-					break;
-				case STATE_CONNECTED:
-				case STATE_RUNNING:
-					result = (it->second).onPacket(*message);
-					break;
-				case STATE_DISCONNECTING:
-					result = (it->second).onDisconnect(*message);
-					break;
-				case STATE_DISCONNECTED:
-				case STATE_NOP:
-				default:
-					break;
-			}
-			if(result.get() != NULL) {
-				if(result->newState != STATE_NOP) {
-					state = result->newState;
-				}
-				for(std::list< std::string >::const_iterator it = result->messages.begin(); it != result->messages.end(); it++) {
-					socket.send(*it);
+		// Should not happen, but check for it here, so that plug-ins do not need to check:
+		if(message.get() != NULL) {
+			// Process message with plug-ins:
+			for(data::PriorityQueue< int, PlugIn & >::iterator it = plugIns.begin(); it != plugIns.end(); it++) {
+				std::auto_ptr< PlugInResult > result = (it->second).onPacket(state, *message);
+				// Check if plug-in provided result that needs to be processed here:
+				if(result.get() != NULL) {
+					// Has the bot state changed?
+					if(result->newState != STATE_NOP) {
+						state = result->newState;
+					}
+					// Send messages the plug-in possibly returned for sending:
+					for(std::list< IRC::Message * >::iterator it = result->messages.begin(); it != result->messages.end(); it++) {
+						std::stringstream sstrMessage;
+						sstrMessage << (*it);
+						socket.send(sstrMessage.str());
+						delete (*it);
+						*it = NULL;
+					}
+					result->messages.clear();
 				}
 			}
 		}

@@ -20,6 +20,22 @@ RawMessage::RawMessage(std::auto_ptr< Prefix > _prefix, std::string const &_comm
 MessagePingPong::MessagePingPong(std::string _serverName) : serverName(_serverName) {
 }
 
+MessagePing::operator RawMessage() const {
+	std::vector< std::string > parameters;
+	parameters.push_back(getServerName());
+	// return RawMessage("PING", parameters); // TODO: Fix this C++ grammar mess?
+	RawMessage tmp("PING", parameters);
+	return tmp;
+}
+
+MessagePong::operator RawMessage() const {
+	std::vector< std::string > parameters;
+	parameters.push_back(getServerName());
+	// return RawMessage("PONG", parameters); // TODO: Fix this C++ grammar mess?
+	RawMessage tmp("PONG", parameters);
+	return tmp;
+}
+
 }
 
 std::ostream &operator<<(std::ostream &_out, IRC::Prefix const &_prefix) {
@@ -51,3 +67,4 @@ std::ostream &operator<<(std::ostream &_out, IRC::RawMessage const &_message) {
 	}
 	return _out;
 }
+

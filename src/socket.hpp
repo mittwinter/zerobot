@@ -1,6 +1,7 @@
 #ifndef SOCKET_HPP
 #define SOCKET_HPP
 
+#include <stdexcept>
 #include <string>
 
 #include <netdb.h>
@@ -43,8 +44,8 @@ class ClientSocket : public Socket {
 		ClientSocket(std::string const &_serverName, int _serverPort, int _domain = AF_UNSPEC, int _type = SOCK_STREAM, int _protocol = getprotobyname("tcp")->p_proto);
 		virtual ~ClientSocket() {}
 
-		std::string receive();
-		void send(std::string const &_data);
+		std::string receive() throw(std::runtime_error);
+		void send(std::string const &_data) throw(std::runtime_error);
 
 	protected:
 		static const unsigned int BUFFER_SIZE;

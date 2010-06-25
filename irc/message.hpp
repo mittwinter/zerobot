@@ -8,14 +8,6 @@
 
 namespace IRC {
 
-class Message {
-	public:
-		Message() {}
-		virtual ~Message() {}
-
-	protected:
-};
-
 class Prefix {
 	public:
 		Prefix(std::string const &_nick, std::string const &_user = "", std::string const &_host = "");
@@ -31,7 +23,7 @@ class Prefix {
 		std::string host;
 };
 
-class RawMessage : public Message {
+class RawMessage {
 	public:
 		RawMessage(std::string const &_command);
 		RawMessage(std::string const &_command, std::vector< std::string > const &_parameters);
@@ -51,12 +43,24 @@ class RawMessage : public Message {
 		std::string trailing;
 };
 
+class Message {
+	public:
+		Message() {}
+		virtual ~Message() {}
+
+		virtual operator RawMessage() const = 0;
+
+	protected:
+};
+
 class MessagePingPong : public Message {
 	public:
 		MessagePingPong(std::string _serverName);
 		virtual ~MessagePingPong() {}
 
 		std::string const &getServerName() const { return serverName; }
+
+		virtual operator RawMessage() const = 0;
 
 	protected:
 		std::string serverName;
@@ -67,13 +71,7 @@ class MessagePing : public MessagePingPong {
 		MessagePing(std::string _serverName) : MessagePingPong(_serverName) {}
 		virtual ~MessagePing() {}
 
-		operator RawMessage() const {
-			std::vector< std::string > parameters;
-			parameters.push_back(getServerName());
-			//return RawMessage("PING", parameters); // TODO: Fix this!
-			RawMessage tmp("PING", parameters);
-			return tmp;
-		}
+		virtual operator RawMessage() const;
 
 	protected:
 };
@@ -83,13 +81,7 @@ class MessagePong : public MessagePingPong {
 		MessagePong(std::string _serverName) : MessagePingPong(_serverName) {}
 		virtual ~MessagePong() {}
 
-		operator RawMessage() const {
-			std::vector< std::string > parameters;
-			parameters.push_back(getServerName());
-			//return RawMessage("PONG", parameters); // TODO: Fix this!
-			RawMessage tmp("PONG", parameters);
-			return tmp;
-		}
+		virtual operator RawMessage() const;
 
 	protected:
 };

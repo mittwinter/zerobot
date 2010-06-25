@@ -194,7 +194,7 @@ void RawParser::skipSpace(std::string &_str) const {
 	}
 }
 
-Parser::Parser() : rawParser(new RawParser) {
+Parser::Parser(bool _debug) : rawParser(new RawParser(_debug)) {
 }
 
 std::auto_ptr< Message > Parser::parseMessage(std::string _message) const {

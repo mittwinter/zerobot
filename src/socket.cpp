@@ -1,7 +1,6 @@
 #include <cstring>
 #include <iostream>
 #include <sstream>
-#include <stdexcept>
 #include <errno.h>
 #include <fcntl.h>
 #include <netdb.h>
@@ -151,11 +150,11 @@ ClientSocket::ClientSocket(std::string const &_serverName, int _serverPort, int 
 	}
 }
 
-std::string ClientSocket::receive() {
+std::string ClientSocket::receive() throw(std::runtime_error) {
 	char *buf = new char[BUFFER_SIZE];
 	ssize_t bytesReceived = 0;
 	bytesReceived = recv(socket, buf, BUFFER_SIZE, 0);
-	if(bytesReceived == -1) {
+	if(bytesReceived <= 0) {
 		throw std::runtime_error(strerror(errno));
 	}
 	std::string data(buf, bytesReceived);
@@ -163,7 +162,7 @@ std::string ClientSocket::receive() {
 	return data;
 }
 
-void ClientSocket::send(std::string const &_data) {
+void ClientSocket::send(std::string const &_data) throw(std::runtime_error) {
 	if(::send(socket, _data.c_str(), _data.length(), 0) == -1) {
 		throw std::runtime_error(strerror(errno));
 	}
