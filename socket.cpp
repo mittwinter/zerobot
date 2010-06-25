@@ -163,7 +163,7 @@ std::string ClientSocket::receive() {
 	return data;
 }
 
-void ClientSocket::send(const std::string &_data) {
+void ClientSocket::send(std::string const &_data) {
 	if(::send(socket, _data.c_str(), _data.length(), 0) == -1) {
 		throw std::runtime_error(strerror(errno));
 	}
