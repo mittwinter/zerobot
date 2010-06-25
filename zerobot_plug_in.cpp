@@ -2,7 +2,7 @@
 
 namespace zerobot {
 
-ZeroBotPlugIn::ZeroBotPlugIn(unsigned int _priority, std::string const &_name) : priority(_priority), name(_name) {
+PlugIn::PlugIn(unsigned int _priority, std::string const &_name) : priority(_priority), name(_name) {
 }
 
 }

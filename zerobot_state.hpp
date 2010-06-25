@@ -1,0 +1,18 @@
+#ifndef ZEROBOT_STATE_HPP
+#define ZEROBOT_STATE_HPP
+
+namespace zerobot {
+
+typedef enum {
+	STATE_NOP,
+	STATE_CONNECTING,
+	STATE_CONNECTED,
+	STATE_RUNNING,
+	STATE_DISCONNECTING,
+	STATE_DISCONNECTED
+} state_t;
+
+}
+
+#endif
+
