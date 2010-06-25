@@ -4,8 +4,8 @@
 #include <list>
 #include <string>
 
-#include "irc/message.hpp"
-#include "zerobot_state.hpp"
+#include "../irc/message.hpp"
+#include "../zerobot_state.hpp"
 
 namespace zerobot {
 

@@ -6,7 +6,7 @@
 #include "include/priority_queue.hpp"
 #include "irc/parser.hpp"
 #include "socket.hpp"
-#include "zerobot_plug_in.hpp"
+#include "plugins/base.hpp"
 #include "zerobot_state.hpp"
 
 namespace zerobot {
