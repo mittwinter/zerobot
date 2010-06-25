@@ -2,9 +2,7 @@
 #include <iostream>
 #include <sstream>
 
-#include "../plugins/base.hpp"
-#include "../plugins/connect.hpp"
-#include "../plugins/pingpong.hpp"
+#include "../plugins/plugins.hpp"
 #include "zerobot.hpp"
 
 #include "../irc/message.hpp"
