@@ -60,8 +60,7 @@ void ZeroBot::processMessage(std::string _message) {
 		std::auto_ptr< IRC::Message > message = parser.parseMessage(_message);
 		// process message with plug-ins:
 		for(data::PriorityQueue< int, PlugIn & >::iterator it = plugIns.begin(); it != plugIns.end(); it++) {
-			PlugInResult result;
-			result.newState = STATE_NOP;
+			std::auto_ptr< PlugInResult > result(NULL);
 			switch(state) {
 				case STATE_CONNECTING:
 					result = (it->second).onConnect(*message);
@@ -78,11 +77,13 @@ void ZeroBot::processMessage(std::string _message) {
 				default:
 					break;
 			}
-			if(result.newState != STATE_NOP) {
-				state = result.newState;
-			}
-			for(std::list< std::string >::const_iterator it = result.messages.begin(); it != result.messages.end(); it++) {
-				socket.send(*it);
+			if(result.get() != NULL) {
+				if(result->newState != STATE_NOP) {
+					state = result->newState;
+				}
+				for(std::list< std::string >::const_iterator it = result->messages.begin(); it != result->messages.end(); it++) {
+					socket.send(*it);
+				}
 			}
 		}
 	}

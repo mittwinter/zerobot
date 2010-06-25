@@ -9,9 +9,12 @@
 
 namespace zerobot {
 
-struct PlugInResult {
-	std::list< std::string > messages;
-	state_t newState;
+class PlugInResult {
+	public:
+		PlugInResult();
+
+		std::list< std::string > messages;
+		state_t newState;
 };
 
 class PlugIn {
@@ -21,9 +24,9 @@ class PlugIn {
 		unsigned int getPriority() const { return priority; }
 		std::string const &getName() const { return name; }
 
-		virtual PlugInResult onConnect(IRC::Message const &_message) = 0;
-		virtual PlugInResult onPacket(IRC::Message const &_message) = 0;
-		virtual PlugInResult onDisconnect(IRC::Message const &_message) = 0;
+		virtual std::auto_ptr< PlugInResult > onConnect(IRC::Message const &_message) = 0;
+		virtual std::auto_ptr< PlugInResult > onPacket(IRC::Message const &_message) = 0;
+		virtual std::auto_ptr< PlugInResult > onDisconnect(IRC::Message const &_message) = 0;
 
 	protected:
 		const unsigned int priority;

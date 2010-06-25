@@ -1,6 +1,9 @@
 #ifndef PLUGINS_PINGPONG_HPP
 #define PLUGINS_PINGPONG_HPP
 
+#include <memory>
+
+#include "../irc/message.hpp"
 #include "base.hpp"
 
 namespace zerobot {
@@ -10,9 +13,9 @@ class PlugInPingPong : public PlugIn {
 		PlugInPingPong(int _priority);
 		virtual ~PlugInPingPong() {}
 
-		virtual PlugInResult onConnect(IRC::Message const &_message);		
-		virtual PlugInResult onPacket(IRC::Message const &_message);		
-		virtual PlugInResult onDisconnect(IRC::Message const &_message);		
+		virtual std::auto_ptr< PlugInResult > onConnect(IRC::Message const &_message);		
+		virtual std::auto_ptr< PlugInResult > onPacket(IRC::Message const &_message);		
+		virtual std::auto_ptr< PlugInResult > onDisconnect(IRC::Message const &_message);		
 
 	protected:
 };

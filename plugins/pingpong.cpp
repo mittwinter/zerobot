@@ -5,17 +5,15 @@ namespace zerobot {
 PlugInPingPong::PlugInPingPong(int _priority) : PlugIn(_priority, "pingpong") {
 }
 
-PlugInResult PlugInPingPong::onConnect(IRC::Message const &_message) {
+std::auto_ptr< PlugInResult > PlugInPingPong::onConnect(IRC::Message const &_message) {
 	return onPacket(_message);
 }
 
-PlugInResult PlugInPingPong::onPacket(IRC::Message const &_message) {
-	PlugInResult result;
-	result.newState = STATE_NOP;
-	return result;
+std::auto_ptr< PlugInResult > PlugInPingPong::onPacket(IRC::Message const &_message) {
+	return std::auto_ptr< PlugInResult > (NULL);
 }
 
-PlugInResult PlugInPingPong::onDisconnect(IRC::Message const &_message) {
+std::auto_ptr< PlugInResult > PlugInPingPong::onDisconnect(IRC::Message const &_message) {
 	return onPacket(_message);
 }
 
