@@ -2,6 +2,7 @@
 #define ZEROBOT_PLUG_IN_HPP
 
 #include <list>
+#include <memory>
 #include <string>
 
 #include "../irc/message.hpp"

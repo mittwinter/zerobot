@@ -1,9 +1,6 @@
 #ifndef PLUGINS_PINGPONG_HPP
 #define PLUGINS_PINGPONG_HPP
 
-#include <memory>
-
-#include "../irc/message.hpp"
 #include "base.hpp"
 
 namespace zerobot {
