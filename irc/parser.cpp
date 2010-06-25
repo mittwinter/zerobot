@@ -7,6 +7,9 @@ namespace IRC {
 
 std::string const RawParser::special = "-[]\\`^{}|_"; // '|_' not allowed per RFC1459
 
+RawParser::RawParser(bool _debug) : debug(_debug) {
+}
+
 std::auto_ptr< RawMessage > RawParser::parseString(std::string _message) const {
 	if(debug) {
 		std::cerr << "RawParser: Parsing message '" << _message << "'" << std::endl;

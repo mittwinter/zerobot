@@ -11,7 +11,7 @@ namespace IRC {
 
 class RawParser {
 	public:
-		RawParser(bool _debug = false) {}
+		RawParser(bool _debug = false);
 		virtual ~RawParser() {}
 
 		std::auto_ptr< RawMessage > parseString(std::string _message) const;
