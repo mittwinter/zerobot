@@ -6,7 +6,7 @@
 
 namespace zerobot {
 
-ZeroBot::ZeroBot(std::string const &_serverName, int _serverPort) : socket(_serverName, _serverPort), parser(true) {
+ZeroBot::ZeroBot(std::string const &_serverName, int _serverPort) : socket(_serverName, _serverPort), parser(false) {
 	state = STATE_CONNECTING;
 }
 

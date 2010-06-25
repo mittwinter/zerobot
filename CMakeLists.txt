@@ -11,6 +11,7 @@ add_executable(zerobot
 	irc/message.cpp
 	irc/parser.cpp
 	plugins/base.cpp
+	plugins/connect.cpp
 	plugins/pingpong.cpp
 	)
 add_executable(testcase/parserTest testcase/parserTest.cpp irc/message.cpp irc/parser.cpp)
