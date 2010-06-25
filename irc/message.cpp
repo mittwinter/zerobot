@@ -2,22 +2,34 @@
 
 namespace IRC {
 
-Prefix::Prefix(std::string const &_nick, std::string const &_user, std::string const &_host) : nick(_nick), user(_user), host(_host) {
+Prefix::Prefix(std::string const &_nick, std::string const &_user, std::string const &_host) {
+	nick = _nick;
+	user = _user;
+	host = _host;
 }
 
-RawMessage::RawMessage(std::string const &_command) : command(_command) {
+RawMessage::RawMessage(std::string const &_command) : prefix(NULL) {
+	command = _command;
 }
 
-RawMessage::RawMessage(std::string const &_command, std::vector< std::string > const &_parameters) : command(_command), parameters(_parameters) {
+RawMessage::RawMessage(std::string const &_command, std::vector< std::string > const &_parameters) : prefix(NULL) {
+	command = _command;
+	parameters = _parameters;
 }
 
-RawMessage::RawMessage(std::string const &_command, std::vector< std::string > const &_parameters, std::string const &_trailing) : command(_command), parameters(_parameters), trailing(_trailing) {
+RawMessage::RawMessage(std::string const &_command, std::vector< std::string > const &_parameters, std::string const &_trailing) : prefix(NULL) {
+	command = _command;
+	parameters = _parameters;
+	trailing = _trailing;
 }
 
-RawMessage::RawMessage(std::auto_ptr< Prefix > _prefix, std::string const &_command, std::vector< std::string > const &_parameters, std::string const &_trailing) : prefix(_prefix), command(_command), parameters(_parameters), trailing(_trailing) {
+RawMessage::RawMessage(std::auto_ptr< Prefix > _prefix, std::string const &_command, std::vector< std::string > const &_parameters, std::string const &_trailing) : prefix(_prefix) {
+	command = _command;
+	parameters = _parameters;
+	trailing = _trailing;
 }
 
-MessagePingPong::MessagePingPong(std::string _serverName) : serverName(_serverName) {
+MessagePingPong::MessagePingPong(std::string const &_serverName) : serverName(_serverName) {
 }
 
 MessagePing::operator RawMessage() const {
@@ -33,6 +45,17 @@ MessagePong::operator RawMessage() const {
 	parameters.push_back(getServerName());
 	// return RawMessage("PONG", parameters); // TODO: Fix this C++ grammar mess?
 	RawMessage tmp("PONG", parameters);
+	return tmp;
+}
+
+MessageNick::MessageNick(std::string const &_nickname) {
+	nickname = _nickname;
+}
+
+MessageNick::operator RawMessage() const {
+	std::vector< std::string > parameters;
+	parameters.push_back(getNickname());
+	RawMessage tmp("NICK", parameters);
 	return tmp;
 }
 

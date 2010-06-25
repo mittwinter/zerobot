@@ -55,7 +55,7 @@ class Message {
 
 class MessagePingPong : public Message {
 	public:
-		MessagePingPong(std::string _serverName);
+		MessagePingPong(std::string const &_serverName);
 		virtual ~MessagePingPong() {}
 
 		std::string const &getServerName() const { return serverName; }
@@ -68,7 +68,7 @@ class MessagePingPong : public Message {
 
 class MessagePing : public MessagePingPong {
 	public:
-		MessagePing(std::string _serverName) : MessagePingPong(_serverName) {}
+		MessagePing(std::string const &_serverName) : MessagePingPong(_serverName) {}
 		virtual ~MessagePing() {}
 
 		virtual operator RawMessage() const;
@@ -78,12 +78,25 @@ class MessagePing : public MessagePingPong {
 
 class MessagePong : public MessagePingPong {
 	public:
-		MessagePong(std::string _serverName) : MessagePingPong(_serverName) {}
+		MessagePong(std::string const &_serverName) : MessagePingPong(_serverName) {}
 		virtual ~MessagePong() {}
 
 		virtual operator RawMessage() const;
 
 	protected:
+};
+
+class MessageNick : public Message {
+	public:
+		MessageNick(std::string const &_nickname);
+		virtual ~MessageNick() {}
+
+		virtual operator RawMessage() const;
+
+		std::string const &getNickname() const { return nickname; }
+
+	protected:
+		std::string nickname;
 };
 
 }
