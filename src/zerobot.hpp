@@ -3,10 +3,10 @@
 
 #include <string>
 
-#include "include/priority_queue.hpp"
-#include "irc/parser.hpp"
+#include "../include/priority_queue.hpp"
+#include "../irc/parser.hpp"
+#include "../plugins/base.hpp"
 #include "socket.hpp"
-#include "plugins/base.hpp"
 #include "zerobot_state.hpp"
 
 namespace zerobot {

@@ -5,9 +5,9 @@ project(zerobot)
 SET(CMAKE_BUILD_TYPE Debug)
 
 add_executable(zerobot
-	main.cpp
-	socket.cpp
-	zerobot.cpp
+	src/main.cpp
+	src/socket.cpp
+	src/zerobot.cpp
 	irc/message.cpp
 	irc/parser.cpp
 	plugins/base.cpp
