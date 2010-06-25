@@ -2,6 +2,8 @@
 #include <iostream>
 #include <sstream>
 
+#include "../plugins/base.hpp"
+#include "../plugins/pingpong.hpp"
 #include "zerobot.hpp"
 
 int main(int argc, char *argv[]) {
@@ -15,6 +17,11 @@ int main(int argc, char *argv[]) {
 	int serverPort = 0;
 	sstrPort >> serverPort;
 	zerobot::ZeroBot bot(argv[1], serverPort);
+	// Register plug-ins:
+	zerobot::PlugIn *plugIn = NULL;
+	plugIn = new zerobot::PlugInPingPong(0);
+	bot.registerPlugIn(*plugIn);
+	// Run bot:
 	bot.run();
 	return EXIT_SUCCESS;
 }
