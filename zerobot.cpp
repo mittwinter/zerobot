@@ -7,6 +7,20 @@ namespace zerobot {
 ZeroBot::ZeroBot(std::string const &_serverName, int _serverPort) : socket(_serverName, _serverPort) {
 }
 
+void ZeroBot::registerPlugIn(ZeroBotPlugIn &_plugIn) {
+	plugIns.insert(_plugIn.getPriority(), _plugIn);
+}
+
+bool ZeroBot::unregisterPlugIn(std::string const &_name) {
+	for(data::PriorityQueue< int, ZeroBotPlugIn & >::iterator it = plugIns.begin(); it != plugIns.end(); it++) {
+		if((it->second).getName() == _name) {
+			plugIns.erase(it);
+			return true;
+		}
+	}
+	return false;
+}
+
 void ZeroBot::run() {
 	std::string receivedData;
 	while((receivedData = socket.receive()) != "") {
