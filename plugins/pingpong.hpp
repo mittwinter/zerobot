@@ -9,7 +9,7 @@
 namespace zerobot {
 
 class PlugInPingPong : public PlugIn {
-	protected:
+	public:
 		PlugInPingPong(int _priority);
 		virtual ~PlugInPingPong() {}
 
