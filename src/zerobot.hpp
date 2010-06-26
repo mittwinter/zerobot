@@ -1,6 +1,7 @@
 #ifndef ZEROBOT_HPP
 #define ZEROBOT_HPP
 
+#include <memory>
 #include <string>
 
 #include "../include/priority_queue.hpp"
@@ -28,6 +29,7 @@ class ZeroBot {
 		IRC::Parser parser;
 		data::PriorityQueue< int, PlugIn & > plugIns;
 
+		void processResult(std::auto_ptr< PlugInResult > _result);
 		std::string receiveMessage();
 		void processMessage(std::string _message);
 };
