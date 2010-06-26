@@ -59,6 +59,22 @@ MessageNick::operator RawMessage() const {
 	return tmp;
 }
 
+MessageUser::MessageUser(std::string const &_nickname, std::string const &_hostname, std::string const &_serverName, std::string const &_realName) {
+	nickname = _nickname;
+	hostname = _hostname;
+	serverName = _serverName;
+	realName = _realName;
+}
+
+MessageUser::operator RawMessage() const {
+	std::vector< std::string > parameters;
+	parameters.push_back(getNickname());
+	parameters.push_back(getHostname());
+	parameters.push_back(getServerName());
+	RawMessage tmp("USER", parameters, getRealName());
+	return tmp;
+}
+
 }
 
 std::ostream &operator<<(std::ostream &_out, IRC::Prefix const &_prefix) {

@@ -99,6 +99,25 @@ class MessageNick : public Message {
 		std::string nickname;
 };
 
+class MessageUser : public Message {
+	public:
+		MessageUser(std::string const &_nickname, std::string const &_hostname, std::string const &_serverName, std::string const &_realName);
+		virtual ~MessageUser() {}
+
+		virtual operator RawMessage() const;
+
+		std::string const &getNickname() const { return nickname; }
+		std::string const &getHostname() const { return hostname; }
+		std::string const &getServerName() const { return serverName; }
+		std::string const &getRealName() const { return realName; }
+
+	protected:
+		std::string nickname;
+		std::string hostname;
+		std::string serverName;
+		std::string realName;
+};
+
 }
 
 std::ostream &operator<<(std::ostream &_out, IRC::Prefix const &_prefix);
