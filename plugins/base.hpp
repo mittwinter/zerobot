@@ -27,6 +27,7 @@ class PlugIn {
 
 		virtual std::auto_ptr< PlugInResult > onConnect(state_t _state) = 0;
 		virtual std::auto_ptr< PlugInResult > onPacket(state_t _state, IRC::Message const &_message) = 0;
+		virtual std::auto_ptr< PlugInResult > onTimeTrigger(state_t _state) = 0;
 		virtual std::auto_ptr< PlugInResult > onDisconnect(state_t _state) = 0;
 
 	protected:

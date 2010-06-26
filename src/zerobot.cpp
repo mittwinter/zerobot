@@ -1,12 +1,15 @@
 #include <iostream> // TODO: remove after debugging
 #include <memory>
 #include <sstream>
+#include <time.h> // for nanosleep()
 
 #include "zerobot.hpp"
 
 namespace zerobot {
 
 ZeroBot::ZeroBot(std::string const &_serverName, int _serverPort) : socket(_serverName, _serverPort), parser(false) {
+	serverName = _serverName;
+	serverPort = _serverPort;
 	state = STATE_CONNECTING;
 }
 
@@ -51,7 +54,22 @@ void ZeroBot::run() {
 			default:
 				break;
 		}
-		processMessage(receiveMessage());
+		std::string receivedMessage;
+		do {
+			receivedMessage = receiveMessage();
+			if(receivedMessage.size() > 0) {
+				processMessage(receivedMessage);
+			}
+		}
+		while(receivedMessage.size() > 0);
+		// time-trigger plug-ins:
+		for(data::PriorityQueue< int, PlugIn & >::iterator it = plugIns.begin(); it != plugIns.end(); it++) {
+			processResult((it->second).onTimeTrigger(state));
+		}
+		struct timespec sleepTime;
+		sleepTime.tv_sec = 0;
+		sleepTime.tv_nsec = 500000000;
+		nanosleep(&sleepTime, NULL);
 	}
 }
 
@@ -78,24 +96,26 @@ std::string ZeroBot::receiveMessage() {
 	std::string receivedData;
 	while((receivedData = socket.receive()) != "") {
 		buffer.append(receivedData);
-		std::string::size_type messageEnd = buffer.find('\n');
-		if(messageEnd != std::string::npos) {
-			// we have a complete message in our buffer,
-			// so remove it from the buffer and return it:
-			std::string receivedMessage = buffer.substr(0, messageEnd + 1);
-			buffer.erase(0, messageEnd + 1);
-			std::cout << receivedMessage << std::flush;
-			return receivedMessage;
-		}
 	}
-	return "";
+	std::string::size_type messageEnd = buffer.find('\n');
+	if(messageEnd != std::string::npos) {
+		// we have a complete message in our buffer,
+		// so remove it from the buffer and return it:
+		std::string receivedMessage = buffer.substr(0, messageEnd + 1);
+		buffer.erase(0, messageEnd + 1);
+		std::cout << receivedMessage << std::flush;
+		return receivedMessage;
+	}
+	else {
+		return "";
+	}
 }
 
-void ZeroBot::processMessage(std::string _message) {
+void ZeroBot::processMessage(std::string const &_message) {
 	// Try to parse message:
 	try {
 		std::auto_ptr< IRC::Message > message = parser.parseMessage(_message);
-		// Should not happen, but check for it here, so that plug-ins do not need to check:
+		// Should not happen, but check for it here, so that plug-ins do not necessarily need to check:
 		if(message.get() != NULL) {
 			// Process message with plug-ins:
 			for(data::PriorityQueue< int, PlugIn & >::iterator it = plugIns.begin(); it != plugIns.end(); it++) {

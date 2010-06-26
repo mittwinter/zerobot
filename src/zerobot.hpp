@@ -22,7 +22,13 @@ class ZeroBot {
 
 		void run();
 
+		std::string const &getServerName() const { return serverName; }
+		int getServerPort() const { return serverPort; }
+
 	protected:
+		std::string serverName;
+		int serverPort;
+
 		state_t state;
 		ClientSocket socket;
 		std::string buffer;
@@ -31,7 +37,7 @@ class ZeroBot {
 
 		void processResult(std::auto_ptr< PlugInResult > _result);
 		std::string receiveMessage();
-		void processMessage(std::string _message);
+		void processMessage(std::string const &_message);
 };
 
 }
