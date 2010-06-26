@@ -140,9 +140,10 @@ ClientSocket::ClientSocket(std::string const &_serverName, int _serverPort, int 
 	}
 	freeaddrinfo(result);
 	if(resultPointer != NULL) {
-		// force blocking socket:
+		// force non-blocking socket:
 		int socketFlags = fcntl(socket, F_GETFL, 0);
-		fcntl(socket, F_SETFL, socketFlags&(~O_NONBLOCK));
+		//fcntl(socket, F_SETFL, socketFlags&(~O_NONBLOCK));
+		fcntl(socket, F_SETFL, socketFlags|O_NONBLOCK);
 		std::cerr << "ClientSocket: Successfully connected to " << _serverName << " on port " << _serverPort << "." << std::endl;
 	}
 	else {
@@ -154,7 +155,7 @@ std::string ClientSocket::receive() throw(std::runtime_error) {
 	char *buf = new char[BUFFER_SIZE];
 	ssize_t bytesReceived = 0;
 	bytesReceived = recv(socket, buf, BUFFER_SIZE, 0);
-	if(bytesReceived <= 0) {
+	if(bytesReceived <= 0 && errno != EAGAIN && errno != EWOULDBLOCK) {
 		throw std::runtime_error(strerror(errno));
 	}
 	std::string data(buf, bytesReceived);
