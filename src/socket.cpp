@@ -1,5 +1,6 @@
 #include <cstring>
 #include <iostream>
+#include <memory>
 #include <sstream>
 #include <errno.h>
 #include <fcntl.h>
@@ -152,19 +153,25 @@ ClientSocket::ClientSocket(std::string const &_serverName, int _serverPort, int 
 }
 
 std::string ClientSocket::receive() throw(std::runtime_error) {
-	char *buf = new char[BUFFER_SIZE];
+	std::auto_ptr< char > buf(new char[BUFFER_SIZE]);
 	ssize_t bytesReceived = 0;
-	bytesReceived = recv(socket, buf, BUFFER_SIZE, 0);
+	bytesReceived = recv(socket, buf.get(), BUFFER_SIZE, 0);
 	if(bytesReceived <= 0 && errno != EAGAIN && errno != EWOULDBLOCK) {
 		throw std::runtime_error(strerror(errno));
 	}
-	std::string data(buf, bytesReceived);
-	delete[] buf;
-	return data;
+	if(bytesReceived > 0) {
+		std::string data(buf.get(), bytesReceived);
+		//std::cerr << "ClientSocket: Received '" << data << "'" << std::endl; // TODO: remove this debug output
+		//std::cerr << "ClientSocket: bytesReceived: " << bytesReceived << " errno: " << errno << " (EAGAIN: " << EAGAIN << " EWOULDBLOCK: " << EWOULDBLOCK << ")" << std::endl; // TODO: remove this debug output
+		return data;
+	}
+	else {
+		return "";
+	}
 }
 
 void ClientSocket::send(std::string const &_data) throw(std::runtime_error) {
-	std::cerr << "ClientSocket: Sending data '" << _data << "'" << std::endl;
+	//std::cerr << "ClientSocket: Sending data '" << _data << "'" << std::endl; // TODO: remove this debug output
 	if(::send(socket, _data.c_str(), _data.length(), 0) == -1) {
 		throw std::runtime_error(strerror(errno));
 	}
