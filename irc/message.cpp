@@ -102,8 +102,9 @@ std::ostream &operator<<(std::ostream &_out, IRC::RawMessage const &_message) {
 		_out << " " << *it << std::flush;
 	}
 	if(_message.getTrailing().size() > 0) {
-		_out << " :" << _message.getTrailing() << std::flush;
+		_out << " :" << _message.getTrailing();
 	}
+	_out << "\r\n" << std::flush;
 	return _out;
 }
 
