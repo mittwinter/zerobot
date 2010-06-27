@@ -14,12 +14,13 @@ class PlugInConnect : public PlugIn {
 
 		virtual std::auto_ptr< PlugInResult > onConnect(state_t _state);
 		virtual std::auto_ptr< PlugInResult > onPacket(state_t _state, IRC::Message const &_message);
+		virtual std::auto_ptr< PlugInResult > onTimeTrigger(state_t _state);
 		virtual std::auto_ptr< PlugInResult > onDisconnect(state_t _state);
 
 	protected:
 		typedef enum {
 			STATE_CONNECT_NOP,
-			STATE_CONNECT_NICK_SENT
+			STATE_CONNECT_NICK_USER_SENT
 		} state_connect_t;
 
 		std::string botNickname;
