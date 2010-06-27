@@ -43,6 +43,7 @@ class RawMessage {
 		std::string trailing;
 };
 
+// TODO: Add prefix to these messages since it contains valuable information (e. g. in PRIVMSG or PING)
 class Message {
 	public:
 		Message() {}
