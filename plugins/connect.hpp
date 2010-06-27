@@ -28,5 +28,6 @@ class PlugInConnect : public PlugIn {
 };
 
 }
+
 #endif
 

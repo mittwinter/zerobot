@@ -5,7 +5,8 @@
 
 namespace zerobot {
 
-PlugInConnect::PlugInConnect(int _priority, std::string _botNickname) : PlugIn(_priority, "connect"), botNickname(_botNickname) {
+PlugInConnect::PlugInConnect(int _priority, std::string _botNickname) : PlugIn(_priority, "connect") {
+	botNickname = _botNickname;
 	connectState = STATE_CONNECT_NOP;
 }
 
