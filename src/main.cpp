@@ -22,7 +22,7 @@ int main(int argc, char *argv[]) {
 	zerobot::PlugIn *plugIn = NULL;
 	plugIn = new zerobot::PlugInConnect(-10, "zerobot");
 	bot.registerPlugIn(*plugIn);
-	plugIn = new zerobot::PlugInPingPong(0);
+	plugIn = new zerobot::PlugInPingPong(0, argv[1]);
 	bot.registerPlugIn(*plugIn);
 	// Run bot:
 	bot.run();
