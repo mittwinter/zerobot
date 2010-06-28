@@ -36,13 +36,13 @@ std::auto_ptr< PlugInResult > PlugInPingPong::onPacket(state_t _state, IRC::Mess
 
 std::auto_ptr< PlugInResult > PlugInPingPong::onTimeTrigger(state_t _state) {
 	std::auto_ptr< PlugInResult > result(NULL);
-	if((lastPing - lastPong) > 65) {
+	if((lastPing - lastPong) > 95) {
 		std::cerr << "PlugInPingPong: Connection timeouted." << std::endl;
 		result = std::auto_ptr< PlugInResult >(new PlugInResult);
 		result->newState = STATE_DISCONNECTING;
 	}
-	else if((time(NULL) - lastPing) > 30) {
-		std::cerr << "PlugInPingPong: Last ping is more than 30 seconds in the past, pinging server ..." << std::endl;
+	else if((time(NULL) - lastPing) > 60) {
+		std::cerr << "PlugInPingPong: Last ping is more than 60 seconds in the past, pinging server ..." << std::endl;
 		lastPing = time(NULL);
 		result = std::auto_ptr< PlugInResult >(new PlugInResult);
 		result->messages.push_back(new IRC::MessagePing(serverName));
