@@ -36,7 +36,7 @@ set window=39
 let s:so_save = &so | let s:siso_save = &siso | set so=0 siso=0
 let v:this_session=expand("<sfile>:p")
 silent only
-cd ~/Projects/zerobot-bak
+cd ~/Projects/zerobot
 if expand('%') == '' && !&modified && line('$') <= 1 && getline(1) == ''
   let s:wipebuf = bufnr('%')
 endif
@@ -237,7 +237,7 @@ normal zo
 normal zo
 106
 normal zo
-let s:l = 85 - ((33 * winheight(0) + 19) / 39)
+let s:l = 85 - ((0 * winheight(0) + 19) / 39)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
@@ -2976,7 +2976,7 @@ exe s:l
 normal! zt
 19
 normal! 04l
-tabnext 1
+tabnext 22
 if exists('s:wipebuf')
   silent exe 'bwipe ' . s:wipebuf
 endif
