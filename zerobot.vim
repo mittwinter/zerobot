@@ -15,11 +15,11 @@ set autoindent
 set backspace=2
 set confirm
 set copyindent
-set encoding=utf-8
 set fileencodings=utf-8,default
 set gdefault
 set guifont=Monospace\ 12
 set history=50
+set iminsert=0
 set nomodeline
 set mouse=a
 set preserveindent
@@ -42,40 +42,40 @@ if expand('%') == '' && !&modified && line('$') <= 1 && getline(1) == ''
 endif
 set shortmess=aoO
 badd +197 CMakeFiles/CompilerIdCXX/CMakeCXXCompilerId.cpp
-badd +0 irc/message.cpp
+badd +1 irc/message.cpp
 badd +47 irc/message.hpp
-badd +0 irc/parser.cpp
-badd +0 irc/parser.hpp
+badd +1 irc/parser.cpp
+badd +1 irc/parser.hpp
 badd +11 main.cpp
 badd +166 socket.cpp
-badd +49 socket.hpp
-badd +0 test
+badd +1 socket.hpp
+badd +1 test
 badd +4 test.cpp
 badd +9 zerobot.hpp
 badd +76 zerobot.cpp
-badd +0 CMakeLists.txt
+badd +1 CMakeLists.txt
 badd +7 .gitignore
 badd +2 testcase/parserTest.cpp
 badd +24 zerobot_plug_in.hpp
 badd +5 zerobot_plug_in.cpp
 badd +6 zerobot_state.hpp
-badd +0 plugins/pingpong.hpp
-badd +0 plugins/pingpong.cpp
-badd +0 plugins/base.cpp
-badd +0 plugins/base.hpp
-badd +0 src/main.cpp
-badd +0 src/zerobot.cpp
-badd +0 src/zerobot.hpp
-badd +0 src/zerobot_state.hpp
-badd +0 src/socket.cpp
-badd +0 src/socket.hpp
-badd +0 plugins/connect.cpp
-badd +0 plugins/connect.hpp
-badd +0 plugins/plugins.hpp
-badd +0 plugins/disconnect.hpp
-badd +0 plugins/disconnect.cpp
-badd +0 src/rand.cpp
-badd +0 src/rand.hpp
+badd +1 plugins/pingpong.hpp
+badd +1 plugins/pingpong.cpp
+badd +1 plugins/base.cpp
+badd +1 plugins/base.hpp
+badd +1 src/main.cpp
+badd +1 src/zerobot.cpp
+badd +1 src/zerobot.hpp
+badd +1 src/zerobot_state.hpp
+badd +1 src/socket.cpp
+badd +1 src/socket.hpp
+badd +1 plugins/connect.cpp
+badd +1 plugins/connect.hpp
+badd +1 plugins/plugins.hpp
+badd +1 plugins/disconnect.hpp
+badd +1 plugins/disconnect.cpp
+badd +1 src/rand.cpp
+badd +1 src/rand.hpp
 args CMakeFiles/CompilerIdCXX/CMakeCXXCompilerId.cpp irc/message.cpp irc/message.hpp irc/parser.cpp irc/parser.hpp main.cpp socket.cpp socket.hpp
 edit irc/message.cpp
 set splitbelow splitright
@@ -193,77 +193,13 @@ normal zo
 normal zo
 26
 normal zo
-29
-normal zo
-20
-normal zo
-26
-normal zo
 32
 normal zo
 35
 normal zo
 43
 normal zo
-48
-normal zo
-49
-normal zo
 51
-normal zo
-54
-normal zo
-49
-normal zo
-58
-normal zo
-48
-normal zo
-64
-normal zo
-65
-normal zo
-69
-normal zo
-72
-normal zo
-64
-normal zo
-78
-normal zo
-85
-normal zo
-35
-normal zo
-43
-normal zo
-51
-normal zo
-55
-normal zo
-65
-normal zo
-66
-normal zo
-68
-normal zo
-71
-normal zo
-66
-normal zo
-75
-normal zo
-65
-normal zo
-81
-normal zo
-82
-normal zo
-86
-normal zo
-89
-normal zo
-81
 normal zo
 55
 normal zo
@@ -271,59 +207,7 @@ normal zo
 normal zo
 69
 normal zo
-80
-normal zo
-81
-normal zo
-83
-normal zo
-86
-normal zo
-81
-normal zo
-90
-normal zo
-80
-normal zo
-96
-normal zo
-97
-normal zo
-101
-normal zo
-104
-normal zo
-96
-normal zo
-69
-normal zo
 78
-normal zo
-82
-normal zo
-90
-normal zo
-91
-normal zo
-93
-normal zo
-96
-normal zo
-91
-normal zo
-100
-normal zo
-90
-normal zo
-106
-normal zo
-107
-normal zo
-111
-normal zo
-114
-normal zo
-106
 normal zo
 82
 normal zo
@@ -468,14 +352,6 @@ normal zo
 11
 normal zo
 26
-normal zo
-47
-normal zo
-57
-normal zo
-68
-normal zo
-78
 normal zo
 47
 normal zo
@@ -767,168 +643,6 @@ normal zo
 normal zo
 200
 normal zo
-10
-normal zo
-13
-normal zo
-14
-normal zo
-13
-normal zo
-27
-normal zo
-28
-normal zo
-29
-normal zo
-36
-normal zo
-41
-normal zo
-44
-normal zo
-28
-normal zo
-52
-normal zo
-27
-normal zo
-57
-normal zo
-59
-normal zo
-60
-normal zo
-64
-normal zo
-59
-normal zo
-68
-normal zo
-71
-normal zo
-57
-normal zo
-76
-normal zo
-77
-normal zo
-80
-normal zo
-84
-normal zo
-87
-normal zo
-77
-normal zo
-91
-normal zo
-76
-normal zo
-96
-normal zo
-97
-normal zo
-101
-normal zo
-96
-normal zo
-108
-normal zo
-109
-normal zo
-112
-normal zo
-114
-normal zo
-112
-normal zo
-118
-normal zo
-120
-normal zo
-118
-normal zo
-124
-normal zo
-125
-normal zo
-129
-normal zo
-124
-normal zo
-133
-normal zo
-136
-normal zo
-139
-normal zo
-140
-normal zo
-139
-normal zo
-109
-normal zo
-146
-normal zo
-108
-normal zo
-151
-normal zo
-154
-normal zo
-155
-normal zo
-156
-normal zo
-155
-normal zo
-161
-normal zo
-154
-normal zo
-166
-normal zo
-167
-normal zo
-169
-normal zo
-167
-normal zo
-166
-normal zo
-151
-normal zo
-177
-normal zo
-178
-normal zo
-181
-normal zo
-178
-normal zo
-186
-normal zo
-177
-normal zo
-191
-normal zo
-192
-normal zo
-191
-normal zo
-197
-normal zo
-200
-normal zo
-203
-normal zo
-206
-normal zo
-209
-normal zo
-200
-normal zo
 6
 normal zo
 let s:l = 201 - ((16 * winheight(0) + 19) / 39)
@@ -1042,10 +756,6 @@ setlocal nowinfixwidth
 setlocal wrap
 setlocal wrapmargin=0
 10
-normal zo
-12
-normal zo
-35
 normal zo
 12
 normal zo
@@ -1291,44 +1001,6 @@ normal zo
 normal zo
 44
 normal zo
-58
-normal zo
-60
-normal zo
-63
-normal zo
-60
-normal zo
-58
-normal zo
-75
-normal zo
-77
-normal zo
-80
-normal zo
-82
-normal zo
-85
-normal zo
-87
-normal zo
-91
-normal zo
-85
-normal zo
-82
-normal zo
-80
-normal zo
-77
-normal zo
-103
-normal zo
-75
-normal zo
-44
-normal zo
 50
 normal zo
 41
@@ -1336,8 +1008,6 @@ normal zo
 58
 normal zo
 60
-normal zo
-66
 normal zo
 58
 normal zo
@@ -1366,22 +1036,6 @@ normal zo
 101
 normal zo
 109
-normal zo
-114
-normal zo
-116
-normal zo
-119
-normal zo
-121
-normal zo
-119
-normal zo
-116
-normal zo
-126
-normal zo
-114
 normal zo
 95
 normal zo
@@ -1755,12 +1409,6 @@ normal zo
 normal zo
 168
 normal zo
-173
-normal zo
-175
-normal zo
-173
-normal zo
 155
 normal zo
 173
@@ -2122,10 +1770,6 @@ normal zo
 normal zo
 21
 normal zo
-13
-normal zo
-21
-normal zo
 11
 normal zo
 let s:l = 29 - ((28 * winheight(0) + 19) / 39)
@@ -2248,30 +1892,6 @@ normal zo
 normal zo
 19
 normal zo
-24
-normal zo
-18
-normal zo
-29
-normal zo
-34
-normal zo
-8
-normal zo
-14
-normal zo
-18
-normal zo
-19
-normal zo
-26
-normal zo
-31
-normal zo
-35
-normal zo
-19
-normal zo
 26
 normal zo
 28
@@ -2281,10 +1901,6 @@ normal zo
 18
 normal zo
 37
-normal zo
-39
-normal zo
-44
 normal zo
 39
 normal zo
@@ -3354,13 +2970,13 @@ setlocal nowinfixheight
 setlocal nowinfixwidth
 setlocal wrap
 setlocal wrapmargin=0
-let s:l = 9 - ((8 * winheight(0) + 19) / 39)
+let s:l = 19 - ((18 * winheight(0) + 19) / 39)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-9
-normal! 012l
-tabnext 22
+19
+normal! 04l
+tabnext 1
 if exists('s:wipebuf')
   silent exe 'bwipe ' . s:wipebuf
 endif
