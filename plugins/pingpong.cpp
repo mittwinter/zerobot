@@ -39,7 +39,7 @@ std::auto_ptr< PlugInResult > PlugInPingPong::onTimeTrigger(state_t _state) {
 	if((lastPing - lastPong) > 65) {
 		std::cerr << "PlugInPingPong: Connection timeouted." << std::endl;
 		result = std::auto_ptr< PlugInResult >(new PlugInResult);
-		result->newState = STATE_DISCONNECTED; // TODO: change this to STATE_DISCONNECTING
+		result->newState = STATE_DISCONNECTING;
 	}
 	else if((time(NULL) - lastPing) > 30) {
 		std::cerr << "PlugInPingPong: Last ping is more than 30 seconds in the past, pinging server ..." << std::endl;

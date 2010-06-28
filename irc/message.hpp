@@ -119,6 +119,19 @@ class MessageUser : public Message {
 		std::string realName;
 };
 
+class MessageQuit : public Message {
+	public:
+		MessageQuit(std::string const &_quitMessage);
+		virtual ~MessageQuit() {}
+
+		virtual operator RawMessage() const;
+
+		std::string const &getQuitMessage() const { return quitMessage; }
+
+	protected:
+		std::string quitMessage;
+};
+
 }
 
 std::ostream &operator<<(std::ostream &_out, IRC::Prefix const &_prefix);

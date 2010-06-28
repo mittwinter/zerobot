@@ -75,6 +75,16 @@ MessageUser::operator RawMessage() const {
 	return tmp;
 }
 
+MessageQuit::MessageQuit(std::string const &_quitMessage) {
+	quitMessage = _quitMessage;
+}
+
+MessageQuit::operator RawMessage() const {
+	std::vector< std::string > parameters;
+	RawMessage tmp("QUIT", parameters, quitMessage);
+	return tmp;
+}
+
 }
 
 std::ostream &operator<<(std::ostream &_out, IRC::Prefix const &_prefix) {
