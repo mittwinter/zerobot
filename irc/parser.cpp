@@ -10,7 +10,7 @@ std::string const RawParser::special = "-[]\\`^{}|_"; // '|_' not allowed per RF
 RawParser::RawParser(bool _debug) : debug(_debug) {
 }
 
-std::auto_ptr< RawMessage > RawParser::parseString(std::string _message) const {
+std::auto_ptr< RawMessage > RawParser::parseString(std::string _message) const throw(std::runtime_error) {
 	if(debug) {
 		std::cerr << "RawParser: Parsing message '" << _message << "'" << std::endl;
 	}
@@ -197,14 +197,22 @@ void RawParser::skipSpace(std::string &_str) const {
 Parser::Parser(bool _debug) : rawParser(new RawParser(_debug)) {
 }
 
-std::auto_ptr< Message > Parser::parseMessage(std::string _message) const {
+std::auto_ptr< Message > Parser::parseMessage(std::string _message) const throw(std::runtime_error) {
 	std::auto_ptr< RawMessage > rawMessage = rawParser->parseString(_message);
 	std::auto_ptr< Message > message(NULL);
 	if(rawMessage->getCommand() == "PING") {
-		message = std::auto_ptr< Message >(new MessagePing(rawMessage->getParamaters().at(0)));
+		try {
+			message = std::auto_ptr< Message >(new MessagePing(rawMessage->getParamaters().at(0)));
+		}
+		catch(std::out_of_range e) {
+		}
 	}
 	else if(rawMessage->getCommand() == "PONG") {
-		message = std::auto_ptr< Message >(new MessagePong(rawMessage->getParamaters().at(0)));
+		try {
+			message = std::auto_ptr< Message >(new MessagePong(rawMessage->getParamaters().at(0)));
+		}
+		catch(std::out_of_range e) {
+		}
 	}
 	else {
 		throw std::runtime_error("Parser: Message with command '" + rawMessage->getCommand() + "' not handled at the moment.");

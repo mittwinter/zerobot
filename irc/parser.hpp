@@ -14,7 +14,7 @@ class RawParser {
 		RawParser(bool _debug = false);
 		virtual ~RawParser() {}
 
-		std::auto_ptr< RawMessage > parseString(std::string _message) const;
+		std::auto_ptr< RawMessage > parseString(std::string _message) const throw(std::runtime_error);
 
 	protected:
 		static std::string const special;
@@ -37,7 +37,7 @@ class Parser {
 		Parser(bool _debug = false);
 		virtual ~Parser() {}
 
-		std::auto_ptr< Message > parseMessage(std::string _message) const;
+		std::auto_ptr< Message > parseMessage(std::string _message) const throw(std::runtime_error);
 
 	protected:
 		std::auto_ptr< RawParser > rawParser;
