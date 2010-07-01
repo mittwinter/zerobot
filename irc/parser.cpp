@@ -1,5 +1,6 @@
 #include <cctype>
 #include <iostream> // TODO: remove after debugging
+#include <sstream>
 
 #include "parser.hpp"
 
@@ -212,6 +213,28 @@ std::auto_ptr< Message > Parser::parseMessage(std::string _message) const throw(
 			message = std::auto_ptr< Message >(new MessagePong(rawMessage->getParamaters().at(0)));
 		}
 		catch(std::out_of_range e) {
+		}
+	}
+	else if(rawMessage->getCommand().size() == 3 && isdigit(rawMessage->getCommand().at(0)) && isdigit(rawMessage->getCommand().at(1)) && isdigit(rawMessage->getCommand().at(2))) {
+		std::auto_ptr< MessageNumericReply::code_t > replyCode(NULL);
+		int replyCodeInt = -1;
+		std::stringstream sstrReplyCode;
+		sstrReplyCode << rawMessage->getCommand();
+		sstrReplyCode >> replyCodeInt;
+		switch(replyCodeInt) {
+			case MessageNumericReply::ERR_NONICKNAMEGIVEN:
+			case MessageNumericReply::ERR_ERRONEUSNICKNAME:
+			case MessageNumericReply::ERR_NICKNAMEINUSE:
+			case MessageNumericReply::ERR_NICKCOLLISION:
+				replyCode = std::auto_ptr< MessageNumericReply::code_t >(new MessageNumericReply::code_t);
+				*replyCode = static_cast< MessageNumericReply::code_t > (replyCodeInt);
+				break;
+		}
+		if(replyCode.get() != NULL) {
+			message = std::auto_ptr< Message >(new MessageNumericReply(*replyCode, rawMessage->getParamaters(), rawMessage->getTrailing()));
+		}
+		else {
+			throw std::runtime_error("Parser: Message with numeric reply code '" + rawMessage->getCommand() + "' not handled at the moment.");
 		}
 	}
 	else {
