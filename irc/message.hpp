@@ -9,14 +9,22 @@
 namespace IRC {
 
 typedef enum {
+	RPL_TOPIC = 331,
+	RPL_NOTOPIC = 332,
 	RPL_MOTD = 372,
 	RPL_MOTDSTART = 375,
 	RPL_ENDOFMOTD = 376,
+	ERR_NOSUCHCHANNEL = 403,
+	ERR_TOOMANYCHANNELS = 405,
 	ERR_NONICKNAMEGIVEN = 431,
 	ERR_ERRONEUSNICKNAME = 432,
 	ERR_NICKNAMEINUSE = 433,
 	ERR_NICKCOLLISION = 436,
 	ERR_ALREADYREGISTERED = 462,
+	ERR_CHANNELISFULL = 471,
+	ERR_INVITEONLYCHAN = 473,
+	ERR_BANNEDFROMCHAN = 474,
+	ERR_BADCHANNELKEY = 475,
 } reply_code_t;
 
 class Prefix {
@@ -159,6 +167,19 @@ class MessageQuit : public Message {
 
 	protected:
 		std::string quitMessage;
+};
+
+class MessageJoin : public Message {
+	public:
+		MessageJoin(std::string const &_channelName);
+		virtual ~MessageJoin() {}
+
+		virtual operator RawMessage() const;
+
+		std::string const &getChannelName() const { return channelName; }
+
+	protected:
+		std::string channelName;
 };
 
 }

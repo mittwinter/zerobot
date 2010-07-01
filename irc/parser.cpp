@@ -233,14 +233,22 @@ std::auto_ptr< Message > Parser::parseMessage(std::string _message) const throw(
 		sstrReplyCode << rawMessage->getCommand();
 		sstrReplyCode >> replyCodeInt;
 		switch(replyCodeInt) {
+			case RPL_TOPIC:
+			case RPL_NOTOPIC:
 			case RPL_MOTD:
 			case RPL_MOTDSTART:
 			case RPL_ENDOFMOTD:
+			case ERR_NOSUCHCHANNEL:
+			case ERR_TOOMANYCHANNELS:
 			case ERR_NONICKNAMEGIVEN:
 			case ERR_ERRONEUSNICKNAME:
 			case ERR_NICKNAMEINUSE:
 			case ERR_NICKCOLLISION:
 			case ERR_ALREADYREGISTERED:
+			case ERR_CHANNELISFULL:
+			case ERR_INVITEONLYCHAN:
+			case ERR_BANNEDFROMCHAN:
+			case ERR_BADCHANNELKEY:
 				replyCode = std::auto_ptr< reply_code_t >(new reply_code_t);
 				*replyCode = static_cast< reply_code_t > (replyCodeInt);
 				break;

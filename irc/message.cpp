@@ -99,7 +99,18 @@ MessageQuit::MessageQuit(std::string const &_quitMessage) {
 
 MessageQuit::operator RawMessage() const {
 	std::vector< std::string > parameters;
-	RawMessage tmp("QUIT", parameters, quitMessage);
+	RawMessage tmp("QUIT", parameters, getQuitMessage());
+	return tmp;
+}
+
+MessageJoin::MessageJoin(std::string const &_channelName) {
+	channelName = _channelName;
+}
+
+MessageJoin::operator RawMessage() const {
+	std::vector< std::string > parameters;
+	parameters.push_back(getChannelName());
+	RawMessage tmp("JOIN", parameters);
 	return tmp;
 }
 
