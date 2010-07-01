@@ -34,15 +34,20 @@ std::auto_ptr< PlugInResult > PlugInConnect::onPacket(state_t _state, IRC::Messa
 	std::auto_ptr< PlugInResult > result(NULL);
 	try {
 		IRC::MessageNumericReply const &reply = dynamic_cast< IRC::MessageNumericReply const & >(_message);
-		if(connectState == STATE_CONNECT_NICK_USER_SENT
-		    && (reply.getReplyCode() == IRC::ERR_NONICKNAMEGIVEN 
-		        || reply.getReplyCode() == IRC::ERR_ERRONEUSNICKNAME
-		        || reply.getReplyCode() == IRC::ERR_NICKNAMEINUSE
-		        || reply.getReplyCode() == IRC::ERR_NICKCOLLISION
-		        || reply.getReplyCode() == IRC::ERR_ALREADYREGISTERED)) {
-			std::cerr << "PlugInConnect: " << reply << std::flush;
-			result = std::auto_ptr< PlugInResult >(new PlugInResult);
-			result->newState = STATE_DISCONNECTING;
+		if(connectState == STATE_CONNECT_NICK_USER_SENT) {
+			if(reply.getReplyCode() == IRC::ERR_NONICKNAMEGIVEN 
+		            || reply.getReplyCode() == IRC::ERR_ERRONEUSNICKNAME
+		            || reply.getReplyCode() == IRC::ERR_NICKNAMEINUSE
+		            || reply.getReplyCode() == IRC::ERR_NICKCOLLISION
+		            || reply.getReplyCode() == IRC::ERR_ALREADYREGISTERED) {
+				std::cerr << "PlugInConnect: " << reply << std::flush;
+				result = std::auto_ptr< PlugInResult >(new PlugInResult);
+				result->newState = STATE_DISCONNECTING;
+			}
+			else if(reply.getReplyCode() == IRC::RPL_ENDOFMOTD) {
+				result = std::auto_ptr< PlugInResult >(new PlugInResult);
+				result->newState = STATE_CONNECTED;
+			}
 		}
 	}
 	catch(std::bad_cast) {
