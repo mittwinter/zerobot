@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 2.8)
 project(zerobot)
 
 SET(CMAKE_BUILD_TYPE Debug)
+SET(CMAKE_CXX_FLAGS_DEBUG "-g -Wall -Wswitch-enum -Werror")
 
 add_executable(zerobot
 	src/main.cpp
