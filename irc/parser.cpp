@@ -235,6 +235,8 @@ std::auto_ptr< Message > Parser::parseMessage(std::string _message) const throw(
 		switch(replyCodeInt) {
 			case RPL_TOPIC:
 			case RPL_NOTOPIC:
+			case RPL_NAMEREPLY:
+			case RPL_ENDOFNAMES:
 			case RPL_MOTD:
 			case RPL_MOTDSTART:
 			case RPL_ENDOFMOTD:
