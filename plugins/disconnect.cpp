@@ -31,7 +31,7 @@ std::auto_ptr< PlugInResult > PlugInDisconnect::onDisconnect(state_t _state) {
 		case STATE_DISCONNECTING:
 			result = std::auto_ptr< PlugInResult >(new PlugInResult);
 			result->newState = STATE_DISCONNECTED;
-			result->messages.push_back(new IRC::MessageQuit(quitMessages.at(util::rand(quitMessages.size()))));
+			result->messages.push_back(new IRC::MessageQuit(quitMessages.at(util::rand(quitMessages.size() - 1))));
 			break;
 		default:
 			break;
