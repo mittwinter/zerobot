@@ -233,6 +233,9 @@ std::auto_ptr< Message > Parser::parseMessage(std::string _message) const throw(
 		sstrReplyCode << rawMessage->getCommand();
 		sstrReplyCode >> replyCodeInt;
 		switch(replyCodeInt) {
+			case RPL_MOTD:
+			case RPL_MOTDSTART:
+			case RPL_ENDOFMOTD:
 			case ERR_NONICKNAMEGIVEN:
 			case ERR_ERRONEUSNICKNAME:
 			case ERR_NICKNAMEINUSE:
