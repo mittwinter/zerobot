@@ -18,7 +18,14 @@ class PlugInJoin : public PlugIn {
 		virtual std::auto_ptr< PlugInResult > onDisconnect(state_t _state);
 
 	protected:
+		typedef enum {
+			STATE_JOIN_NOP,
+			STATE_JOIN_SENT,
+			STATE_JOIN_JOINED,
+		} state_join_t;
+
 		std::string channelName;
+		state_join_t joinState;
 };
 
 }
