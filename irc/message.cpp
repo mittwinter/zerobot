@@ -1,3 +1,5 @@
+#include <sstream>
+
 #include "message.hpp"
 
 namespace IRC {
@@ -27,6 +29,22 @@ RawMessage::RawMessage(std::auto_ptr< Prefix > _prefix, std::string const &_comm
 	command = _command;
 	parameters = _parameters;
 	trailing = _trailing;
+}
+
+MessageNumericReply::MessageNumericReply(code_t _replyCode) {
+	replyCode = _replyCode;
+}
+
+MessageNumericReply::MessageNumericReply(code_t _replyCode, std::vector< std::string > const &_parameters, std::string const &_trailing) : parameters(_parameters) {
+	replyCode = _replyCode;
+	trailing = _trailing;
+}
+
+MessageNumericReply::operator RawMessage() const {
+	std::stringstream sstrReplyCode;
+	sstrReplyCode << getReplyCode();
+	RawMessage tmp(sstrReplyCode.str(), getParamaters(), getTrailing());
+	return tmp;
 }
 
 MessagePingPong::MessagePingPong(std::string const &_serverName) : serverName(_serverName) {

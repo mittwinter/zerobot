@@ -54,6 +54,31 @@ class Message {
 	protected:
 };
 
+class MessageNumericReply : public Message {
+	public:
+		typedef enum {
+			ERR_NONICKNAMEGIVEN = 431,
+			ERR_ERRONEUSNICKNAME = 432,
+			ERR_NICKNAMEINUSE = 433,
+			ERR_NICKCOLLISION = 436
+		} code_t;
+
+		MessageNumericReply(code_t _replyCode);
+		MessageNumericReply(code_t _replyCode, std::vector< std::string > const &_parameters, std::string const &_trailing = "");
+		virtual ~MessageNumericReply() {}
+
+		virtual operator RawMessage() const;
+
+		code_t getReplyCode() const { return replyCode; }
+		std::vector< std::string > const &getParamaters() const { return parameters; }
+		std::string const &getTrailing() const { return trailing; }
+
+	protected:
+		code_t replyCode;
+		std::vector< std::string > parameters;
+		std::string trailing;
+};
+
 class MessagePingPong : public Message {
 	public:
 		MessagePingPong(std::string const &_serverName);
