@@ -12,7 +12,7 @@ PlugInPingPong::PlugInPingPong(int _priority, std::string const &_serverName) : 
 }
 
 std::auto_ptr< PlugInResult > PlugInPingPong::onConnect(state_t _state) {
-	return std::auto_ptr< PlugInResult > (NULL);
+	return std::auto_ptr< PlugInResult >(NULL);
 }
 
 std::auto_ptr< PlugInResult > PlugInPingPong::onPacket(state_t _state, IRC::Message const &_message) {
@@ -31,7 +31,7 @@ std::auto_ptr< PlugInResult > PlugInPingPong::onPacket(state_t _state, IRC::Mess
 	}
 	catch(std::bad_cast e) {
 	}
-	return std::auto_ptr< PlugInResult > (NULL);
+	return std::auto_ptr< PlugInResult >(NULL);
 }
 
 std::auto_ptr< PlugInResult > PlugInPingPong::onTimeTrigger(state_t _state) {
@@ -51,7 +51,7 @@ std::auto_ptr< PlugInResult > PlugInPingPong::onTimeTrigger(state_t _state) {
 }
 
 std::auto_ptr< PlugInResult > PlugInPingPong::onDisconnect(state_t _state) {
-	return std::auto_ptr< PlugInResult > (NULL);
+	return std::auto_ptr< PlugInResult >(NULL);
 }
 
 }
