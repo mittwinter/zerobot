@@ -40,7 +40,7 @@ std::auto_ptr< PlugInResult > PlugInConnect::onPacket(state_t _state, IRC::Messa
 		        || reply.getReplyCode() == IRC::ERR_NICKNAMEINUSE
 		        || reply.getReplyCode() == IRC::ERR_NICKCOLLISION
 		        || reply.getReplyCode() == IRC::ERR_ALREADYREGISTERED)) {
-			std::cerr << "PlugInConnect: " << reply << std::endl;
+			std::cerr << "PlugInConnect: " << reply << std::flush;
 			result = std::auto_ptr< PlugInResult >(new PlugInResult);
 			result->newState = STATE_DISCONNECTING;
 		}
