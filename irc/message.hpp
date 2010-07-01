@@ -8,6 +8,13 @@
 
 namespace IRC {
 
+typedef enum {
+	ERR_NONICKNAMEGIVEN = 431,
+	ERR_ERRONEUSNICKNAME = 432,
+	ERR_NICKNAMEINUSE = 433,
+	ERR_NICKCOLLISION = 436
+} reply_code_t;
+
 class Prefix {
 	public:
 		Prefix(std::string const &_nick, std::string const &_user = "", std::string const &_host = "");
@@ -56,25 +63,18 @@ class Message {
 
 class MessageNumericReply : public Message {
 	public:
-		typedef enum {
-			ERR_NONICKNAMEGIVEN = 431,
-			ERR_ERRONEUSNICKNAME = 432,
-			ERR_NICKNAMEINUSE = 433,
-			ERR_NICKCOLLISION = 436
-		} code_t;
-
-		MessageNumericReply(code_t _replyCode);
-		MessageNumericReply(code_t _replyCode, std::vector< std::string > const &_parameters, std::string const &_trailing = "");
+		MessageNumericReply(reply_code_t _replyCode);
+		MessageNumericReply(reply_code_t _replyCode, std::vector< std::string > const &_parameters, std::string const &_trailing = "");
 		virtual ~MessageNumericReply() {}
 
 		virtual operator RawMessage() const;
 
-		code_t getReplyCode() const { return replyCode; }
+		reply_code_t getReplyCode() const { return replyCode; }
 		std::vector< std::string > const &getParamaters() const { return parameters; }
 		std::string const &getTrailing() const { return trailing; }
 
 	protected:
-		code_t replyCode;
+		reply_code_t replyCode;
 		std::vector< std::string > parameters;
 		std::string trailing;
 };

@@ -215,19 +215,22 @@ std::auto_ptr< Message > Parser::parseMessage(std::string _message) const throw(
 		catch(std::out_of_range e) {
 		}
 	}
-	else if(rawMessage->getCommand().size() == 3 && isdigit(rawMessage->getCommand().at(0)) && isdigit(rawMessage->getCommand().at(1)) && isdigit(rawMessage->getCommand().at(2))) {
-		std::auto_ptr< MessageNumericReply::code_t > replyCode(NULL);
+	else if(rawMessage->getCommand().size() == 3
+	        && isdigit(rawMessage->getCommand().at(0))
+	        && isdigit(rawMessage->getCommand().at(1))
+	        && isdigit(rawMessage->getCommand().at(2))) {
+		std::auto_ptr< reply_code_t > replyCode(NULL);
 		int replyCodeInt = -1;
 		std::stringstream sstrReplyCode;
 		sstrReplyCode << rawMessage->getCommand();
 		sstrReplyCode >> replyCodeInt;
 		switch(replyCodeInt) {
-			case MessageNumericReply::ERR_NONICKNAMEGIVEN:
-			case MessageNumericReply::ERR_ERRONEUSNICKNAME:
-			case MessageNumericReply::ERR_NICKNAMEINUSE:
-			case MessageNumericReply::ERR_NICKCOLLISION:
-				replyCode = std::auto_ptr< MessageNumericReply::code_t >(new MessageNumericReply::code_t);
-				*replyCode = static_cast< MessageNumericReply::code_t > (replyCodeInt);
+			case ERR_NONICKNAMEGIVEN:
+			case ERR_ERRONEUSNICKNAME:
+			case ERR_NICKNAMEINUSE:
+			case ERR_NICKCOLLISION:
+				replyCode = std::auto_ptr< reply_code_t >(new reply_code_t);
+				*replyCode = static_cast< reply_code_t > (replyCodeInt);
 				break;
 		}
 		if(replyCode.get() != NULL) {

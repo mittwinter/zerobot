@@ -31,11 +31,11 @@ RawMessage::RawMessage(std::auto_ptr< Prefix > _prefix, std::string const &_comm
 	trailing = _trailing;
 }
 
-MessageNumericReply::MessageNumericReply(code_t _replyCode) {
+MessageNumericReply::MessageNumericReply(reply_code_t _replyCode) {
 	replyCode = _replyCode;
 }
 
-MessageNumericReply::MessageNumericReply(code_t _replyCode, std::vector< std::string > const &_parameters, std::string const &_trailing) : parameters(_parameters) {
+MessageNumericReply::MessageNumericReply(reply_code_t _replyCode, std::vector< std::string > const &_parameters, std::string const &_trailing) : parameters(_parameters) {
 	replyCode = _replyCode;
 	trailing = _trailing;
 }
