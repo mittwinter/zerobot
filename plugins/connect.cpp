@@ -1,4 +1,4 @@
-#include <bits/local_lim.h>
+#include <bits/local_lim.h> // for HOST_NAME_MAX (POSIX limit)
 #include <unistd.h>
 
 #include "connect.hpp"
