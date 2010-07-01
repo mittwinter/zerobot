@@ -3,6 +3,7 @@
 
 #include "connect.hpp"
 #include "disconnect.hpp"
+#include "join.hpp"
 #include "pingpong.hpp"
 
 #endif
