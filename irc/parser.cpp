@@ -229,6 +229,7 @@ std::auto_ptr< Message > Parser::parseMessage(std::string _message) const throw(
 			case ERR_ERRONEUSNICKNAME:
 			case ERR_NICKNAMEINUSE:
 			case ERR_NICKCOLLISION:
+			case ERR_ALREADYREGISTERED:
 				replyCode = std::auto_ptr< reply_code_t >(new reply_code_t);
 				*replyCode = static_cast< reply_code_t > (replyCodeInt);
 				break;
