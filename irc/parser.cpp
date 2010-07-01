@@ -15,6 +15,14 @@ std::auto_ptr< RawMessage > RawParser::parseString(std::string _message) const t
 	if(debug) {
 		std::cerr << "RawParser: Parsing message '" << _message << "'" << std::endl;
 	}
+	if(_message.size() >= 2) {
+		if(_message.at(_message.size() - 1) == '\n') {
+			_message.erase(_message.size() - 1, 1);
+		}
+		if(_message.at(_message.size() - 1) == '\r') {
+			_message.erase(_message.size() - 1, 1);
+		}
+	}
 	std::auto_ptr< Prefix > prefix = parsePrefix(_message);
 	skipSpace(_message);
 	std::string command = parseCommand(_message);
