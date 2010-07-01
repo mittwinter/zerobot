@@ -103,7 +103,7 @@ std::string ZeroBot::receiveMessage() {
 		// so remove it from the buffer and return it:
 		std::string receivedMessage = buffer.substr(0, messageEnd + 1);
 		buffer.erase(0, messageEnd + 1);
-		std::cout << receivedMessage << std::flush;
+		std::cout << "<<< " << receivedMessage << std::flush; // TODO: remove this debug output
 		return receivedMessage;
 	}
 	else {
