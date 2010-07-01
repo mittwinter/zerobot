@@ -26,7 +26,7 @@ std::auto_ptr< PlugInResult > PlugInPingPong::onPacket(state_t _state, IRC::Mess
 	catch(std::bad_cast e) {
 	}
 	try {
-		IRC::MessagePong const &pong = dynamic_cast< IRC::MessagePong const & >(_message);
+		IRC::MessagePong const &pong __attribute__((unused)) = dynamic_cast< IRC::MessagePong const & >(_message);
 		lastPong = time(NULL);
 	}
 	catch(std::bad_cast e) {
