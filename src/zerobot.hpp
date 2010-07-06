@@ -5,7 +5,7 @@
 #include <string>
 
 #include "../include/priority_queue.hpp"
-#include "../irc/parser.hpp"
+#include "../lib/irc/parser.hpp"
 #include "../plugins/base.hpp"
 #include "socket.hpp"
 #include "zerobot_state.hpp"

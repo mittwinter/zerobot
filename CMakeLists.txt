@@ -10,12 +10,16 @@ add_executable(zerobot
 	src/rand.cpp
 	src/socket.cpp
 	src/zerobot.cpp
-	irc/message.cpp
-	irc/parser.cpp
+	lib/irc/message.cpp
+	lib/irc/parser.cpp
 	plugins/base.cpp
 	plugins/connect.cpp
 	plugins/disconnect.cpp
 	plugins/join.cpp
 	plugins/pingpong.cpp
 	)
-add_executable(testcase/parserTest testcase/parserTest.cpp irc/message.cpp irc/parser.cpp)
+add_executable(testcase/parserTest
+	testcase/parserTest.cpp
+	lib/irc/message.cpp 
+	lib/irc/parser.cpp
+	)

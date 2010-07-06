@@ -5,7 +5,7 @@
 #include <memory>
 #include <string>
 
-#include "../irc/message.hpp"
+#include "../lib/irc/message.hpp"
 #include "../src/zerobot_state.hpp"
 
 namespace zerobot {

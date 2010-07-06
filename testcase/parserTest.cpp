@@ -3,8 +3,8 @@
 #include <iostream>
 #include <memory>
 
-#include "../irc/message.hpp"
-#include "../irc/parser.hpp"
+#include "../lib/irc/message.hpp"
+#include "../lib/irc/parser.hpp"
 
 int main(int argc, char *argv[]) {
 	if(argc < 2) {
