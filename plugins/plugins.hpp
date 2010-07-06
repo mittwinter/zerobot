@@ -4,6 +4,7 @@
 #include "connect.hpp"
 #include "disconnect.hpp"
 #include "join.hpp"
+#include "log.hpp"
 #include "pingpong.hpp"
 
 #endif

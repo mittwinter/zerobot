@@ -16,6 +16,7 @@ add_executable(zerobot
 	plugins/connect.cpp
 	plugins/disconnect.cpp
 	plugins/join.cpp
+	plugins/log.cpp
 	plugins/pingpong.cpp
 	)
 add_executable(testcase/parserTest
