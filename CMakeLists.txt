@@ -22,7 +22,6 @@ add_executable(zerobot
 	src/rand.cpp
 	src/socket.cpp
 	src/zerobot.cpp
-	lib/database_sqlite.cpp
 	lib/irc/message.cpp
 	lib/irc/parser.cpp
 	plugins/base.cpp
