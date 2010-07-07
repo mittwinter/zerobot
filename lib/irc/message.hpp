@@ -68,18 +68,25 @@ class RawMessage {
 // TODO: Add prefix to these messages since it contains valuable information (e. g. in PRIVMSG or PING)
 class Message {
 	public:
-		Message() {}
+		Message();
+		Message(std::auto_ptr< Prefix > _prefix);
 		virtual ~Message() {}
 
 		virtual operator RawMessage() const = 0;
 
+		Prefix const *getPrefix() const { return prefix.get(); }
+		void setPrefix(std::auto_ptr< Prefix > _prefix) { prefix = _prefix; }
+
 	protected:
+		std::auto_ptr< Prefix > prefix;
 };
 
 class MessageNumericReply : public Message {
 	public:
 		MessageNumericReply(reply_code_t _replyCode);
+		MessageNumericReply(std::auto_ptr< Prefix > _prefix, reply_code_t _replyCode);
 		MessageNumericReply(reply_code_t _replyCode, std::vector< std::string > const &_parameters, std::string const &_trailing = "");
+		MessageNumericReply(std::auto_ptr< Prefix > _prefix, reply_code_t _replyCode, std::vector< std::string > const &_parameters, std::string const &_trailing = "");
 		virtual ~MessageNumericReply() {}
 
 		virtual operator RawMessage() const;
@@ -97,6 +104,7 @@ class MessageNumericReply : public Message {
 class MessagePingPong : public Message {
 	public:
 		MessagePingPong(std::string const &_serverName);
+		MessagePingPong(std::auto_ptr< Prefix > _prefix, std::string const &_serverName);
 		virtual ~MessagePingPong() {}
 
 		std::string const &getServerName() const { return serverName; }
@@ -109,7 +117,8 @@ class MessagePingPong : public Message {
 
 class MessagePing : public MessagePingPong {
 	public:
-		MessagePing(std::string const &_serverName) : MessagePingPong(_serverName) {}
+		MessagePing(std::string const &_serverName);
+		MessagePing(std::auto_ptr< Prefix > _prefix, std::string const &_serverName);
 		virtual ~MessagePing() {}
 
 		virtual operator RawMessage() const;
@@ -119,7 +128,8 @@ class MessagePing : public MessagePingPong {
 
 class MessagePong : public MessagePingPong {
 	public:
-		MessagePong(std::string const &_serverName) : MessagePingPong(_serverName) {}
+		MessagePong(std::string const &_serverName);
+		MessagePong(std::auto_ptr< Prefix > _prefix, std::string const &_serverName);
 		virtual ~MessagePong() {}
 
 		virtual operator RawMessage() const;
@@ -130,6 +140,7 @@ class MessagePong : public MessagePingPong {
 class MessageNick : public Message {
 	public:
 		MessageNick(std::string const &_nickname);
+		MessageNick(std::auto_ptr< Prefix > _prefix, std::string const &_nickname);
 		virtual ~MessageNick() {}
 
 		virtual operator RawMessage() const;
@@ -143,6 +154,7 @@ class MessageNick : public Message {
 class MessageUser : public Message {
 	public:
 		MessageUser(std::string const &_nickname, std::string const &_hostname, std::string const &_serverName, std::string const &_realName);
+		MessageUser(std::auto_ptr< Prefix > _prefix, std::string const &_nickname, std::string const &_hostname, std::string const &_serverName, std::string const &_realName);
 		virtual ~MessageUser() {}
 
 		virtual operator RawMessage() const;
@@ -162,6 +174,7 @@ class MessageUser : public Message {
 class MessageQuit : public Message {
 	public:
 		MessageQuit(std::string const &_quitMessage);
+		MessageQuit(std::auto_ptr< Prefix > _prefix, std::string const &_quitMessage);
 		virtual ~MessageQuit() {}
 
 		virtual operator RawMessage() const;
@@ -175,6 +188,7 @@ class MessageQuit : public Message {
 class MessageJoin : public Message {
 	public:
 		MessageJoin(std::string const &_channelName);
+		MessageJoin(std::auto_ptr< Prefix > _prefix, std::string const &_channelName);
 		virtual ~MessageJoin() {}
 
 		virtual operator RawMessage() const;

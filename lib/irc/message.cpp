@@ -31,11 +31,26 @@ RawMessage::RawMessage(std::auto_ptr< Prefix > _prefix, std::string const &_comm
 	trailing = _trailing;
 }
 
+Message::Message() : prefix(NULL) {
+}
+
+Message::Message(std::auto_ptr< Prefix > _prefix) : prefix(_prefix) {
+}
+
 MessageNumericReply::MessageNumericReply(reply_code_t _replyCode) {
 	replyCode = _replyCode;
 }
 
+MessageNumericReply::MessageNumericReply(std::auto_ptr< Prefix > _prefix, reply_code_t _replyCode) : Message(_prefix) {
+	replyCode = _replyCode;
+}
+
 MessageNumericReply::MessageNumericReply(reply_code_t _replyCode, std::vector< std::string > const &_parameters, std::string const &_trailing) : parameters(_parameters) {
+	replyCode = _replyCode;
+	trailing = _trailing;
+}
+
+MessageNumericReply::MessageNumericReply(std::auto_ptr< Prefix > _prefix, reply_code_t _replyCode, std::vector< std::string > const &_parameters, std::string const &_trailing) : Message(_prefix), parameters(_parameters) {
 	replyCode = _replyCode;
 	trailing = _trailing;
 }
@@ -47,7 +62,18 @@ MessageNumericReply::operator RawMessage() const {
 	return tmp;
 }
 
-MessagePingPong::MessagePingPong(std::string const &_serverName) : serverName(_serverName) {
+MessagePingPong::MessagePingPong(std::string const &_serverName) {
+	serverName = _serverName;
+}
+
+MessagePingPong::MessagePingPong(std::auto_ptr< Prefix > _prefix, std::string const &_serverName) : Message(_prefix) {
+	serverName = _serverName;
+}
+
+MessagePing::MessagePing(std::string const &_serverName) : MessagePingPong(_serverName) {
+}
+
+MessagePing::MessagePing(std::auto_ptr< Prefix > _prefix, std::string const &_serverName) : MessagePingPong(_prefix, _serverName) {
 }
 
 MessagePing::operator RawMessage() const {
@@ -56,6 +82,12 @@ MessagePing::operator RawMessage() const {
 	// return RawMessage("PING", parameters); // TODO: Fix this C++ grammar mess?
 	RawMessage tmp("PING", parameters);
 	return tmp;
+}
+
+MessagePong::MessagePong(std::string const &_serverName) : MessagePingPong(_serverName) {
+}
+
+MessagePong::MessagePong(std::auto_ptr< Prefix > _prefix, std::string const &_serverName) : MessagePingPong(_prefix, _serverName) {
 }
 
 MessagePong::operator RawMessage() const {
@@ -70,6 +102,10 @@ MessageNick::MessageNick(std::string const &_nickname) {
 	nickname = _nickname;
 }
 
+MessageNick::MessageNick(std::auto_ptr< Prefix > _prefix, std::string const &_nickname) : Message(_prefix) {
+	nickname = _nickname;
+}
+
 MessageNick::operator RawMessage() const {
 	std::vector< std::string > parameters;
 	parameters.push_back(getNickname());
@@ -78,6 +114,13 @@ MessageNick::operator RawMessage() const {
 }
 
 MessageUser::MessageUser(std::string const &_nickname, std::string const &_hostname, std::string const &_serverName, std::string const &_realName) {
+	nickname = _nickname;
+	hostname = _hostname;
+	serverName = _serverName;
+	realName = _realName;
+}
+
+MessageUser::MessageUser(std::auto_ptr< Prefix > _prefix, std::string const &_nickname, std::string const &_hostname, std::string const &_serverName, std::string const &_realName) : Message(_prefix) {
 	nickname = _nickname;
 	hostname = _hostname;
 	serverName = _serverName;
@@ -97,6 +140,10 @@ MessageQuit::MessageQuit(std::string const &_quitMessage) {
 	quitMessage = _quitMessage;
 }
 
+MessageQuit::MessageQuit(std::auto_ptr< Prefix > _prefix, std::string const &_quitMessage) : Message(_prefix) {
+	quitMessage = _quitMessage;
+}
+
 MessageQuit::operator RawMessage() const {
 	std::vector< std::string > parameters;
 	RawMessage tmp("QUIT", parameters, getQuitMessage());
@@ -104,6 +151,10 @@ MessageQuit::operator RawMessage() const {
 }
 
 MessageJoin::MessageJoin(std::string const &_channelName) {
+	channelName = _channelName;
+}
+
+MessageJoin::MessageJoin(std::auto_ptr< Prefix > _prefix, std::string const &_channelName) : Message(_prefix) {
 	channelName = _channelName;
 }
 

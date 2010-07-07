@@ -211,16 +211,18 @@ std::auto_ptr< Message > Parser::parseMessage(std::string _message) const throw(
 	std::auto_ptr< Message > message(NULL);
 	if(rawMessage->getCommand() == "PING") {
 		try {
-			message = std::auto_ptr< Message >(new MessagePing(rawMessage->getParamaters().at(0)));
+			message = std::auto_ptr< Message >(new MessagePing(rawMessage->getPrefix(), rawMessage->getParamaters().at(0)));
 		}
 		catch(std::out_of_range e) {
+			throw std::runtime_error("Parser: PING message missing server parameter.");
 		}
 	}
 	else if(rawMessage->getCommand() == "PONG") {
 		try {
-			message = std::auto_ptr< Message >(new MessagePong(rawMessage->getParamaters().at(0)));
+			message = std::auto_ptr< Message >(new MessagePong(rawMessage->getPrefix(), rawMessage->getParamaters().at(0)));
 		}
 		catch(std::out_of_range e) {
+			throw std::runtime_error("Parser: PONG message missing server parameter.");
 		}
 	}
 	else if(rawMessage->getCommand().size() == 3
@@ -256,7 +258,7 @@ std::auto_ptr< Message > Parser::parseMessage(std::string _message) const throw(
 				break;
 		}
 		if(replyCode.get() != NULL) {
-			message = std::auto_ptr< Message >(new MessageNumericReply(*replyCode, rawMessage->getParamaters(), rawMessage->getTrailing()));
+			message = std::auto_ptr< Message >(new MessageNumericReply(rawMessage->getPrefix(), *replyCode, rawMessage->getParamaters(), rawMessage->getTrailing()));
 		}
 		else {
 			throw std::runtime_error("Parser: Message with numeric reply code '" + rawMessage->getCommand() + "' not handled at the moment.");
