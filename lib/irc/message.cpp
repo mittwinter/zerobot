@@ -133,7 +133,7 @@ std::ostream &operator<<(std::ostream &_out, IRC::Prefix const &_prefix) {
 }
 
 std::ostream &operator<<(std::ostream &_out, IRC::RawMessage const &_message) {
-	if(_message.getPrefix() != NULL) {
+	if(_message.getPrefixPtr() != NULL) {
 		_out << *(_message.getPrefix()) << " " << std::flush;
 	}
 	_out << _message.getCommand() << std::flush;

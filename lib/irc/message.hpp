@@ -52,7 +52,8 @@ class RawMessage {
 		RawMessage(std::auto_ptr< Prefix > _prefix, std::string const &_command, std::vector< std::string > const &_parameters, std::string const &_trailing);
 		virtual ~RawMessage() {}
 
-		Prefix const *getPrefix() const { return prefix.get(); }
+		Prefix const *getPrefixPtr() const { return prefix.get(); }
+		std::auto_ptr< Prefix > getPrefix() const { return std::auto_ptr< Prefix >(new Prefix(*(prefix.get()))); }
 		std::string const &getCommand() const { return command; }
 		std::vector< std::string > const &getParamaters() const { return parameters; }
 		std::string const &getTrailing() const { return trailing; }
