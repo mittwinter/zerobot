@@ -26,6 +26,8 @@ int main(int argc, char *argv[]) {
 	bot.registerPlugIn(*plugIn);
 	plugIn = new zerobot::PlugInPingPong(0, argv[1]);
 	bot.registerPlugIn(*plugIn);
+	plugIn = new zerobot::PlugInLog(0, "log", "##zerobot-test", "./log.db");
+	bot.registerPlugIn(*plugIn);
 	// Run bot:
 	bot.run();
 	return EXIT_SUCCESS;

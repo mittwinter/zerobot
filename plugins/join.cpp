@@ -22,7 +22,7 @@ std::auto_ptr< PlugInResult > PlugInJoin::onPacket(state_t _state, IRC::Message 
 			switch(reply.getReplyCode()) {
 				case IRC::RPL_TOPIC:
 				case IRC::RPL_NOTOPIC:
-				case IRC::RPL_NAMEREPLY:
+				case IRC::RPL_NAMREPLY:
 				case IRC::RPL_ENDOFNAMES:
 					joinState = STATE_JOIN_JOINED;
 					std::cerr << "PlugInJoin: Joined to channel " << channelName << "." << std::endl;

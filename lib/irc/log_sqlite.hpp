@@ -21,7 +21,11 @@ class LogSQLite : Log {
 		void open() throw(std::runtime_error);
 		void close() throw(std::runtime_error);
 
-		virtual void logMessage(Message const &_message);
+		virtual void logNamesList(std::string const &_channelName, std::string const &_namesListStr);
+		virtual void logNick(std::string const &_channelName, std::string const &_oldNickname, std::string const &_newNickname);
+		virtual void logQuit(std::string const &_channelName, std::string const &_nickname, std::string const &_quitMessage);
+		virtual void logJoin(std::string const &_channelName, std::string const &_nickname);
+		virtual void logPrivMsg(std::string const &_channelName, std::string const &_nickname, std::string const &_message);
 
 	protected:
 		std::string filename;
@@ -33,4 +37,3 @@ class LogSQLite : Log {
 }
 
 #endif
-

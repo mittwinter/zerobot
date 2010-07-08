@@ -209,23 +209,7 @@ Parser::Parser(bool _debug) : rawParser(new RawParser(_debug)) {
 std::auto_ptr< Message > Parser::parseMessage(std::string _message) const throw(std::runtime_error) {
 	std::auto_ptr< RawMessage > rawMessage = rawParser->parseString(_message);
 	std::auto_ptr< Message > message(NULL);
-	if(rawMessage->getCommand() == "PING") {
-		try {
-			message = std::auto_ptr< Message >(new MessagePing(rawMessage->getPrefix(), rawMessage->getParamaters().at(0)));
-		}
-		catch(std::out_of_range e) {
-			throw std::runtime_error("Parser: PING message missing server parameter.");
-		}
-	}
-	else if(rawMessage->getCommand() == "PONG") {
-		try {
-			message = std::auto_ptr< Message >(new MessagePong(rawMessage->getPrefix(), rawMessage->getParamaters().at(0)));
-		}
-		catch(std::out_of_range e) {
-			throw std::runtime_error("Parser: PONG message missing server parameter.");
-		}
-	}
-	else if(rawMessage->getCommand().size() == 3
+	if(rawMessage->getCommand().size() == 3
 	        && isdigit(rawMessage->getCommand().at(0))
 	        && isdigit(rawMessage->getCommand().at(1))
 	        && isdigit(rawMessage->getCommand().at(2))) {
@@ -237,7 +221,7 @@ std::auto_ptr< Message > Parser::parseMessage(std::string _message) const throw(
 		switch(replyCodeInt) {
 			case RPL_TOPIC:
 			case RPL_NOTOPIC:
-			case RPL_NAMEREPLY:
+			case RPL_NAMREPLY:
 			case RPL_ENDOFNAMES:
 			case RPL_MOTD:
 			case RPL_MOTDSTART:
@@ -262,6 +246,67 @@ std::auto_ptr< Message > Parser::parseMessage(std::string _message) const throw(
 		}
 		else {
 			throw std::runtime_error("Parser: Message with numeric reply code '" + rawMessage->getCommand() + "' not handled at the moment.");
+		}
+	}
+	else if(rawMessage->getCommand() == "PING") {
+		try {
+			message = std::auto_ptr< Message >(new MessagePing(rawMessage->getPrefix(), rawMessage->getParamaters().at(0)));
+		}
+		catch(std::out_of_range e) {
+			throw std::runtime_error("Parser: PING message missing server parameter.");
+		}
+	}
+	else if(rawMessage->getCommand() == "PONG") {
+		try {
+			message = std::auto_ptr< Message >(new MessagePong(rawMessage->getPrefix(), rawMessage->getParamaters().at(0)));
+		}
+		catch(std::out_of_range e) {
+			throw std::runtime_error("Parser: PONG message missing server parameter.");
+		}
+	}
+	else if(rawMessage->getCommand() == "NICK") {
+		std::string nickname;
+		if(rawMessage->getParamaters().size() > 0) {
+			nickname = rawMessage->getParamaters().at(0);
+		}
+		else if(rawMessage->getTrailing() != "") {
+			nickname = rawMessage->getTrailing();
+		}
+		else {
+			throw std::runtime_error("Parser: NICK message missing nickname parameter.");
+		}
+		message = std::auto_ptr< Message >(new MessageNick(rawMessage->getPrefix(), nickname));
+	}
+	else if(rawMessage->getCommand() == "QUIT") {
+		message = std::auto_ptr< Message >(new MessageQuit(rawMessage->getPrefix(), rawMessage->getTrailing()));
+	}
+	else if(rawMessage->getCommand() == "JOIN") {
+		std::string channelName;
+		if(rawMessage->getParamaters().size() > 0) {
+			channelName = rawMessage->getParamaters().at(0);
+		}
+		else if(rawMessage->getTrailing() != "") {
+			channelName = rawMessage->getTrailing();
+		}
+		else {
+			throw std::runtime_error("Parser: JOIN message missing channel parameter.");
+		}
+		message = std::auto_ptr< Message >(new MessageJoin(rawMessage->getPrefix(), channelName));
+	}
+	else if(rawMessage->getCommand() == "PRIVMSG") {
+		try {
+			message = std::auto_ptr< Message >(new MessagePrivMsg(rawMessage->getPrefix(), rawMessage->getParamaters().at(0), rawMessage->getTrailing()));
+		}
+		catch(std::out_of_range) {
+			throw std::runtime_error("Parser: PRIVMSG message missing receiver parameter.");
+		}
+	}
+	else if(rawMessage->getCommand() == "PART") {
+		try {
+			message = std::auto_ptr< Message >(new MessagePart(rawMessage->getPrefix(), rawMessage->getParamaters().at(0), rawMessage->getTrailing()));
+		}
+		catch(std::out_of_range) {
+			throw std::runtime_error("Parser: PART message missing channel parameter.");
 		}
 	}
 	else {

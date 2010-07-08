@@ -11,7 +11,7 @@ namespace IRC {
 typedef enum {
 	RPL_TOPIC = 331,
 	RPL_NOTOPIC = 332,
-	RPL_NAMEREPLY = 353,
+	RPL_NAMREPLY = 353,
 	RPL_ENDOFNAMES = 366,
 	RPL_MOTD = 372,
 	RPL_MOTDSTART = 375,
@@ -65,7 +65,6 @@ class RawMessage {
 		std::string trailing;
 };
 
-// TODO: Add prefix to these messages since it contains valuable information (e. g. in PRIVMSG or PING)
 class Message {
 	public:
 		Message();
@@ -197,6 +196,38 @@ class MessageJoin : public Message {
 
 	protected:
 		std::string channelName;
+};
+
+class MessagePrivMsg : public Message {
+	public:
+		MessagePrivMsg(std::string const &_receiver, std::string const &_message);
+		MessagePrivMsg(std::auto_ptr< Prefix > _prefix, std::string const &_receiver, std::string const &_message);
+		virtual ~MessagePrivMsg() {}
+
+		virtual operator RawMessage() const;
+		
+		std::string const &getReceiver() const { return receiver; }
+		std::string const &getMessage() const { return message; }
+
+	protected:
+		std::string receiver;
+		std::string message;
+};
+
+class MessagePart : public Message {
+	public:
+		MessagePart(std::string const &_channelName, std::string const &_partMessage);
+		MessagePart(std::auto_ptr< Prefix > _prefix, std::string const &_channelName, std::string const &_partMessage);
+		virtual ~MessagePart() {}
+
+		virtual operator RawMessage() const;
+
+		std::string const &getChannelName() const { return channelName; }
+		std::string const &getPartMessage() const { return partMessage; }
+
+	protected:
+		std::string channelName;
+		std::string partMessage;
 };
 
 }

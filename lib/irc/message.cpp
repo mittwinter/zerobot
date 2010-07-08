@@ -165,6 +165,40 @@ MessageJoin::operator RawMessage() const {
 	return tmp;
 }
 
+MessagePrivMsg::MessagePrivMsg (std::string const &_receiver, std::string const &_message) {
+	receiver = _receiver;
+	message = _message;
+}
+
+MessagePrivMsg::MessagePrivMsg (std::auto_ptr< Prefix > _prefix, std::string const &_receiver, std::string const &_message) : Message (_prefix) {
+	receiver = _receiver;
+	message = _message;
+}
+
+MessagePrivMsg::operator RawMessage() const {
+	std::vector< std::string > parameters;
+	parameters.push_back(getReceiver());
+	RawMessage tmp("PRIVMSG", parameters, getMessage());
+	return tmp;
+}
+
+MessagePart::MessagePart(std::string const &_channelName, std::string const &_partMessage) {
+	channelName = _channelName;
+	partMessage = _partMessage;
+}
+
+MessagePart::MessagePart(std::auto_ptr< Prefix > _prefix, std::string const &_channelName, std::string const &_partMessage ) : Message (_prefix) {
+	channelName = _channelName;
+	partMessage = _partMessage;
+}
+
+MessagePart::operator RawMessage() const {
+	std::vector< std::string > parameters;
+	parameters.push_back(getChannelName());
+	RawMessage tmp("PART", parameters, getPartMessage());
+	return tmp;
+}
+
 }
 
 std::ostream &operator<<(std::ostream &_out, IRC::Prefix const &_prefix) {
