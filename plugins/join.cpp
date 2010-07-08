@@ -25,7 +25,7 @@ std::auto_ptr< PlugInResult > PlugInJoin::onPacket(state_t _state, IRC::Message 
 				case IRC::RPL_NAMEREPLY:
 				case IRC::RPL_ENDOFNAMES:
 					joinState = STATE_JOIN_JOINED;
-					std::cout << "PlugInJoin: Joined to channel " << channelName << "." << std::endl;
+					std::cerr << "PlugInJoin: Joined to channel " << channelName << "." << std::endl;
 					break;
 				case IRC::ERR_NOSUCHCHANNEL:
 				case IRC::ERR_TOOMANYCHANNELS:
