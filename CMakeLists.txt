@@ -17,6 +17,8 @@ pkgconfig(sqlite3
 include_directories(${SQLITE3_INCLUDE_DIR})
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SQLITE_CFLAGS}")
 
+set(LOCAL_INCLUDE_PATH "./local/build/include/")
+include_directories(${LOCAL_INCLUDE_PATH})
 set(LOCAL_LIBRARY_FLAGS "-L./local/build/lib -lcurl -ltidy")
 
 add_executable(zerobot
