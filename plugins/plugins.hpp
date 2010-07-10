@@ -6,6 +6,7 @@
 #include "join.hpp"
 #include "log.hpp"
 #include "pingpong.hpp"
+#include "urltitle.hpp"
 
 #endif
 

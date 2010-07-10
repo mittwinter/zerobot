@@ -17,6 +17,8 @@ pkgconfig(sqlite3
 include_directories(${SQLITE3_INCLUDE_DIR})
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SQLITE_CFLAGS}")
 
+set(LOCAL_LIBRARY_FLAGS "-L./local/build/lib -lcurl -ltidy")
+
 add_executable(zerobot
 	src/main.cpp
 	src/rand.cpp
@@ -31,8 +33,9 @@ add_executable(zerobot
 	plugins/join.cpp
 	plugins/log.cpp
 	plugins/pingpong.cpp
+	plugins/urltitle.cpp
 	)
-set_target_properties(zerobot PROPERTIES LINK_FLAGS ${SQLITE_LINK_FLAGS})
+set_target_properties(zerobot PROPERTIES LINK_FLAGS "${SQLITE_LINK_FLAGS} ${LOCAL_LIBRARY_FLAGS}")
 
 add_executable(testcase/parserTest
 	testcase/parserTest.cpp

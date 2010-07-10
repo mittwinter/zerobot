@@ -28,6 +28,8 @@ int main(int argc, char *argv[]) {
 	bot.registerPlugIn(*plugIn);
 	plugIn = new zerobot::PlugInLog(0, "log", "##zerobot-test", "./log.db");
 	bot.registerPlugIn(*plugIn);
+	plugIn = new zerobot::PlugInURLTitle(5);
+	bot.registerPlugIn(*plugIn);
 	// Run bot:
 	bot.run();
 	return EXIT_SUCCESS;
