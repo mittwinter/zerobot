@@ -16,6 +16,7 @@ size_t curlGlobalWriteDataCallback(void *_data, size_t _size, size_t _nmemb, voi
 	return plugInStorage->plugIn->curlWriteDataCallback(_data, _size, _nmemb);
 }
 
+// TODO: match all whitespace here!
 char const *PlugInURLTitle::whitespace = " \t\x0f";
 bool PlugInURLTitle::curlInitialized = false;
 unsigned int PlugInURLTitle::curlMaxBufferSize = 20 * 1024;
@@ -57,6 +58,7 @@ std::auto_ptr< PlugInResult > PlugInURLTitle::onPacket(state_t _state, IRC::Mess
 			result = std::auto_ptr< PlugInResult >(new PlugInResult);
 			std::string::size_type urlPosEnd = messageText.find_first_of(whitespace, urlPos);
 			std::string url = messageText.substr(urlPos, urlPosEnd - urlPos);
+			// TODO: Refactor curl -> tidy -> expat into methods!
 			// fetch site with curl:
 			std::cerr << "PlugInURLTitle: Setting up curl and the write callbacks to this plug-in ..." << std::endl;
 			std::auto_ptr< char > curlErrorBuffer = std::auto_ptr< char >(new char[CURL_ERROR_SIZE]);
@@ -74,6 +76,7 @@ std::auto_ptr< PlugInResult > PlugInURLTitle::onPacket(state_t _state, IRC::Mess
 			curl_easy_setopt(curlHandle, CURLOPT_WRITEDATA, &storage);
 			std::cerr << "PlugInURLTitle: Fetching URL '" << url << "':" << std::endl;
 			if(curl_easy_perform(curlHandle) != 0) {
+				// TODO: Handle errors here! We want to continue when we reached buffer limit, but abort otherwise!
 				//throw std::runtime_error(std::string("PlugInURLTitle: curl_easy_perform() failed: ") + curlErrorBuffer.get());
 			}
 			curl_easy_cleanup(curlHandle);
