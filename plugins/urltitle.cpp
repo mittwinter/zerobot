@@ -1,8 +1,11 @@
+#include <buffio.h>
 #include <curl/curl.h>
 #include <iostream>
+#include <sstream>
 #include <stdexcept>
 #include <string>
 #include <typeinfo>
+#include <tidy.h>
 
 #include "urltitle.hpp"
 
@@ -13,7 +16,7 @@ size_t curlGlobalWriteDataCallback(void *_data, size_t _size, size_t _nmemb, voi
 	return plugInStorage->plugIn->curlWriteDataCallback(_data, _size, _nmemb);
 }
 
-char const *PlugInURLTitle::whitespace = " \t";
+char const *PlugInURLTitle::whitespace = " \t\x0f";
 bool PlugInURLTitle::curlInitialized = false;
 unsigned int PlugInURLTitle::curlMaxBufferSize = 20 * 1024;
 
@@ -62,19 +65,61 @@ std::auto_ptr< PlugInResult > PlugInURLTitle::onPacket(state_t _state, IRC::Mess
 				throw std::runtime_error("PlugInURLTitle: curl_easy_init() returned NULL.");
 			}
 			curl_easy_setopt(curlHandle, CURLOPT_URL, url.c_str());
+			curl_easy_setopt(curlHandle, CURLOPT_VERBOSE, 1);
 			curl_easy_setopt(curlHandle, CURLOPT_ERRORBUFFER, curlErrorBuffer.get());
 			// Set up write callback over global callback wrapper:
 			PlugInURLTitlePtrStorage storage;
 			storage.plugIn = this;
 			curl_easy_setopt(curlHandle, CURLOPT_WRITEFUNCTION, &curlGlobalWriteDataCallback);
 			curl_easy_setopt(curlHandle, CURLOPT_WRITEDATA, &storage);
-			std::cerr << "PlugInURLTitle: Fetching URL:" << std::endl;
+			std::cerr << "PlugInURLTitle: Fetching URL '" << url << "':" << std::endl;
 			if(curl_easy_perform(curlHandle) != 0) {
-				throw std::runtime_error(std::string("PlugInURLTitle: curl_easy_perform() failed: ") + *curlErrorBuffer);
+				//throw std::runtime_error(std::string("PlugInURLTitle: curl_easy_perform() failed: ") + curlErrorBuffer.get());
 			}
 			curl_easy_cleanup(curlHandle);
+			std::cerr << "---------------------------------------- curl result ----------------------------------------" << std::endl;
 			std::cerr << curlBuffer << std::endl;
+			std::cerr << "---------------------------------------- curl result end ------------------------------------" << std::endl;
+			// tidy up the document:
+			// try to create valid XHTML document for XML parser:
+			TidyBuffer outputBuffer = { NULL };
+			TidyBuffer errorBuffer = { NULL };
+			TidyDoc tidyDocument = tidyCreate();
+			int tidyResult = -1;
+			if(tidyOptSetBool(tidyDocument, TidyXhtmlOut, yes)) {
+				tidyResult = tidySetErrorBuffer(tidyDocument, &errorBuffer);
+			}
+			if(tidyResult >= 0) {
+				tidyResult = tidyParseString(tidyDocument, curlBuffer.c_str());
+			}
+			if(tidyResult >= 0) {
+				tidyResult = tidyCleanAndRepair(tidyDocument);
+			}
+			if(tidyResult >= 0) {
+				tidyResult = tidyRunDiagnostics(tidyDocument);
+			}
+			if(tidyResult > 1) {
+				if(!tidyOptSetBool(tidyDocument, TidyForceOutput, yes)) {
+					tidyResult = -1;
+				}
+			}
+			if(tidyResult >= 0) {
+				tidyResult = tidySaveBuffer(tidyDocument, &outputBuffer);
+			}
+			if(tidyResult > 0) {
+				std::cerr << "PlugInURLTitle: Diagnostics of libtidy:" << std::endl;
+				std::cerr << errorBuffer.bp;
+			}
+			else if(tidyResult < 0) {
+				std::stringstream sstrTidyResult;
+				sstrTidyResult << tidyResult;
+				throw std::runtime_error("A severe error occured while tidying up the received document (" + sstrTidyResult.str() + ").");
+			}
 			curlBuffer.clear();
+			std::cerr << "---------------------------------------- tidy result ----------------------------------------" << std::endl;
+			std::cerr << outputBuffer.bp << std::endl;
+			std::cerr << "---------------------------------------- tidy result end ------------------------------------" << std::endl;
+			//std::string xhtmlDocumentStr(static_cast< char * >(outputBuffer.bp));
 			std::cerr << "PlugInURLTitle: Fetching done." << std::endl;
 			result->messages.push_back(new IRC::MessagePrivMsg(privMessage.getReceiver(), "Found URL: " + url));
 		}
