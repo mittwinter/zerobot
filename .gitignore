@@ -1,7 +1,10 @@
+.kdev4/
 .*.swp
 CMakeCache.txt
 CMakeFiles/*
 Makefile
 cmake_install.cmake
-zerobot
+local/
 testcase/parserTest
+zerobot
+zerobot.kdev4
