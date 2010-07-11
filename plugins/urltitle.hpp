@@ -5,7 +5,11 @@
 
 namespace zerobot {
 
-size_t curlGlobalWriteDataCallback(void* _data, size_t _size, size_t _nmemb, void *_plugInStorage);
+namespace urltitle {
+
+size_t curlWriteDataCallback(void *_data, size_t _size, size_t _nmemb, void *_plugInStorage);
+
+}
 
 class PlugInURLTitle : public PlugIn {
 	public:
@@ -25,6 +29,7 @@ class PlugInURLTitle : public PlugIn {
 		static unsigned int curlMaxBufferSize;
 
 		std::string curlBuffer;
+
 };
 
 struct PlugInURLTitlePtrStorage {

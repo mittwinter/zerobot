@@ -11,9 +11,13 @@
 
 namespace zerobot {
 
-size_t curlGlobalWriteDataCallback(void *_data, size_t _size, size_t _nmemb, void *_plugInStorage) {
+namespace urltitle {
+
+size_t curlWriteDataCallback(void *_data, size_t _size, size_t _nmemb, void *_plugInStorage) {
 	PlugInURLTitlePtrStorage *plugInStorage = static_cast< PlugInURLTitlePtrStorage * >(_plugInStorage);
 	return plugInStorage->plugIn->curlWriteDataCallback(_data, _size, _nmemb);
+}
+
 }
 
 // TODO: match all whitespace here!
@@ -72,7 +76,7 @@ std::auto_ptr< PlugInResult > PlugInURLTitle::onPacket(state_t _state, IRC::Mess
 			// Set up write callback over global callback wrapper:
 			PlugInURLTitlePtrStorage storage;
 			storage.plugIn = this;
-			curl_easy_setopt(curlHandle, CURLOPT_WRITEFUNCTION, &curlGlobalWriteDataCallback);
+			curl_easy_setopt(curlHandle, CURLOPT_WRITEFUNCTION, &urltitle::curlWriteDataCallback);
 			curl_easy_setopt(curlHandle, CURLOPT_WRITEDATA, &storage);
 			std::cerr << "PlugInURLTitle: Fetching URL '" << url << "':" << std::endl;
 			if(curl_easy_perform(curlHandle) != 0) {
@@ -147,5 +151,7 @@ size_t PlugInURLTitle::curlWriteDataCallback(void *_data, size_t _size, size_t _
 	std::cerr << "PlugInURLTitle: Callback method was called and wrote " << writeSize << " bytes to internal buffer." << std::endl;
 	return writeSize;
 }
+
+
 
 }
