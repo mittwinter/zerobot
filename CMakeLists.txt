@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.6)
 
-include(UsePkgConfig)
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMakeModules")
 
 project(zerobot)
 
@@ -9,19 +9,23 @@ set(CMAKE_CXX_FLAGS_DEBUG "-g")
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wswitch -Werror")
 
-pkgconfig(sqlite3
-	SQLITE3_INCLUDE_DIR
-	SQLITE3_LINK_DIR
-	SQLITE_LINK_FLAGS
-	SQLITE_CFLAGS)
-include_directories(${SQLITE3_INCLUDE_DIR})
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SQLITE_CFLAGS}")
-
-set(LOCAL_INCLUDE_PATH "./local/build/include/")
+set(LOCAL_INCLUDE_PATH "${CMAKE_SOURCE_DIR}/local/build/include/")
+set(LOCAL_LIBRARY_PATH "${CMAKE_SOURCE_DIR}/local/build/lib/")
 include_directories(${LOCAL_INCLUDE_PATH})
-set(LOCAL_LIBRARY_FLAGS "-L./local/build/lib -lcurl -ltidy")
+link_directories(${LOCAL_LIBRARY_PATH})
+set(LOCAL_LIBRARY_FLAGS "-ltidy")
 
-add_executable(zerobot
+find_package(CURL REQUIRED)
+include_directories(${CURL_INCLUDE_DIRS})
+
+find_package(EXPAT REQUIRED)
+include_directories(${EXPAT_INCLUDE_DIRS})
+
+find_package(Sqlite REQUIRED)
+include_directories(${SQLITE_INCLUDE_DIR})
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SQLITE_DEFINITIONS}")
+
+add_executable(${PROJECT_NAME}
 	src/main.cpp
 	src/rand.cpp
 	src/socket.cpp
@@ -37,7 +41,9 @@ add_executable(zerobot
 	plugins/pingpong.cpp
 	plugins/urltitle.cpp
 	)
-set_target_properties(zerobot PROPERTIES LINK_FLAGS "${SQLITE_LINK_FLAGS} ${LOCAL_LIBRARY_FLAGS}")
+set_target_properties(zerobot
+	PROPERTIES LINK_FLAGS "${CURL_LIBRARIES} ${EXPAT_LIBRARIES} ${SQLITE_LIBRARIES} ${LOCAL_LIBRARY_FLAGS}"
+	)
 
 add_executable(testcase/parserTest
 	testcase/parserTest.cpp
