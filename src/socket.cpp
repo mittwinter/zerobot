@@ -153,19 +153,22 @@ ClientSocket::ClientSocket(std::string const &_serverName, int _serverPort, int 
 }
 
 std::string ClientSocket::receive() throw(std::runtime_error) {
-	std::auto_ptr< char > buf(new char[BUFFER_SIZE]);
+	char *buf = new char[BUFFER_SIZE];
 	ssize_t bytesReceived = 0;
-	bytesReceived = recv(socket, buf.get(), BUFFER_SIZE, 0);
+	bytesReceived = recv(socket, buf, BUFFER_SIZE, 0);
 	if(bytesReceived <= 0 && errno != EAGAIN && errno != EWOULDBLOCK) {
+		delete[] buf;
 		throw std::runtime_error(strerror(errno));
 	}
 	if(bytesReceived > 0) {
-		std::string data(buf.get(), bytesReceived);
+		std::string data(buf, bytesReceived);
+		delete[] buf;
 		//std::cerr << "ClientSocket: Received '" << data << "'" << std::endl; // TODO: remove this debug output
 		//std::cerr << "ClientSocket: bytesReceived: " << bytesReceived << " errno: " << errno << " (EAGAIN: " << EAGAIN << " EWOULDBLOCK: " << EWOULDBLOCK << ")" << std::endl; // TODO: remove this debug output
 		return data;
 	}
 	else {
+		delete[] buf;
 		return "";
 	}
 }
