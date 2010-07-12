@@ -59,6 +59,7 @@ CurlHTMLDownloader::CurlHTMLDownloader(std::string const &_url) throw(std::runti
 	headers = curl_slist_append(headers, "Accept: text/html");
 	// Set up options:
 	curl_easy_setopt(handle, CURLOPT_HTTPHEADER, headers);
+	curl_easy_setopt(handle, CURLOPT_FOLLOWLOCATION, 1);
 	//curl_easy_setopt(handle, CURLOPT_VERBOSE, 1);
 	curl_easy_setopt(handle, CURLOPT_ERRORBUFFER, errorBuffer);
 	// Set up write callback over global callback wrapper:
