@@ -24,8 +24,13 @@ std::auto_ptr< PlugInResult > PlugInJoin::onPacket(state_t _state, IRC::Message 
 				case IRC::RPL_NOTOPIC:
 				case IRC::RPL_NAMREPLY:
 				case IRC::RPL_ENDOFNAMES:
-					joinState = STATE_JOIN_JOINED;
-					std::cerr << "PlugInJoin: Joined to channel " << channelName << "." << std::endl;
+					for(std::vector< std::string >::const_iterator it = reply.getParamaters().begin(); it != reply.getParamaters().end(); it++) {
+						if(*it == channelName) {
+							joinState = STATE_JOIN_JOINED;
+							std::cerr << "PlugInJoin: Joined to channel " << channelName << "." << std::endl;
+							break;
+						}
+					}
 					break;
 				case IRC::ERR_NOSUCHCHANNEL:
 				case IRC::ERR_TOOMANYCHANNELS:
