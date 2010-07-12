@@ -1,13 +1,86 @@
 #ifndef PLUGINS_URLTITLE_HPP
 #define PLUGINS_URLTITLE_HPP
 
+#include <buffio.h>
+#include <curl/curl.h>
+#include <expat.h>
+#include <memory>
+#include <stdexcept>
+#include <string>
+#include <tidy.h>
+
 #include "base.hpp"
 
 namespace zerobot {
 
 namespace urltitle {
 
-size_t curlWriteDataCallback(void *_data, size_t _size, size_t _nmemb, void *_plugInStorage);
+size_t curlWriteDataCallback(void *_data, size_t _size, size_t _nmemb, void *_plugIn);
+void expatStartElementHandler(void *_parser, const XML_Char * _name, const XML_Char **_attributes);
+void expatEndElementHandler(void *_parser, const XML_Char *_name);
+void expatCharacterDataHandler(void *_parser, const XML_Char *_str, int _length);
+
+class CurlHTMLDownloader {
+	public:
+		CurlHTMLDownloader(std::string const &_url) throw(std::runtime_error);
+		~CurlHTMLDownloader();
+
+		std::string const &getBuffer() const { return buffer; }
+
+		void perform();
+
+		size_t writeDataCallback(void *_data, size_t _size, size_t _nmemb);
+
+	private:
+		static unsigned int MAX_BUFFER_SIZE;
+
+		static bool curlInitialized;
+
+		std::string url;
+		std::string buffer;
+		char *errorBuffer;
+		CURL *handle;
+		struct curl_slist *headers;
+};
+
+class HTMLTidy {
+	public:
+		HTMLTidy(std::string const &_document);
+		~HTMLTidy();
+
+		std::string const &getResultDocument() const { return resultDocument; }
+
+		void run() throw(std::runtime_error);
+
+	private:
+		std::string const &document;
+		std::string resultDocument;
+
+		TidyDoc handle;
+};
+
+class ExpatHTMLTitleParser {
+	public:
+		ExpatHTMLTitleParser(std::string const &_document);
+		~ExpatHTMLTitleParser();
+
+		std::string const &getTitle() const { return title; }
+
+		void parse() throw(std::runtime_error);
+
+		void startElementHandler(const XML_Char *_name, const XML_Char **_attributes);
+		void endElementHandler(const XML_Char *_name);
+		void characterDataHandler(const XML_Char *_str, int _length);
+
+	private:
+		XML_Parser expatParser;
+
+		std::string const &document;
+		bool inTitle;
+		std::string title;
+
+		void canonicalizeTitle();
+};
 
 }
 
@@ -21,19 +94,8 @@ class PlugInURLTitle : public PlugIn {
 		virtual std::auto_ptr< PlugInResult > onTimeTrigger(state_t _state);
 		virtual std::auto_ptr< PlugInResult > onDisconnect(state_t _state);
 
-		size_t curlWriteDataCallback(void *_data, size_t _size, size_t _nmemb);
-
 	protected:
 		static char const *whitespace;
-		static bool curlInitialized;
-		static unsigned int curlMaxBufferSize;
-
-		std::string curlBuffer;
-
-};
-
-struct PlugInURLTitlePtrStorage {
-	PlugInURLTitle *plugIn;
 };
 
 }
