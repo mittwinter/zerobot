@@ -34,4 +34,3 @@ class PlugInLog : public PlugIn {
 }
 
 #endif
-
