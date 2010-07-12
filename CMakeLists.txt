@@ -11,6 +11,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wswitch -Werror")
 
 set(LOCAL_INCLUDE_PATH "${CMAKE_SOURCE_DIR}/local/build/include/")
 set(LOCAL_LIBRARY_PATH "${CMAKE_SOURCE_DIR}/local/build/lib/")
+set(CMAKE_INCLUDE_PATH "${LOCAL_INCLUDE_PATH}")
+set(CMAKE_LIBRARY_PATH "${LOCAL_LIBRARY_PATH}")
 include_directories(${LOCAL_INCLUDE_PATH})
 link_directories(${LOCAL_LIBRARY_PATH})
 set(LOCAL_LIBRARY_FLAGS "-ltidy")
