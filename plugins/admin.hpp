@@ -19,8 +19,10 @@ class PlugInAdmin : public PlugIn {
 
 	protected:
 		std::string adminNickname;
+		static std::string const versionString;
 
 		std::string trim(std::string _str) const;
+		bool checkAdminNickname(std::string const &_nickname) const;
 };
 
 }

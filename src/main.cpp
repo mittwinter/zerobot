@@ -77,7 +77,7 @@ int main(int argc, char *argv[]) {
 */
 	int getoptResult = -1;
 	int optionIndex = 0;
-	bool serverNameFound = false, serverPortFound = false, nicknameFound = false, logfileFound = false, adminFound = false;
+	bool serverNameFound = false, serverPortFound = false, nicknameFound = false, logfileFound = false;
 	std::string serverName, serverPort, nickname, logfile, admin;
 	std::list< std::string > joinChannels;
 	std::list< std::string > logChannels;
@@ -114,7 +114,6 @@ int main(int argc, char *argv[]) {
 					optionsFlagTitle = 1;
 					break;
 				case 'a':
-					adminFound = true;
 					admin = optarg;
 					break;
 				case '?':
@@ -170,10 +169,8 @@ int main(int argc, char *argv[]) {
 		plugIn = new zerobot::PlugInURLTitle(5);
 		bot.registerPlugIn(*plugIn);
 	}
-	if(adminFound) {
-		plugIn = new zerobot::PlugInAdmin(0, admin);
-		bot.registerPlugIn(*plugIn);
-	}
+	plugIn = new zerobot::PlugInAdmin(0, admin); // it's not bad when admin's nickname was not specified
+	bot.registerPlugIn(*plugIn);
 	// Run bot:
 	bot.run();
 	return EXIT_SUCCESS;

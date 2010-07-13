@@ -1,6 +1,8 @@
 #include <cctype>
 #include <typeinfo>
 
+#include "../lib/version.hpp"
+
 #include "admin.hpp"
 
 namespace zerobot {
@@ -17,9 +19,12 @@ std::auto_ptr< PlugInResult > PlugInAdmin::onPacket(state_t _state, IRC::Message
 	std::auto_ptr< PlugInResult > result(NULL);
 	try {
 		IRC::MessagePrivMsg const &privMessage = dynamic_cast< IRC::MessagePrivMsg const & >(_message);
-		if(privMessage.getPrefix()->getNick() == adminNickname && trim(privMessage.getMessage()) == (getCommandPrefix() + "quit")) {
-			result = std::auto_ptr< PlugInResult >(new PlugInResult);
+		result = std::auto_ptr< PlugInResult >(new PlugInResult);
+		if(checkAdminNickname(privMessage.getPrefix()->getNick()) && trim(privMessage.getMessage()) == (getCommandPrefix() + "quit")) {
 			result->newState = STATE_DISCONNECTING;
+		}
+		else if(trim(privMessage.getMessage()) == (getCommandPrefix() + "version")) {
+			result->messages.push_back(new IRC::MessagePrivMsg(privMessage.getPrefix()->getNick(), zerobot::versionString));
 		}
 	}
 	catch(std::bad_cast) {}
@@ -42,6 +47,10 @@ std::string PlugInAdmin::trim(std::string _str) const {
 		_str.erase(_str.size() - 1, 1);
 	}
 	return _str;
+}
+
+bool PlugInAdmin::checkAdminNickname(std::string const &_nickname) const {
+	return (adminNickname.size() > 0 && adminNickname == _nickname);
 }
 
 }
