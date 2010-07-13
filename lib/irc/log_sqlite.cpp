@@ -196,6 +196,19 @@ void LogSQLite::createSchema() {
 			, nick TEXT NOT NULL \
 			, message TEXT NOT NULL \
 			); \
+		CREATE VIEW IF NOT EXISTS log AS SELECT datetime || ' ' || line FROM \
+			( \
+				SELECT datetime(timestamp, 'unixepoch') AS datetime, '|' || channel || '| <' || nick || '> ' || message AS line FROM log_privmsg \
+			UNION ALL \
+				SELECT datetime(timestamp, 'unixepoch') AS datetime, '|' || channel || '| Users in channel: ' || namesList AS line FROM log_names \
+			UNION ALL \
+				SELECT datetime(timestamp, 'unixepoch') AS datetime, '|' || channel || '| ' || oldNick || ' changed his nick to ' || newNick AS line FROM log_nick \
+			UNION ALL \
+				SELECT datetime(timestamp, 'unixepoch') AS datetime, '|' || channel || '| ' || nick || ' joined' AS line FROM log_join \
+			UNION ALL \
+				SELECT datetime(timestamp, 'unixepoch') AS datetime, '|' || channel || '| ' || nick || ' has left (' || quitMessage || ')' AS line FROM log_quit \
+			) \
+			ORDER BY datetime; \
 		";
 	char *errorMessagesPtr = NULL;
 	if(sqlite3_exec(connection, schema, NULL, NULL, &errorMessagesPtr) != SQLITE_OK) {
