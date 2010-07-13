@@ -63,6 +63,11 @@ struct option options[] = {
 		, &optionsFlagTitle
 		, 1
 		},
+		{ "admin"
+		, required_argument
+		, 0
+		, 'a'
+		},
 		{ 0, 0, 0, 0 }
 	};
 
@@ -72,12 +77,12 @@ int main(int argc, char *argv[]) {
 */
 	int getoptResult = -1;
 	int optionIndex = 0;
-	bool serverNameFound = false, serverPortFound = false, nicknameFound = false, logfileFound = false;
-	std::string serverName, serverPort, nickname, logfile;
+	bool serverNameFound = false, serverPortFound = false, nicknameFound = false, logfileFound = false, adminFound = false;
+	std::string serverName, serverPort, nickname, logfile, admin;
 	std::list< std::string > joinChannels;
 	std::list< std::string > logChannels;
 	do {
-		getoptResult = getopt_long(argc, argv, "s:p:n:j:l:f:t", options, &optionIndex);
+		getoptResult = getopt_long(argc, argv, "s:p:n:j:l:f:ta:", options, &optionIndex);
 		if(getoptResult != -1) {
 			switch(getoptResult) {
 				case 0:
@@ -108,6 +113,10 @@ int main(int argc, char *argv[]) {
 				case 't':
 					optionsFlagTitle = 1;
 					break;
+				case 'a':
+					adminFound = true;
+					admin = optarg;
+					break;
 				case '?':
 					// TODO: print more detailled error message here!
 					return EXIT_FAILURE;
@@ -123,7 +132,8 @@ int main(int argc, char *argv[]) {
 
 	if(!serverNameFound || !serverPortFound || !nicknameFound || (logChannels.size() > 0 && !logfileFound)) {
 		std::cerr << "Usage:" << std::endl
-		          << "\t " << argv[0] << " --server <server> --port <port> --nick <nickname> [--join <channel> ...] [--log <channel> ... --logfile <file>] [--title]" << std::endl;
+		          << "\t " << argv[0] << " --server <server> --port <port> --nick <nickname>" << std::endl
+		          << "\t\t\t [--join <channel> ...] [--log <channel> ... --logfile <file>] [--title] [--admin=<nickname>]" << std::endl;
 		return EXIT_FAILURE;
 	}
 
@@ -158,6 +168,10 @@ int main(int argc, char *argv[]) {
 	}
 	if(optionsFlagTitle) {
 		plugIn = new zerobot::PlugInURLTitle(5);
+		bot.registerPlugIn(*plugIn);
+	}
+	if(adminFound) {
+		plugIn = new zerobot::PlugInAdmin(0, admin);
 		bot.registerPlugIn(*plugIn);
 	}
 	// Run bot:

@@ -23,6 +23,8 @@ PlugInResult::PlugInResult() {
 	newState = STATE_NOP;
 }
 
+std::string const PlugIn::commandPrefix = "!";
+
 PlugIn::PlugIn(unsigned int _priority, std::string const &_name) : priority(_priority), name(_name) {
 }
 

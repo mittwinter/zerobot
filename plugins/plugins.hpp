@@ -18,6 +18,7 @@
 #ifndef PLUGINS_HPP
 #define PLUGINS_HPP
 
+#include "admin.hpp"
 #include "connect.hpp"
 #include "disconnect.hpp"
 #include "join.hpp"

@@ -36,6 +36,7 @@ add_executable(${PROJECT_NAME}
 	lib/irc/message.cpp
 	lib/irc/parser.cpp
 	plugins/base.cpp
+	plugins/admin.cpp
 	plugins/connect.cpp
 	plugins/disconnect.cpp
 	plugins/join.cpp
