@@ -23,7 +23,7 @@
 #include <string>
 
 #include "../lib/irc/message.hpp"
-#include "../src/zerobot_state.hpp"
+#include "../lib/zerobot_state.hpp"
 
 namespace zerobot {
 

@@ -25,7 +25,7 @@
 #include "../lib/irc/parser.hpp"
 #include "../plugins/base.hpp"
 #include "socket.hpp"
-#include "zerobot_state.hpp"
+#include "../lib/zerobot_state.hpp"
 
 namespace zerobot {
 

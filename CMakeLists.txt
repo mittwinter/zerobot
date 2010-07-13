@@ -29,12 +29,12 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SQLITE_DEFINITIONS}")
 
 add_executable(${PROJECT_NAME}
 	src/main.cpp
-	src/rand.cpp
 	src/socket.cpp
 	src/zerobot.cpp
 	lib/irc/log_sqlite.cpp
 	lib/irc/message.cpp
 	lib/irc/parser.cpp
+	lib/rand.cpp
 	plugins/base.cpp
 	plugins/admin.cpp
 	plugins/connect.cpp

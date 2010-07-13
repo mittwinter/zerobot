@@ -15,7 +15,7 @@
 	along with zerobot.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "../src/rand.hpp"
+#include "../lib/rand.hpp"
 
 #include "disconnect.hpp"
 
