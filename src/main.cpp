@@ -132,8 +132,8 @@ int main(int argc, char *argv[]) {
 
 	if(!serverNameFound || !serverPortFound || !nicknameFound || (logChannels.size() > 0 && !logfileFound)) {
 		std::cerr << "Usage:" << std::endl
-		          << "\t " << argv[0] << " --server <server> --port <port> --nick <nickname>" << std::endl
-		          << "\t\t\t [--join <channel> ...] [--log <channel> ... --logfile <file>] [--title] [--admin=<nickname>]" << std::endl;
+		          << "\t " << argv[0] << "\t --server=<server> --port=<port> --nick=<nickname>" << std::endl
+		          << "\t\t\t [--join=<channel> ...] [--log=<channel> ... --logfile=<file>] [--title] [--admin=<nickname>]" << std::endl;
 		return EXIT_FAILURE;
 	}
 
