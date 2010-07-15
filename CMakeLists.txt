@@ -27,6 +27,9 @@ find_package(Sqlite REQUIRED)
 include_directories(${SQLITE_INCLUDE_DIR})
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SQLITE_DEFINITIONS}")
 
+find_package(Tidy REQUIRED)
+include_directories(${TIDY_INCLUDE_DIR})
+
 add_executable(${PROJECT_NAME}
 	src/main.cpp
 	src/socket.cpp
@@ -46,7 +49,7 @@ add_executable(${PROJECT_NAME}
 	plugins/urltitle.cpp
 	)
 set_target_properties(zerobot
-	PROPERTIES LINK_FLAGS "${CURL_LIBRARIES} ${EXPAT_LIBRARIES} ${SQLITE_LIBRARIES} ${LOCAL_LIBRARY_FLAGS}"
+	PROPERTIES LINK_FLAGS "${CURL_LIBRARIES} ${EXPAT_LIBRARIES} ${SQLITE_LIBRARIES} ${TIDY_LIBRARIES} ${LOCAL_LIBRARY_FLAGS}"
 	)
 
 add_executable(testcase/parserTest
