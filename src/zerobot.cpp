@@ -118,8 +118,7 @@ std::string ZeroBot::receiveMessage() {
 		}
 	}
 	catch(std::exception const &e) { // Socket was closed or some other error occured:
-		std::cerr << "ZeroBot: Socket operation receive() failed, assuming it's disconnected:" << std::endl
-		          << e.what() << std::endl;
+		std::cerr << "ZeroBot: Socket operation receive() failed, assuming it's disconnected: " << e.what() << std::endl;
 		setState(STATE_DISCONNECTED);
 	}
 	std::string::size_type messageEnd = buffer.find('\n');
@@ -139,12 +138,12 @@ std::string ZeroBot::receiveMessage() {
 void ZeroBot::sendMessage(IRC::Message const &message) {
 	std::stringstream sstrMessage;
 	sstrMessage << message;
+	std::cout << ">>> " << sstrMessage.str() << std::flush;
 	try {
 		socket.send(sstrMessage.str());
 	}
 	catch(std::exception e) { // Socket was closed or some other error occured:
-		std::cerr << "ZeroBot: Socket operation receive() failed, assuming it's disconnected:" << std::endl
-		          << e.what() << std::endl;
+		std::cerr << "ZeroBot: Socket operation receive() failed, assuming it's disconnected: " << e.what() << std::endl;
 		setState(STATE_DISCONNECTED);
 	}
 }
