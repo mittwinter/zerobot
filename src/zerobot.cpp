@@ -24,7 +24,7 @@
 
 namespace zerobot {
 
-ZeroBot::ZeroBot(std::string const &_serverName, int _serverPort) : socket(_serverName, _serverPort), parser(false) {
+ZeroBot::ZeroBot(std::string const &_serverName, int _serverPort) : socket(_serverName, _serverPort, AF_UNSPEC, SOCK_STREAM, getprotobyname("tcp")->p_proto, false), parser(false) {
 	serverName = _serverName;
 	serverPort = _serverPort;
 	state = STATE_CONNECTING;

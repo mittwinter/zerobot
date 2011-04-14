@@ -24,7 +24,7 @@
 #include "../include/priority_queue.hpp"
 #include "../lib/irc/parser.hpp"
 #include "../plugins/base.hpp"
-#include "socket.hpp"
+#include "../posix/client_socket.hpp"
 #include "../lib/zerobot_state.hpp"
 
 namespace zerobot {
@@ -47,7 +47,7 @@ class ZeroBot {
 		int serverPort;
 
 		state_t state;
-		ClientSocket socket;
+		posix::ClientSocket socket;
 		std::string buffer;
 		IRC::Parser parser;
 		data::PriorityQueue< int, PlugIn & > plugIns;

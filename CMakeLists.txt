@@ -32,7 +32,6 @@ include_directories(${TIDY_INCLUDE_DIR})
 
 add_executable(${PROJECT_NAME}
 	src/main.cpp
-	src/socket.cpp
 	src/zerobot.cpp
 	lib/irc/log_sqlite.cpp
 	lib/irc/message.cpp
@@ -47,6 +46,9 @@ add_executable(${PROJECT_NAME}
 	plugins/log.cpp
 	plugins/pingpong.cpp
 	plugins/urltitle.cpp
+	posix/client_socket.cpp
+	posix/server_socket.cpp
+	posix/socket.cpp
 	)
 set_target_properties(zerobot
 	PROPERTIES LINK_FLAGS "${CURL_LIBRARIES} ${EXPAT_LIBRARIES} ${SQLITE_LIBRARIES} ${TIDY_LIBRARIES} ${LOCAL_LIBRARY_FLAGS}"
