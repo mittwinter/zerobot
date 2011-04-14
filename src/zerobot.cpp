@@ -70,7 +70,7 @@ void ZeroBot::run() {
 		}
 		// Run onDisconnect() triggers of plug-ins if appropiate:
 		if(getState() == STATE_DISCONNECTING) {
-			for(data::PriorityQueue< int, PlugIn & >::iterator it = plugIns.begin(); it != plugIns.end(); it++) {
+			for(data::PriorityQueue< int, PlugIn & >::reverse_iterator it = plugIns.rbegin(); it != plugIns.rend(); it++) {
 				processResult((it->second).onDisconnect(getState()));
 			}
 		}
