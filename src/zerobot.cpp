@@ -53,66 +53,75 @@ bool ZeroBot::unregisterPlugIn(std::string const &_name) {
 }
 
 void ZeroBot::run() {
-	while(getState() != STATE_DISCONNECTED) {
-		std::auto_ptr< PlugInResult > result(NULL);
-		switch(getState()) {
-			case STATE_CONNECTING:
-			case STATE_CONNECTED:
-				for(data::PriorityQueue< int, PlugIn & >::iterator it = plugIns.begin(); it != plugIns.end(); it++) {
-					processResult((it->second).onConnect(getState()));
-				}
-				break;
-			case STATE_DISCONNECTING:
-			case STATE_DISCONNECTED:
-				for(data::PriorityQueue< int, PlugIn & >::iterator it = plugIns.begin(); it != plugIns.end(); it++) {
-					processResult((it->second).onDisconnect(getState()));
-				}
-				break;
-			default:
-				break;
-		}
-		std::string receivedMessage;
-		do {
-			receivedMessage = receiveMessage();
-			if(receivedMessage.size() > 0) {
-				processMessage(receivedMessage);
+	while(isConnected()) {
+		// Run onConnect() triggers of plug-ins if appropiate:
+		if(getState() == STATE_CONNECTING) {
+			for(data::PriorityQueue< int, PlugIn & >::iterator it = plugIns.begin(); it != plugIns.end(); it++) {
+				processResult((it->second).onConnect(getState()));
 			}
 		}
-		while(receivedMessage.size() > 0);
-		// time-trigger plug-ins:
-		for(data::PriorityQueue< int, PlugIn & >::iterator it = plugIns.begin(); it != plugIns.end(); it++) {
-			processResult((it->second).onTimeTrigger(getState()));
+		// Receive messages:
+		if(isConnected()) {
+			receiveMessages();
 		}
-		struct timespec sleepTime;
-		sleepTime.tv_sec = 0;
-		sleepTime.tv_nsec = 500000000;
-		nanosleep(&sleepTime, NULL);
+		// Time-trigger plug-ins:
+		if(isConnected()) {
+			timeTriggerPlugins();
+		}
+		// Run onDisconnect() triggers of plug-ins if appropiate:
+		if(getState() == STATE_DISCONNECTING) {
+			for(data::PriorityQueue< int, PlugIn & >::iterator it = plugIns.begin(); it != plugIns.end(); it++) {
+				processResult((it->second).onDisconnect(getState()));
+			}
+		}
+		if(isConnected()) {
+			sleep();
+		}
+	}
+	// We were disconnected, so run onDisconnect() triggers one last time with this state:
+	if(getState() == STATE_DISCONNECTED) {
+		for(data::PriorityQueue< int, PlugIn & >::iterator it = plugIns.begin(); it != plugIns.end(); it++) {
+			processResult((it->second).onDisconnect(getState()));
+		}
 	}
 }
 
-void ZeroBot::processResult(std::auto_ptr< PlugInResult > _result) {
-	// Check if result was actually provided that needs to be processed here:
-	if(_result.get() != NULL) {
-		// Has the bot state changed?
-		if(_result->newState != STATE_NOP) {
-			setState(_result->newState);
+void ZeroBot::receiveMessages() {
+	std::string receivedMessage;
+	do {
+		receivedMessage = receiveMessage();
+		if(receivedMessage.size() > 0) {
+			processMessage(receivedMessage);
 		}
-		// Send messages that were possibly returned for sending:
-		for(std::list< IRC::Message * >::iterator it = _result->messages.begin(); it != _result->messages.end(); it++) {
-			std::stringstream sstrMessage;
-			sstrMessage << *(*it);
-			socket.send(sstrMessage.str());
-			delete (*it);
-			*it = NULL;
-		}
-		_result->messages.clear();
 	}
+	while(receivedMessage.size() > 0);
+}
+
+void ZeroBot::timeTriggerPlugins() {
+	for(data::PriorityQueue< int, PlugIn & >::iterator it = plugIns.begin(); it != plugIns.end(); it++) {
+		processResult((it->second).onTimeTrigger(getState()));
+	}
+}
+
+void ZeroBot::sleep() const {
+	struct timespec sleepTime;
+	sleepTime.tv_sec = 0;
+	sleepTime.tv_nsec = 500000000;
+	nanosleep(&sleepTime, NULL);
 }
 
 std::string ZeroBot::receiveMessage() {
 	std::string receivedData;
-	while((receivedData = socket.receive()) != "") {
-		buffer.append(receivedData);
+	try {
+		while((receivedData = socket.receive()).size() > 0) {
+			buffer.append(receivedData);
+		}
+	}
+	catch(std::invalid_argument e) { // Socket was closed:
+		setState(STATE_DISCONNECTED);
+	}
+	catch(std::runtime_error e) {
+		setState(STATE_DISCONNECTED);
 	}
 	std::string::size_type messageEnd = buffer.find('\n');
 	if(messageEnd != std::string::npos) {
@@ -124,7 +133,30 @@ std::string ZeroBot::receiveMessage() {
 		return receivedMessage;
 	}
 	else {
-		return "";
+		return std::string();
+	}
+}
+
+void ZeroBot::sendMessage(IRC::Message const &message) {
+	std::stringstream sstrMessage;
+	sstrMessage << message;
+	socket.send(sstrMessage.str());
+}
+
+void ZeroBot::processResult(std::auto_ptr< PlugInResult > _result) {
+	// Check if result was actually provided that needs to be processed here:
+	if(_result.get() != NULL) {
+		// Has the bot state changed?
+		if(_result->newState != STATE_NOP) {
+			setState(_result->newState);
+		}
+		// Send messages that were possibly returned for sending:
+		for(std::list< IRC::Message * >::iterator it = _result->messages.begin(); it != _result->messages.end(); it++) {
+			sendMessage(*(*it));
+			delete *it;
+			*it = NULL;
+		}
+		_result->messages.clear();
 	}
 }
 

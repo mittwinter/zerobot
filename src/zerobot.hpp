@@ -54,8 +54,15 @@ class ZeroBot {
 
 		state_t getState() const { return state; }
 		void setState(state_t state) { this->state = state; }
+		bool isConnected() const { return (getState() != STATE_DISCONNECTED); }
+
+		void receiveMessages();
+		void timeTriggerPlugins();
+		void sleep() const;
 
 		std::string receiveMessage();
+		void sendMessage(IRC::Message const &message);
+
 		void processResult(std::auto_ptr< PlugInResult > _result);
 		void processMessage(std::string const &_message);
 };
