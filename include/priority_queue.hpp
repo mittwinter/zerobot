@@ -24,6 +24,14 @@ template< class T, class U > class PriorityQueue {
 		 */
 		typedef typename std::multimap< T, U >::iterator iterator;
 		/**
+		 * Constant reverse iterator type for PriorityQueue.
+		 */
+		typedef typename std::multimap< T, U >::const_reverse_iterator const_reverse_iterator;
+		/**
+		 * Reverse iterator type for PriorityQueue.
+		 */
+		typedef typename std::multimap< T, U >::reverse_iterator reverse_iterator;
+		/**
 		 * Type of size values used and returned by various methods.
 		 */
 		typedef typename std::multimap< T, U >::size_type size_type;
@@ -54,6 +62,22 @@ template< class T, class U > class PriorityQueue {
 		}
 
 		/**
+		 * Returns constant reverse iterator to the end of the queue.
+		 * @returns Iterator referencing the end.
+		 */
+		const_reverse_iterator rbegin() const {
+			return values.rbegin();
+		}
+
+		/**
+		 * Returns reverse iterator to the end of the queue.
+		 * @returns Iterator referencing the end.
+		 */
+		reverse_iterator rbegin() {
+			return values.rbegin();
+		}
+
+		/**
 		 * Returns constant iterator to the end (i. e. back) of the queue.
 		 * @returns Iterator referencing the end.
 		 */
@@ -67,6 +91,22 @@ template< class T, class U > class PriorityQueue {
 		 */
 		iterator end() {
 			return values.end();
+		}
+
+		/**
+		 * Returns constant reverse iterator to the beginning of the queue.
+		 * @returns Reverse iterator referencing the beginning.
+		 */
+		const_reverse_iterator rend() const {
+			return values.rend();
+		}
+
+		/**
+		 * Returns reverse iterator to the beginning of the queue.
+		 * @returns Reverse iterator referencing the beginning.
+		 */
+		reverse_iterator rend() {
+			return values.rend();
 		}
 
 		/**
