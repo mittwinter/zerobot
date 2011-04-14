@@ -52,8 +52,11 @@ class ZeroBot {
 		IRC::Parser parser;
 		data::PriorityQueue< int, PlugIn & > plugIns;
 
-		void processResult(std::auto_ptr< PlugInResult > _result);
+		state_t getState() const { return state; }
+		void setState(state_t state) { this->state = state; }
+
 		std::string receiveMessage();
+		void processResult(std::auto_ptr< PlugInResult > _result);
 		void processMessage(std::string const &_message);
 };
 
