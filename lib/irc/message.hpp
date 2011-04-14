@@ -189,6 +189,7 @@ class MessageUser : public Message {
 
 class MessageQuit : public Message {
 	public:
+		MessageQuit() {}
 		MessageQuit(std::string const &_quitMessage);
 		MessageQuit(std::auto_ptr< Prefix > _prefix, std::string const &_quitMessage);
 		virtual ~MessageQuit() {}
