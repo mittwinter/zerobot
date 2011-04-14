@@ -63,7 +63,7 @@ CurlHTMLDownloader::CurlHTMLDownloader(std::string const &_url) throw(std::runti
 	std::cerr << "CurlHTMLDownloader: Using libcurl version: " << curl_version() << std::endl;
 	std::cerr << "CurlHTMLDownloader: Reserving " << MAX_BUFFER_SIZE << " bytes for buffer." << std::endl;
 	buffer.reserve(MAX_BUFFER_SIZE);
-	
+
 	std::cerr << "CurlHTMLDownloader: Setting up curl and the write callbacks ..." << std::endl;
 	errorBuffer = new char[CURL_ERROR_SIZE];
 	handle = curl_easy_init();
