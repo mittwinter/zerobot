@@ -117,7 +117,7 @@ std::string ZeroBot::receiveMessage() {
 			buffer.append(receivedData);
 		}
 	}
-	catch(std::exception e) { // Socket was closed or some other error occured:
+	catch(std::exception const &e) { // Socket was closed or some other error occured:
 		std::cerr << "ZeroBot: Socket operation receive() failed, assuming it's disconnected:" << std::endl
 		          << e.what() << std::endl;
 		setState(STATE_DISCONNECTED);
