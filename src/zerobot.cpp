@@ -117,10 +117,9 @@ std::string ZeroBot::receiveMessage() {
 			buffer.append(receivedData);
 		}
 	}
-	catch(std::invalid_argument e) { // Socket was closed:
-		setState(STATE_DISCONNECTED);
-	}
-	catch(std::runtime_error e) {
+	catch(std::exception e) { // Socket was closed or some other error occured:
+		std::cerr << "ZeroBot: Socket operation receive() failed, assuming it's disconnected:" << std::endl
+		          << e.what() << std::endl;
 		setState(STATE_DISCONNECTED);
 	}
 	std::string::size_type messageEnd = buffer.find('\n');
@@ -140,7 +139,14 @@ std::string ZeroBot::receiveMessage() {
 void ZeroBot::sendMessage(IRC::Message const &message) {
 	std::stringstream sstrMessage;
 	sstrMessage << message;
-	socket.send(sstrMessage.str());
+	try {
+		socket.send(sstrMessage.str());
+	}
+	catch(std::exception e) { // Socket was closed or some other error occured:
+		std::cerr << "ZeroBot: Socket operation receive() failed, assuming it's disconnected:" << std::endl
+		          << e.what() << std::endl;
+		setState(STATE_DISCONNECTED);
+	}
 }
 
 void ZeroBot::processResult(std::auto_ptr< PlugInResult > _result) {
@@ -151,7 +157,8 @@ void ZeroBot::processResult(std::auto_ptr< PlugInResult > _result) {
 			setState(_result->newState);
 		}
 		// Send messages that were possibly returned for sending:
-		for(std::list< IRC::Message * >::iterator it = _result->messages.begin(); it != _result->messages.end(); it++) {
+		// Careful! Do this only as lon as we are connected! (send() operation may fail.)
+		for(std::list< IRC::Message * >::iterator it = _result->messages.begin(); isConnected() && it != _result->messages.end(); it++) {
 			sendMessage(*(*it));
 			delete *it;
 			*it = NULL;
