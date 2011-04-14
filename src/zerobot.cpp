@@ -152,10 +152,6 @@ void ZeroBot::sendMessage(IRC::Message const &message) {
 void ZeroBot::processResult(std::auto_ptr< PlugInResult > _result) {
 	// Check if result was actually provided that needs to be processed here:
 	if(_result.get() != NULL) {
-		// Has the bot state changed?
-		if(_result->newState != STATE_NOP) {
-			setState(_result->newState);
-		}
 		// Send messages that were possibly returned for sending:
 		// Careful! Do this only as lon as we are connected! (send() operation may fail.)
 		for(std::list< IRC::Message * >::iterator it = _result->messages.begin(); isConnected() && it != _result->messages.end(); it++) {
@@ -164,6 +160,10 @@ void ZeroBot::processResult(std::auto_ptr< PlugInResult > _result) {
 			*it = NULL;
 		}
 		_result->messages.clear();
+		// Has the bot state changed?
+		if(_result->newState != STATE_NOP) {
+			setState(_result->newState);
+		}
 	}
 }
 
