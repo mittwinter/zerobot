@@ -60,11 +60,11 @@ CurlHTMLDownloader::CurlHTMLDownloader(std::string const &_url) throw(std::runti
 		atexit(&curl_global_cleanup);
 		curlInitialized = true;
 	}
-	std::cerr << "CurlHTMLDownloader: Using libcurl version: " << curl_version() << std::endl;
-	std::cerr << "CurlHTMLDownloader: Reserving " << MAX_BUFFER_SIZE << " bytes for buffer." << std::endl;
+	std::clog << "CurlHTMLDownloader: Using libcurl version: " << curl_version() << std::endl;
+	std::clog << "CurlHTMLDownloader: Reserving " << MAX_BUFFER_SIZE << " bytes for buffer." << std::endl;
 	buffer.reserve(MAX_BUFFER_SIZE);
 
-	std::cerr << "CurlHTMLDownloader: Setting up curl and the write callbacks ..." << std::endl;
+	std::clog << "CurlHTMLDownloader: Setting up curl and the write callbacks ..." << std::endl;
 	errorBuffer = new char[CURL_ERROR_SIZE];
 	handle = curl_easy_init();
 	if(handle == NULL) {
@@ -96,14 +96,14 @@ CurlHTMLDownloader::~CurlHTMLDownloader() {
 }
 
 void CurlHTMLDownloader::perform() {
-	std::cerr << "CurlHTMLDownloader: Fetching URL '" << url << "' ..." << std::endl;
+	std::clog << "CurlHTMLDownloader: Fetching URL '" << url << "' ..." << std::endl;
 	if(curl_easy_perform(handle) != 0) {
 		// TODO: Handle errors here in a better way! We want to continue when we reached buffer limit, but abort otherwise!
 		std::cerr << "CurlHTMLDownloader: libcurl reported the following errors:" << std::endl;
 		std::cerr << errorBuffer << std::endl;
 		//throw std::runtime_error(std::string("CurlHTMLDownloader: curl_easy_perform() failed: ") + curlErrorBuffer.get());
 	}
-	std::cerr << "... done." << std::endl;
+	std::clog << "... done." << std::endl;
 }
 
 size_t CurlHTMLDownloader::writeDataCallback(void *_data, size_t _size, size_t _nmemb) {
@@ -115,7 +115,7 @@ size_t CurlHTMLDownloader::writeDataCallback(void *_data, size_t _size, size_t _
 		writeSize = _size * _nmemb;
 	}
 	buffer.append(static_cast< char * > (_data), writeSize);
-	//std::cerr << "CurlHTMLDownloader: Callback method was called and wrote " << writeSize << " bytes to internal buffer." << std::endl;
+	//std::clog << "CurlHTMLDownloader: Callback method was called and wrote " << writeSize << " bytes to internal buffer." << std::endl;
 	return writeSize;
 }
 
@@ -153,8 +153,8 @@ void HTMLTidy::run() throw(std::runtime_error) {
 		tidyResult = tidySaveBuffer(handle, &outputBuffer);
 	}
 	if(tidyResult > 0) {
-		std::cerr << "HTMLTidy: Diagnostics of libtidy:" << std::endl;
-		std::cerr << errorBuffer.bp;
+		std::clog << "HTMLTidy: Diagnostics of libtidy:" << std::endl;
+		std::clog << errorBuffer.bp;
 	}
 	else if(tidyResult < 0) {
 		std::stringstream sstrTidyResult;

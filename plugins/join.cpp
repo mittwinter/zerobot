@@ -44,7 +44,7 @@ std::auto_ptr< PlugInResult > PlugInJoin::onPacket(state_t _state, IRC::Message 
 					for(std::vector< std::string >::const_iterator it = reply.getParamaters().begin(); it != reply.getParamaters().end(); it++) {
 						if(*it == channelName) {
 							joinState = STATE_JOIN_JOINED;
-							std::cerr << "PlugInJoin: Joined to channel " << channelName << "." << std::endl;
+							std::clog << "PlugInJoin: Joined to channel " << channelName << "." << std::endl;
 							break;
 						}
 					}

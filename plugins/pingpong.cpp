@@ -59,7 +59,7 @@ std::auto_ptr< PlugInResult > PlugInPingPong::onTimeTrigger(state_t _state) {
 		result->newState = STATE_DISCONNECTING;
 	}
 	else if((time(NULL) - lastPing) > 60) {
-		std::cerr << "PlugInPingPong: Last ping is more than 60 seconds in the past, pinging server ..." << std::endl;
+		std::clog << "PlugInPingPong: Last ping is more than 60 seconds in the past, pinging server ..." << std::endl;
 		lastPing = time(NULL);
 		result = std::auto_ptr< PlugInResult >(new PlugInResult);
 		result->messages.push_back(new IRC::MessagePing(serverName));

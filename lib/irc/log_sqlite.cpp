@@ -51,7 +51,7 @@ void LogSQLite::close() throw(std::runtime_error) {
 
 void LogSQLite::logNamesList(std::string const &_channelName, std::string const &_namesListStr) {
 	sqlite3_stmt *stmtInsert = NULL;
-	std::cerr << "LogSQLite: Logging RPL_NAMREPLY message to table log_names." << std::endl;
+	std::clog << "LogSQLite: Logging RPL_NAMREPLY message to table log_names." << std::endl;
 	if(sqlite3_prepare_v2(connection, "INSERT INTO log_names(channel, namesList) VALUES($channel, $namesList)", -1, &stmtInsert, NULL) != SQLITE_OK) {
 		throw std::runtime_error(std::string("SQLite error: ") + sqlite3_errmsg(connection));
 	}
@@ -72,7 +72,7 @@ void LogSQLite::logNamesList(std::string const &_channelName, std::string const 
 
 void LogSQLite::logNick(std::string const &_channelName, std::string const &_oldNickname, std::string const &_newNickname) {
 	sqlite3_stmt *stmtInsert = NULL;
-	std::cerr << "LogSQLite: Logging NICK message to table log_nick." << std::endl;
+	std::clog << "LogSQLite: Logging NICK message to table log_nick." << std::endl;
 	if(sqlite3_prepare_v2(connection, "INSERT INTO log_nick(channel, oldNick, newNick) VALUES($channel, $oldNick, $newNick)", -1, &stmtInsert, NULL) != SQLITE_OK) {
 		throw std::runtime_error(std::string("SQLite error: ") + sqlite3_errmsg(connection));
 	}
@@ -97,7 +97,7 @@ void LogSQLite::logNick(std::string const &_channelName, std::string const &_old
 
 void LogSQLite::logQuit(std::string const &_channelName, std::string const &_nickname, std::string const &_quitMessage) {
 	sqlite3_stmt *stmtInsert = NULL;
-	std::cerr << "LogSQLite: Logging QUIT/PART message to table log_quit." << std::endl;
+	std::clog << "LogSQLite: Logging QUIT/PART message to table log_quit." << std::endl;
 	if(sqlite3_prepare_v2(connection, "INSERT INTO log_quit(channel, nick, quitMessage) VALUES($channel, $nick, $quitMessage)", -1, &stmtInsert, NULL) != SQLITE_OK) {
 		throw std::runtime_error(std::string("SQLite error: ") + sqlite3_errmsg(connection));
 	}
@@ -122,7 +122,7 @@ void LogSQLite::logQuit(std::string const &_channelName, std::string const &_nic
 
 void LogSQLite::logJoin(std::string const &_channelName, std::string const &_nickname) {
 	sqlite3_stmt *stmtInsert = NULL;
-	std::cerr << "LogSQLite: Logging JOIN message to table log_join." << std::endl;
+	std::clog << "LogSQLite: Logging JOIN message to table log_join." << std::endl;
 	if(sqlite3_prepare_v2(connection, "INSERT INTO log_join(channel, nick) VALUES($channel, $nick)", -1, &stmtInsert, NULL) != SQLITE_OK) {
 		throw std::runtime_error(std::string("SQLite error: ") + sqlite3_errmsg(connection));
 	}
@@ -143,7 +143,7 @@ void LogSQLite::logJoin(std::string const &_channelName, std::string const &_nic
 
 void LogSQLite::logPrivMsg(std::string const &_channelName, std::string const &_nickname, std::string const &_message) {
 	sqlite3_stmt *stmtInsert = NULL;
-	std::cerr << "LogSQLite: Logging PRIVMSG message to log_privmsg." << std::endl;
+	std::clog << "LogSQLite: Logging PRIVMSG message to log_privmsg." << std::endl;
 	if(sqlite3_prepare_v2(connection, "INSERT INTO log_privmsg(channel, nick, message) VALUES($channel, $nick, $message)", -1, &stmtInsert, NULL) != SQLITE_OK) {
 		throw std::runtime_error(std::string("SQLite error: ") + sqlite3_errmsg(connection));
 	}

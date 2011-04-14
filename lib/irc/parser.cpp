@@ -30,7 +30,7 @@ RawParser::RawParser(bool _debug) : debug(_debug) {
 
 std::auto_ptr< RawMessage > RawParser::parseString(std::string _message) const throw(std::runtime_error) {
 	if(debug) {
-		std::cerr << "RawParser: Parsing message '" << _message << "'" << std::endl;
+		std::clog << "RawParser: Parsing message '" << _message << "'" << std::endl;
 	}
 	if(_message.size() >= 2) {
 		if(_message.at(_message.size() - 1) == '\n') {
@@ -53,7 +53,7 @@ std::auto_ptr< RawMessage > RawParser::parseString(std::string _message) const t
 std::auto_ptr< Prefix > RawParser::parsePrefix(std::string &_message) const throw(std::runtime_error) {
 	if(_message.size() >= 1 && _message.at(0) == ':') {
 		if(debug) {
-			std::cerr << "RawParser: Parsing prefix of message: '" << _message << "'" << std::endl;
+			std::clog << "RawParser: Parsing prefix of message: '" << _message << "'" << std::endl;
 		}
 		_message.erase(0, 1); // remove colon
 		std::string nick, user, host;
@@ -68,7 +68,7 @@ std::auto_ptr< Prefix > RawParser::parsePrefix(std::string &_message) const thro
 			host = parseHost(_message);
 		}
 		if(debug) {
-			std::cerr << "RawParser: Prefix is..." << std::endl
+			std::clog << "RawParser: Prefix is..." << std::endl
 			          << "\t ...nick: " << nick << std::endl
 			          << "\t ...user: " << user << std::endl
 			          << "\t ...host: " << host << std::endl;
@@ -138,13 +138,13 @@ std::string RawParser::parseCommand(std::string &_message) const throw(std::runt
 		if(isalpha(_message.at(0))) {
 			checkFunc = &isalpha;
 			if(debug) {
-				std::cerr << "RawParser: Alphabetic command found." << std::endl;
+				std::clog << "RawParser: Alphabetic command found." << std::endl;
 			}
 		}
 		else if(isdigit(_message.at(0))) {
 			checkFunc = &isdigit;
 			if(debug) {
-				std::cerr << "RawParser: Numeric command found." << std::endl;
+				std::clog << "RawParser: Numeric command found." << std::endl;
 			}
 		}
 		while(_message.size() > 0 && !isspace(_message.at(0))) {
@@ -164,7 +164,7 @@ std::string RawParser::parseCommand(std::string &_message) const throw(std::runt
 		}
 		else {
 			if(debug) {
-				std::cerr << "RawParser: Command '" << command << "' found." << std::endl;
+				std::clog << "RawParser: Command '" << command << "' found." << std::endl;
 			}
 			return command;
 		}
@@ -191,9 +191,9 @@ std::vector< std::string > RawParser::parseParameters(std::string &_message) con
 	}
 	if(parameters.size() > 0) {
 		if(debug) {
-			std::cerr << "RawParser: Parsed parameters..." << std::endl;
+			std::clog << "RawParser: Parsed parameters..." << std::endl;
 			for(std::vector< std::string >::const_iterator it = parameters.begin(); it != parameters.end(); it++) {
-				std::cerr << "\t - " << *it << std::endl;
+				std::clog << "\t - " << *it << std::endl;
 			}
 		}
 	}
@@ -205,7 +205,7 @@ std::string RawParser::parseTrailing(std::string &_message) const {
 		std::string trailing = _message.substr(1);
 		_message.clear();
 		if(debug) {
-			std::cerr << "RawParser: Trailing is '" << trailing << "'." << std::endl;
+			std::clog << "RawParser: Trailing is '" << trailing << "'." << std::endl;
 		}
 		return trailing;
 	}
