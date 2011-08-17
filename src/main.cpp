@@ -25,6 +25,11 @@
 #include "../plugins/plugins.hpp"
 #include "zerobot.hpp"
 
+void showUsage(char const *_programName) {
+		std::clog << "Usage:" << "\t" << _programName << "\t --server=<server> --port=<port> --nick=<nickname>" << std::endl
+		          << "\t\t\t [--join=<channel> ...] [--log=<channel> ... --logfile=<file>] [--title] [--admin=<nickname>]" << std::endl;
+}
+
 int optionsFlagTitle = 0;
 
 struct option options[] = {
@@ -72,9 +77,6 @@ struct option options[] = {
 	};
 
 int main(int argc, char *argv[]) {
-/*	if(argc < 3) {
-	}
-*/
 	int getoptResult = -1;
 	int optionIndex = 0;
 	bool serverNameFound = false, serverPortFound = false, nicknameFound = false, logfileFound = false;
@@ -83,56 +85,60 @@ int main(int argc, char *argv[]) {
 	std::list< std::string > logChannels;
 	do {
 		getoptResult = getopt_long(argc, argv, "s:p:n:j:l:f:ta:", options, &optionIndex);
-		if(getoptResult != -1) {
-			switch(getoptResult) {
-				case 0:
-					break;
-				case 's':
-					serverNameFound = true;
-					serverName = optarg;
-					break;
-				case 'p':
-					serverPortFound = true;
-					serverPort = optarg;
-					break;
-				case 'n':
-					nicknameFound = true;
-					nickname = optarg;
-					break;
-				case 'j':
-					joinChannels.push_back(optarg);
-					break;
-				case 'l':
-					joinChannels.push_back(optarg);
-					logChannels.push_back(optarg);
-					break;
-				case 'f':
-					logfileFound = true;
-					logfile = optarg;
-					break;
-				case 't':
-					optionsFlagTitle = 1;
-					break;
-				case 'a':
-					admin = optarg;
-					break;
-				case '?':
-					// TODO: print more detailled error message here!
-					return EXIT_FAILURE;
-					break;
-				default:
-					std::cerr << argv[0] << ": unknown option " << options[optionIndex].name << std::endl;
-					return EXIT_FAILURE;
-					break;
-			}
+		switch(getoptResult) {
+			case -1: // all options parsed...
+			case 0: // getopt() set flag...
+				break;
+			case 's':
+				serverNameFound = true;
+				serverName = optarg;
+				break;
+			case 'p':
+				serverPortFound = true;
+				serverPort = optarg;
+				break;
+			case 'n':
+				nicknameFound = true;
+				nickname = optarg;
+				break;
+			case 'j':
+				joinChannels.push_back(optarg);
+				break;
+			case 'l':
+				joinChannels.push_back(optarg);
+				logChannels.push_back(optarg);
+				break;
+			case 'f':
+				logfileFound = true;
+				logfile = optarg;
+				break;
+//			case 't':
+//				optionsFlagTitle = 1;
+//				break;
+			case 'a':
+				admin = optarg;
+				break;
+			case '?':
+				// TODO: print more detailled error message here!
+				return EXIT_FAILURE;
+				break;
+			default:
+				std::cerr << argv[0] << ": unknown option '" << optopt << "'" << std::endl;
+				showUsage(argv[0]);
+				return EXIT_FAILURE;
+				break;
 		}
 	}
 	while(getoptResult != -1);
 
-	if(!serverNameFound || !serverPortFound || !nicknameFound || (logChannels.size() > 0 && !logfileFound)) {
-		std::cerr << "Usage:" << std::endl
-		          << "\t " << argv[0] << "\t --server=<server> --port=<port> --nick=<nickname>" << std::endl
-		          << "\t\t\t [--join=<channel> ...] [--log=<channel> ... --logfile=<file>] [--title] [--admin=<nickname>]" << std::endl;
+	if(!serverNameFound || !serverPortFound || !nicknameFound) {
+		std::clog << argv[0] << ": server, port and nickname are required" << std::endl;
+		showUsage(argv[0]);
+		return EXIT_FAILURE;
+	}
+	if(logChannels.size() > 0 && !logfileFound) {
+		std::clog << argv[0] << ": logging facility needs a logfile" << std::endl;
+		showUsage(argv[0]);
 		return EXIT_FAILURE;
 	}
 
