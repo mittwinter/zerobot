@@ -27,6 +27,8 @@
 
 namespace zerobot {
 
+class ZeroBot; // forward declaration of class ZeroBot
+
 class PlugInResult {
 	public:
 		PlugInResult();
@@ -38,6 +40,7 @@ class PlugInResult {
 class PlugIn {
 	public:
 		PlugIn(unsigned int _priority, std::string const &_name);
+		virtual ~PlugIn() {}
 
 		unsigned int getPriority() const { return priority; }
 		std::string const &getName() const { return name; }
@@ -53,6 +56,18 @@ class PlugIn {
 		const std::string name;
 
 		static std::string const commandPrefix;
+};
+
+class PlugInAdminBase : public PlugIn {
+	public:
+		PlugInAdminBase(unsigned int _priority, std::string const &_name) : PlugIn(_priority, _name), zerobotInstance(NULL) {}
+		PlugInAdminBase(ZeroBot *_zerobotInstance, unsigned int _priority, std::string const &_name) : PlugIn(_priority, _name), zerobotInstance(_zerobotInstance) {}
+		virtual ~PlugInAdminBase() {}
+
+		void setZeroBotInstance(ZeroBot *_zerobotInstance) { zerobotInstance = _zerobotInstance; }
+
+	protected:
+		ZeroBot *zerobotInstance;
 };
 
 }

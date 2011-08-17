@@ -41,6 +41,11 @@ void ZeroBot::registerPlugIn(PlugIn &_plugIn) {
 	plugIns.insert(_plugIn.getPriority(), _plugIn);
 }
 
+void ZeroBot::registerAdminPlugIn(PlugInAdminBase &_plugIn) {
+	_plugIn.setZeroBotInstance(this);
+	registerPlugIn(_plugIn);
+}
+
 bool ZeroBot::unregisterPlugIn(std::string const &_name) {
 	for(data::PriorityQueue< int, PlugIn & >::iterator it = plugIns.begin(); it != plugIns.end(); it++) {
 		if((it->second).getName() == _name) {

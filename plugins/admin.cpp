@@ -7,7 +7,7 @@
 
 namespace zerobot {
 
-PlugInAdmin::PlugInAdmin(int _priority, std::string const &_adminNickname): PlugIn(_priority, "admin") {
+PlugInAdmin::PlugInAdmin(int _priority, std::string const &_adminNickname): PlugInAdminBase(_priority, "admin") {
 	adminNickname = _adminNickname;
 }
 

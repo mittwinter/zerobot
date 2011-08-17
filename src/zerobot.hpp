@@ -35,6 +35,7 @@ class ZeroBot {
 		~ZeroBot();
 
 		void registerPlugIn(PlugIn &_plugIn);
+		void registerAdminPlugIn(PlugInAdminBase &_plugIn);
 		bool unregisterPlugIn(std::string const &_name);
 
 		void run();
