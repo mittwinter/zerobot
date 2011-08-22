@@ -23,7 +23,7 @@
 
 namespace zerobot {
 
-PlugInLog::PlugInLog(int _priority, const std::string& _name, const std::string& _channelName, const std::string& _databaseFilename)
+PlugInLog::PlugInLog(int _priority, std::string const &_name, std::string const &_channelName, std::string const &_databaseFilename)
         : PlugIn(_priority, _name), logSQLite(_databaseFilename) {
 	channelName = _channelName;
 	logSQLite.open();
