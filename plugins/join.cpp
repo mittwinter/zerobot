@@ -54,8 +54,8 @@ std::auto_ptr< PlugInResult > PlugInJoin::onPacket(state_t _state, IRC::Message 
 				case IRC::ERR_BANNEDFROMCHAN:
 				case IRC::ERR_BADCHANNELKEY:
 					std::cerr << "PlugInJoin: " << reply << std::flush;
-					result = std::auto_ptr< PlugInResult >(new PlugInResult);
-					result->newState = STATE_DISCONNECTING;
+					//result = std::auto_ptr< PlugInResult >(new PlugInResult);
+					//result->newState = STATE_DISCONNECTING;
 					break;
 				default:
 					break;
