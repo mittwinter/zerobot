@@ -22,7 +22,7 @@
 
 namespace zerobot {
 
-PlugInJoin::PlugInJoin(int _priority, std::string const &_channelName) : PlugIn(_priority, "join"), channelName(_channelName), joinState(STATE_JOIN_NOP) {
+PlugInJoin::PlugInJoin(int _priority, std::string const &_channelName) : PlugIn(_priority, "join_" + _channelName), channelName(_channelName), joinState(STATE_JOIN_NOP) {
 }
 
 std::auto_ptr< PlugInResult > PlugInJoin::onConnect(state_t _state) {
