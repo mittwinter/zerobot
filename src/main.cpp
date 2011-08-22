@@ -27,10 +27,12 @@
 
 void showUsage(char const *_programName) {
 		std::clog << "Usage:" << "\t" << _programName << "\t --server=<server> --port=<port> --nick=<nickname>" << std::endl
-		          << "\t\t\t [--join=<channel> ...] [--log=<channel> ... --logfile=<file>] [--title] [--admin=<nickname>]" << std::endl;
+		          << "\t\t\t [--join=<channel> ...] [--log=<channel> ... --logfile=<file>] [--title] [--admin=<nickname>]" << std::endl
+		          << "\t\t\t [--identify]" << std::endl;
 }
 
 int optionsFlagTitle = 0;
+int optionsFlagIdentify = 0;
 
 struct option options[] = {
 		{ "server"
@@ -72,6 +74,11 @@ struct option options[] = {
 		, required_argument
 		, 0
 		, 'a'
+		},
+		{ "identify"
+		, no_argument
+		, &optionsFlagIdentify
+		, 1
 		},
 		{ 0, 0, 0, 0 }
 	};
@@ -177,6 +184,10 @@ int main(int argc, char *argv[]) {
 	}
 	plugIn = new zerobot::PlugInAdmin(0, admin); // it's not bad when admin's nickname was not specified
 	bot.registerPlugIn(plugIn);
+	if(optionsFlagIdentify) {
+		plugIn = new zerobot::PlugInNickServ(-5);
+		bot.registerPlugIn(plugIn);
+	}
 	// Run bot:
 	bot.run();
 	return EXIT_SUCCESS;
