@@ -196,17 +196,17 @@ void LogSQLite::createSchema() {
 			, nick TEXT NOT NULL \
 			, message TEXT NOT NULL \
 			); \
-		CREATE VIEW IF NOT EXISTS log AS SELECT datetime || ' ' || line FROM \
+		CREATE VIEW IF NOT EXISTS log AS SELECT type, datetime || ' ' || line FROM \
 			( \
-				SELECT datetime(timestamp, 'unixepoch') AS datetime, '|' || channel || '| <' || nick || '> ' || message AS line FROM log_privmsg \
+				SELECT 'privmsg' AS type, datetime(timestamp, 'unixepoch') AS datetime, '|' || channel || '| <' || nick || '> ' || message AS line FROM log_privmsg \
 			UNION ALL \
-				SELECT datetime(timestamp, 'unixepoch') AS datetime, '|' || channel || '| Users in channel: ' || namesList AS line FROM log_names \
+				SELECT 'names' AS type, datetime(timestamp, 'unixepoch') AS datetime, '|' || channel || '| Users in channel: ' || namesList AS line FROM log_names \
 			UNION ALL \
-				SELECT datetime(timestamp, 'unixepoch') AS datetime, '|' || channel || '| ' || oldNick || ' changed his nick to ' || newNick AS line FROM log_nick \
+				SELECT 'nick' AS type, datetime(timestamp, 'unixepoch') AS datetime, '|' || channel || '| ' || oldNick || ' changed his nick to ' || newNick AS line FROM log_nick \
 			UNION ALL \
-				SELECT datetime(timestamp, 'unixepoch') AS datetime, '|' || channel || '| ' || nick || ' joined' AS line FROM log_join \
+				SELECT 'join' AS type, datetime(timestamp, 'unixepoch') AS datetime, '|' || channel || '| ' || nick || ' joined' AS line FROM log_join \
 			UNION ALL \
-				SELECT datetime(timestamp, 'unixepoch') AS datetime, '|' || channel || '| ' || nick || ' has left (' || quitMessage || ')' AS line FROM log_quit \
+				SELECT 'quit' AS type, datetime(timestamp, 'unixepoch') AS datetime, '|' || channel || '| ' || nick || ' has left (' || quitMessage || ')' AS line FROM log_quit \
 			) \
 			ORDER BY datetime; \
 		";
