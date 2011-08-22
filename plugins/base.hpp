@@ -34,6 +34,8 @@ class PlugInResult {
 
 		std::list< IRC::Message * > messages;
 		state_t newState;
+		std::list< PlugIn * > registerPlugIns;
+		std::list< std::string > unregisterPlugins;
 };
 
 class PlugIn {
