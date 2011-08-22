@@ -177,7 +177,7 @@ std::string RawParser::parseCommand(std::string &_message) const throw(std::runt
 std::vector< std::string > RawParser::parseParameters(std::string &_message) const {
 	std::vector< std::string > parameters;
 	std::string parameter;
-	while(_message.size() > 0 && (parameter.size() > 0 || _message.at(0) != ':')) {
+	while(_message.size() > 0 && !(parameter.size() == 0 && _message.at(0) == ':')) {
 		if(isspace(_message.at(0))) {
 			if(parameter.size() > 0) {
 				parameters.push_back(parameter);
@@ -189,12 +189,13 @@ std::vector< std::string > RawParser::parseParameters(std::string &_message) con
 		}
 		_message.erase(0, 1);
 	}
-	if(parameters.size() > 0) {
-		if(debug) {
-			std::clog << "RawParser: Parsed parameters..." << std::endl;
-			for(std::vector< std::string >::const_iterator it = parameters.begin(); it != parameters.end(); it++) {
-				std::clog << "\t - " << *it << std::endl;
-			}
+	if(parameter.size() > 0) {
+		parameters.push_back(parameter);
+	}
+	if(debug && parameters.size() > 0) {
+		std::clog << "RawParser: Parsed parameters..." << std::endl;
+		for(std::vector< std::string >::const_iterator it = parameters.begin(); it != parameters.end(); it++) {
+			std::clog << "\t - " << *it << std::endl;
 		}
 	}
 	return parameters;
