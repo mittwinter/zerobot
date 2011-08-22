@@ -55,8 +55,3 @@ set_target_properties(zerobot
 	PROPERTIES LINK_FLAGS "${CURL_LIBRARIES} ${EXPAT_LIBRARIES} ${SQLITE_LIBRARIES} ${TIDY_LIBRARIES} ${LOCAL_LIBRARY_FLAGS}"
 	)
 
-add_executable(testcase/parserTest
-	testcase/parserTest.cpp
-	lib/irc/message.cpp 
-	lib/irc/parser.cpp
-	)
