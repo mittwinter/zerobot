@@ -152,7 +152,7 @@ void ZeroBot::processResult(std::auto_ptr< PlugInResult > _result) {
 	// Check if result was actually provided that needs to be processed here:
 	if(_result.get() != NULL) {
 		// Send messages that were possibly returned for sending:
-		// Careful! Do this only as lon as we are connected! (send() operation may fail.)
+		// TODO: Careful! Do this only as long as we are connected! (send() operation may fail.)
 		for(std::list< IRC::Message * >::iterator it = _result->messages.begin(); isConnected() && it != _result->messages.end(); it++) {
 			sendMessage(*(*it));
 			delete *it;
