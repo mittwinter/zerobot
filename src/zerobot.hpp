@@ -34,8 +34,7 @@ class ZeroBot {
 		ZeroBot(std::string const &_serverName, int _serverPort);
 		~ZeroBot();
 
-		void registerPlugIn(PlugIn &_plugIn);
-		void registerAdminPlugIn(PlugInAdminBase &_plugIn);
+		void registerPlugIn(PlugIn *_plugIn);
 		bool unregisterPlugIn(std::string const &_name);
 
 		void run();
@@ -51,7 +50,7 @@ class ZeroBot {
 		posix::ClientSocket socket;
 		std::string buffer;
 		IRC::Parser parser;
-		data::PriorityQueue< int, PlugIn & > plugIns;
+		data::PriorityQueue< int, PlugIn * > plugIns;
 
 		state_t getState() const { return state; }
 		void setState(state_t state) { this->state = state; }

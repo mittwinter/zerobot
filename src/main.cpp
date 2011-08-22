@@ -155,28 +155,28 @@ int main(int argc, char *argv[]) {
 	// Register basic plug-ins:
 	// - Connect:
 	plugIn = new zerobot::PlugInConnect(-10, nickname);
-	bot.registerPlugIn(*plugIn);
+	bot.registerPlugIn(plugIn);
 	// - Disconnect:
 	plugIn = new zerobot::PlugInDisconnect(-10);
-	bot.registerPlugIn(*plugIn);
+	bot.registerPlugIn(plugIn);
 	// - PingPong:
 	plugIn = new zerobot::PlugInPingPong(0, serverName);
-	bot.registerPlugIn(*plugIn);
+	bot.registerPlugIn(plugIn);
 	// Register optional plug-ins, multiple definitions were allowed:
 	for(std::list< std::string >::const_iterator it = joinChannels.begin(); it != joinChannels.end(); it++) {
 		plugIn = new zerobot::PlugInJoin(-5, *it);
-		bot.registerPlugIn(*plugIn);
+		bot.registerPlugIn(plugIn);
 	}
 	for(std::list< std::string >::const_iterator it = logChannels.begin(); it != logChannels.end(); it++) {
 		plugIn = new zerobot::PlugInLog(0, "log_" + *it, *it, logfile);
-		bot.registerPlugIn(*plugIn);
+		bot.registerPlugIn(plugIn);
 	}
 	if(optionsFlagTitle) {
 		plugIn = new zerobot::PlugInURLTitle(5);
-		bot.registerPlugIn(*plugIn);
+		bot.registerPlugIn(plugIn);
 	}
 	plugIn = new zerobot::PlugInAdmin(0, admin); // it's not bad when admin's nickname was not specified
-	bot.registerPlugIn(*plugIn);
+	bot.registerPlugIn(plugIn);
 	// Run bot:
 	bot.run();
 	return EXIT_SUCCESS;

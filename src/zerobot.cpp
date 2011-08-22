@@ -31,25 +31,20 @@ ZeroBot::ZeroBot(std::string const &_serverName, int _serverPort) : socket(_serv
 }
 
 ZeroBot::~ZeroBot() {
-	for(data::PriorityQueue< int, PlugIn & >::iterator it = plugIns.begin(); it != plugIns.end(); it++) {
-		delete &(it->second);
+	for(data::PriorityQueue< int, PlugIn * >::iterator it = plugIns.begin(); it != plugIns.end(); it++) {
+		delete it->second;
 	}
 	plugIns.clear();
 }
 
-void ZeroBot::registerPlugIn(PlugIn &_plugIn) {
-	plugIns.insert(_plugIn.getPriority(), _plugIn);
-}
-
-void ZeroBot::registerAdminPlugIn(PlugInAdminBase &_plugIn) {
-	_plugIn.setZeroBotInstance(this);
-	registerPlugIn(_plugIn);
+void ZeroBot::registerPlugIn(PlugIn *_plugIn) {
+	plugIns.insert(_plugIn->getPriority(), _plugIn);
 }
 
 bool ZeroBot::unregisterPlugIn(std::string const &_name) {
-	for(data::PriorityQueue< int, PlugIn & >::iterator it = plugIns.begin(); it != plugIns.end(); it++) {
-		if((it->second).getName() == _name) {
-			delete &(it->second);
+	for(data::PriorityQueue< int, PlugIn * >::iterator it = plugIns.begin(); it != plugIns.end(); it++) {
+		if((it->second)->getName() == _name) {
+			delete it->second;
 			plugIns.erase(it);
 			return true;
 		}
@@ -61,8 +56,8 @@ void ZeroBot::run() {
 	while(isConnected()) {
 		// Run onConnect() triggers of plug-ins if appropiate:
 		if(getState() == STATE_CONNECTING) {
-			for(data::PriorityQueue< int, PlugIn & >::iterator it = plugIns.begin(); it != plugIns.end(); it++) {
-				processResult((it->second).onConnect(getState()));
+			for(data::PriorityQueue< int, PlugIn * >::iterator it = plugIns.begin(); it != plugIns.end(); it++) {
+				processResult(it->second->onConnect(getState()));
 			}
 		}
 		// Receive messages:
@@ -75,8 +70,8 @@ void ZeroBot::run() {
 		}
 		// Run onDisconnect() triggers of plug-ins if appropiate:
 		if(getState() == STATE_DISCONNECTING) {
-			for(data::PriorityQueue< int, PlugIn & >::reverse_iterator it = plugIns.rbegin(); it != plugIns.rend(); it++) {
-				processResult((it->second).onDisconnect(getState()));
+			for(data::PriorityQueue< int, PlugIn * >::reverse_iterator it = plugIns.rbegin(); it != plugIns.rend(); it++) {
+				processResult(it->second->onDisconnect(getState()));
 			}
 		}
 		if(isConnected()) {
@@ -85,8 +80,8 @@ void ZeroBot::run() {
 	}
 	// We were disconnected, so run onDisconnect() triggers one last time with this state:
 	if(getState() == STATE_DISCONNECTED) {
-		for(data::PriorityQueue< int, PlugIn & >::iterator it = plugIns.begin(); it != plugIns.end(); it++) {
-			processResult((it->second).onDisconnect(getState()));
+		for(data::PriorityQueue< int, PlugIn * >::iterator it = plugIns.begin(); it != plugIns.end(); it++) {
+			processResult(it->second->onDisconnect(getState()));
 		}
 	}
 }
@@ -103,8 +98,8 @@ void ZeroBot::receiveMessages() {
 }
 
 void ZeroBot::timeTriggerPlugins() {
-	for(data::PriorityQueue< int, PlugIn & >::iterator it = plugIns.begin(); it != plugIns.end(); it++) {
-		processResult((it->second).onTimeTrigger(getState()));
+	for(data::PriorityQueue< int, PlugIn * >::iterator it = plugIns.begin(); it != plugIns.end(); it++) {
+		processResult(it->second->onTimeTrigger(getState()));
 	}
 }
 
@@ -168,6 +163,12 @@ void ZeroBot::processResult(std::auto_ptr< PlugInResult > _result) {
 		if(_result->newState != STATE_NOP) {
 			setState(_result->newState);
 		}
+		for(std::list< PlugIn * >::iterator it = _result->registerPlugIns.begin(); it != _result->registerPlugIns.end(); it++) {
+			registerPlugIn(*it);
+		}
+		for(std::list< std::string >::iterator it = _result->unregisterPlugins.begin(); it != _result->unregisterPlugins.end(); it++) {
+			unregisterPlugIn(*it);
+		}
 	}
 }
 
@@ -178,8 +179,8 @@ void ZeroBot::processMessage(std::string const &_message) {
 		// Should not happen, but check for it here, so that plug-ins do not necessarily need to check:
 		if(message.get() != NULL) {
 			// Process message with plug-ins:
-			for(data::PriorityQueue< int, PlugIn & >::iterator it = plugIns.begin(); it != plugIns.end(); it++) {
-				processResult((it->second).onPacket(getState(), *message));
+			for(data::PriorityQueue< int, PlugIn * >::iterator it = plugIns.begin(); it != plugIns.end(); it++) {
+				processResult(it->second->onPacket(getState(), *message));
 			}
 		}
 	}
