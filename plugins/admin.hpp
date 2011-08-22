@@ -7,7 +7,7 @@
 
 namespace zerobot {
 
-class PlugInAdmin : public PlugInAdminBase {
+class PlugInAdmin : public PlugIn {
 	public:
 		PlugInAdmin(int _priority, std::string const &_adminNickname);
 		virtual ~PlugInAdmin() {}
