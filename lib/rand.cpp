@@ -26,6 +26,6 @@ double util::rand(double _high) {
 		srand(time(NULL));
 		initialized = true;
 	}
-	return (std::rand() / (RAND_MAX + 1.0)) * (_high + 1.0);
+	return _high * std::rand() / RAND_MAX;
 }
 
