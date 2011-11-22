@@ -22,25 +22,28 @@
 
 namespace zerobot {
 
-PlugInJoin::PlugInJoin(int _priority, std::string const &_channelName) : PlugIn(_priority, "join_" + _channelName), channelName(_channelName), joinState(STATE_JOIN_NOP) {
+PlugInJoin::PlugInJoin( int priority, std::string const &channelName )
+		: PlugIn( priority, "join_" + channelName )
+		, channelName( channelName )
+		, joinState( STATE_JOIN_NOP ) {
 }
 
-std::auto_ptr< PlugInResult > PlugInJoin::onConnect(state_t _state) {
+std::auto_ptr< PlugInResult > PlugInJoin::onConnect( state_t state ) {
 	return std::auto_ptr< PlugInResult >(NULL);
 }
 
-std::auto_ptr< PlugInResult > PlugInJoin::onPacket(state_t _state, IRC::Message const &_message) {
-	std::auto_ptr< PlugInResult > result(NULL);
-	if(joinState == STATE_JOIN_SENT) {
+std::auto_ptr< PlugInResult > PlugInJoin::onPacket( state_t state, IRC::Message const &message ) {
+	std::auto_ptr< PlugInResult > result( NULL );
+	if( joinState == STATE_JOIN_SENT ) {
 		try {
-			IRC::MessageNumericReply const &reply = dynamic_cast< IRC::MessageNumericReply const & >(_message);
-			switch(reply.getReplyCode()) {
+			IRC::MessageNumericReply const &reply = dynamic_cast< IRC::MessageNumericReply const & >( message );
+			switch( reply.getReplyCode() ) {
 				case IRC::RPL_TOPIC:
 				case IRC::RPL_NOTOPIC:
 				case IRC::RPL_NAMREPLY:
 				case IRC::RPL_ENDOFNAMES:
-					for(std::vector< std::string >::const_iterator it = reply.getParamaters().begin(); it != reply.getParamaters().end(); it++) {
-						if(*it == channelName) {
+					for( std::vector< std::string >::const_iterator it = reply.getParamaters().begin(); it != reply.getParamaters().end(); it++ ) {
+						if( *it == channelName ) {
 							joinState = STATE_JOIN_JOINED;
 							std::clog << "PlugInJoin: Joined to channel " << channelName << "." << std::endl;
 							break;
@@ -54,35 +57,34 @@ std::auto_ptr< PlugInResult > PlugInJoin::onPacket(state_t _state, IRC::Message 
 				case IRC::ERR_BANNEDFROMCHAN:
 				case IRC::ERR_BADCHANNELKEY:
 					std::cerr << "PlugInJoin: " << reply << std::flush;
-					//result = std::auto_ptr< PlugInResult >(new PlugInResult);
+					//result = std::auto_ptr< PlugInResult >( new PlugInResult );
 					//result->newState = STATE_DISCONNECTING;
 					break;
 				default:
 					break;
 			}
 		}
-		catch(std::bad_cast) {
-		}
+		catch( std::bad_cast const & ) {}
 	}
 	return result;
 }
 
-std::auto_ptr< PlugInResult > PlugInJoin::onTimeTrigger(state_t _state) {
-	std::auto_ptr< PlugInResult > result(NULL);
-	if(_state == STATE_CONNECTED && joinState == STATE_JOIN_NOP) {
-		result = std::auto_ptr< PlugInResult >(new PlugInResult);
-		result->messages.push_back(new IRC::MessageJoin(channelName));
+std::auto_ptr< PlugInResult > PlugInJoin::onTimeTrigger( state_t state ) {
+	std::auto_ptr< PlugInResult > result( NULL );
+	if( state == STATE_CONNECTED && joinState == STATE_JOIN_NOP ) {
+		result = std::auto_ptr< PlugInResult >( new PlugInResult );
+		result->messages.push_back( new IRC::MessageJoin( channelName ) );
 		joinState = STATE_JOIN_SENT;
 	}
 	return result;
 }
 
-std::auto_ptr< PlugInResult > PlugInJoin::onDisconnect(state_t _state) {
+std::auto_ptr< PlugInResult > PlugInJoin::onDisconnect( state_t state ) {
 	// reset this plug-in:
 	if( joinState != STATE_JOIN_NOP ) {
 		joinState = STATE_JOIN_NOP;
 	}
-	return std::auto_ptr< PlugInResult >(NULL);
+	return std::auto_ptr< PlugInResult >( NULL );
 }
 
 }
