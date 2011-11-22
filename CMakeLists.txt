@@ -46,6 +46,7 @@ add_executable(${PROJECT_NAME}
 	plugins/log.cpp
 	plugins/nickserv.cpp
 	plugins/pingpong.cpp
+	plugins/reconnect.cpp
 	plugins/urltitle.cpp
 	posix/client_socket.cpp
 	posix/server_socket.cpp
