@@ -27,20 +27,20 @@ namespace zerobot {
 
 class PlugInAdmin : public PlugIn {
 	public:
-		PlugInAdmin(int _priority, std::string const &_adminNickname);
+		PlugInAdmin( int priority, std::string const &adminNickname );
 		virtual ~PlugInAdmin() {}
 
-		virtual std::auto_ptr< PlugInResult > onConnect(state_t _state);
-		virtual std::auto_ptr< PlugInResult > onPacket(state_t _state, IRC::Message const &_message);
-		virtual std::auto_ptr< PlugInResult > onTimeTrigger(state_t _state);
-		virtual std::auto_ptr< PlugInResult > onDisconnect(state_t _state);
+		virtual std::auto_ptr< PlugInResult > onConnect( state_t state );
+		virtual std::auto_ptr< PlugInResult > onPacket( state_t state, IRC::Message const &message );
+		virtual std::auto_ptr< PlugInResult > onTimeTrigger( state_t state );
+		virtual std::auto_ptr< PlugInResult > onDisconnect( state_t state );
 
 	protected:
 		std::string adminNickname;
 		static std::vector< std::string > partPhrases;
 
-		std::string trim(std::string _str) const;
-		bool checkAdminNickname(std::string const &_nickname) const;
+		std::string trim( std::string str ) const;
+		bool checkAdminNickname( std::string const &nickname ) const;
 };
 
 }
