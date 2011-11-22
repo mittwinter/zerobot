@@ -31,11 +31,11 @@ namespace zerobot {
 
 class ZeroBot {
 	public:
-		ZeroBot(std::string const &_serverName, int _serverPort);
+		ZeroBot( std::string const &serverName, int serverPort );
 		~ZeroBot();
 
-		void registerPlugIn(PlugIn *_plugIn);
-		bool unregisterPlugIn(std::string const &_name);
+		void registerPlugIn( PlugIn *plugIn );
+		bool unregisterPlugIn( std::string const &name );
 
 		void run();
 
@@ -47,13 +47,13 @@ class ZeroBot {
 		int serverPort;
 
 		state_t state;
-		posix::ClientSocket socket;
+		std::auto_ptr< posix::ClientSocket > socket;
 		std::string buffer;
 		IRC::Parser parser;
 		data::PriorityQueue< int, PlugIn * > plugIns;
 
 		state_t getState() const { return state; }
-		void setState(state_t state) { this->state = state; }
+		void setState( state_t state ) { this->state = state; }
 		bool isConnected() const { return (getState() != STATE_DISCONNECTED); }
 
 		void receiveMessages();
@@ -61,10 +61,10 @@ class ZeroBot {
 		void sleep() const;
 
 		std::string receiveMessage();
-		void sendMessage(IRC::Message const &message);
+		void sendMessage( IRC::Message const &message );
 
-		void processResult(std::auto_ptr< PlugInResult > _result);
-		void processMessage(std::string const &_message);
+		void processResult( std::auto_ptr< PlugInResult > result );
+		void processMessage( std::string const &messageStr );
 };
 
 }
