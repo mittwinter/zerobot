@@ -101,6 +101,10 @@ std::auto_ptr< PlugInResult > PlugInLog::onTimeTrigger(state_t _state) {
 }
 
 std::auto_ptr< PlugInResult > PlugInLog::onDisconnect(state_t _state){
+	// reset this plug-in:
+	if( channelUsers.size() > 0 ) {
+		channelUsers.clear();
+	}
 	return std::auto_ptr< PlugInResult >(NULL);
 }
 
