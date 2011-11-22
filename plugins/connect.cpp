@@ -77,6 +77,10 @@ std::auto_ptr< PlugInResult > PlugInConnect::onTimeTrigger(state_t _state) {
 }
 
 std::auto_ptr< PlugInResult > PlugInConnect::onDisconnect(state_t _state) {
+	// reset this plug-in:
+	if( connectState == STATE_CONNECT_NICK_USER_SENT ) {
+		connectState = STATE_CONNECT_NOP;
+	}
 	return std::auto_ptr< PlugInResult >(NULL);
 }
 
