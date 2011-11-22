@@ -28,11 +28,12 @@
 void showUsage(char const *_programName) {
 		std::clog << "Usage:" << "\t" << _programName << "\t --server=<server> --port=<port> --nick=<nickname>" << std::endl
 		          << "\t\t\t [--join=<channel> ...] [--log=<channel> ... --logfile=<file>] [--title] [--admin=<nickname>]" << std::endl
-		          << "\t\t\t [--identify]" << std::endl;
+		          << "\t\t\t [--identify] [--reconnect]" << std::endl;
 }
 
 int optionsFlagTitle = 0;
 int optionsFlagIdentify = 0;
+int optionsFlagReconnect = 0;
 
 struct option options[] = {
 		{ "server"
@@ -78,6 +79,11 @@ struct option options[] = {
 		{ "identify"
 		, no_argument
 		, &optionsFlagIdentify
+		, 1
+		},
+		{ "reconnect"
+		, no_argument
+		, &optionsFlagReconnect
 		, 1
 		},
 		{ 0, 0, 0, 0 }
@@ -127,6 +133,9 @@ int main(int argc, char *argv[]) {
 				break;
 			case 'i':
 				optionsFlagIdentify = 1;
+				break;
+			case 'r':
+				optionsFlagReconnect = 1;
 				break;
 			case '?':
 				// TODO: print more detailled error message here!
@@ -189,6 +198,10 @@ int main(int argc, char *argv[]) {
 	bot.registerPlugIn(plugIn);
 	if(optionsFlagIdentify) {
 		plugIn = new zerobot::PlugInNickServ(-5);
+		bot.registerPlugIn(plugIn);
+	}
+	if(optionsFlagReconnect) {
+		plugIn = new zerobot::PlugInReconnect(10);
 		bot.registerPlugIn(plugIn);
 	}
 	// Run bot:
