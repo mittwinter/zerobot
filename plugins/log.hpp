@@ -28,13 +28,13 @@ namespace zerobot {
 
 class PlugInLog : public PlugIn {
 	public:
-		PlugInLog(int _priority, std::string const &_name, std::string const &_channelName, std::string const &_databaseFilename);
+		PlugInLog( int priority, std::string const &name, std::string const &channelName, std::string const &databaseFilename );
 		virtual ~PlugInLog();
 
-		virtual std::auto_ptr< PlugInResult > onConnect(state_t _state);
-		virtual std::auto_ptr< PlugInResult > onPacket(state_t _state, IRC::Message const &_message);
-		virtual std::auto_ptr< PlugInResult > onTimeTrigger(state_t _state);
-		virtual std::auto_ptr< PlugInResult > onDisconnect(state_t _state);
+		virtual std::auto_ptr< PlugInResult > onConnect( state_t state );
+		virtual std::auto_ptr< PlugInResult > onPacket( state_t state, IRC::Message const &message );
+		virtual std::auto_ptr< PlugInResult > onTimeTrigger( state_t state );
+		virtual std::auto_ptr< PlugInResult > onDisconnect( state_t state );
 
 		std::string const &getChannelName() const { return channelName; }
 
@@ -43,9 +43,9 @@ class PlugInLog : public PlugIn {
 		std::list< std::string > channelUsers;
 		IRC::LogSQLite logSQLite;
 
-		void parseChannelUsers(std::string const &_channelUsersStr);
-		void addChannelUser(std::string const &_user);
-		void rmChannelUser(std::string const &_user);
+		void parseChannelUsers( std::string const &channelUsersStr );
+		void addChannelUser( std::string const &user );
+		void removeChannelUser( std::string const &user );
 };
 
 }

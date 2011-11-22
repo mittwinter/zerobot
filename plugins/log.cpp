@@ -23,9 +23,10 @@
 
 namespace zerobot {
 
-PlugInLog::PlugInLog(int _priority, std::string const &_name, std::string const &_channelName, std::string const &_databaseFilename)
-        : PlugIn(_priority, _name), logSQLite(_databaseFilename) {
-	channelName = _channelName;
+PlugInLog::PlugInLog( int priority, std::string const &name, std::string const &channelName, std::string const &databaseFilename )
+		: PlugIn( priority, name )
+		, channelName( channelName )
+		, logSQLite( databaseFilename ) {
 	logSQLite.open();
 }
 
@@ -33,20 +34,21 @@ PlugInLog::~PlugInLog() {
 	logSQLite.close();
 }
 
-std::auto_ptr< PlugInResult > PlugInLog::onConnect(state_t _state) {
-	return std::auto_ptr< PlugInResult >(NULL);
+std::auto_ptr< PlugInResult > PlugInLog::onConnect( state_t state ) {
+	return std::auto_ptr< PlugInResult >( NULL );
 }
 
-std::auto_ptr< PlugInResult > PlugInLog::onPacket(state_t _state, IRC::Message const &_message) {
+std::auto_ptr< PlugInResult > PlugInLog::onPacket( state_t state, IRC::Message const &message ) {
 	try {
-		IRC::MessageNumericReply const &numericReply = dynamic_cast< IRC::MessageNumericReply const & >(_message);
+		IRC::MessageNumericReply const &numericReply = dynamic_cast< IRC::MessageNumericReply const & >( message );
 		try {
 			// seems that the channel name can be at first or last position in parameter list "in the wild", so honour this:
-			if(numericReply.getParamaters().at(0) == channelName
-			        || (numericReply.getParamaters().size() > 1 && numericReply.getParamaters().at(numericReply.getParamaters().size() - 1) == channelName)) {
-				if(numericReply.getReplyCode() == IRC::RPL_NAMREPLY) {
-					logSQLite.logNamesList(channelName, numericReply.getTrailing());
-					parseChannelUsers(numericReply.getTrailing());
+			if( numericReply.getParamaters().at( 0 ) == channelName
+					|| (numericReply.getParamaters().size() > 1 && numericReply.getParamaters().at( numericReply.getParamaters().size() - 1 ) == channelName)
+					) {
+				if( numericReply.getReplyCode() == IRC::RPL_NAMREPLY ) {
+					logSQLite.logNamesList( channelName, numericReply.getTrailing() );
+					parseChannelUsers( numericReply.getTrailing() );
 				}
 			}
 		}
@@ -54,84 +56,84 @@ std::auto_ptr< PlugInResult > PlugInLog::onPacket(state_t _state, IRC::Message c
 	}
 	catch(std::bad_cast) {}
 	try {
-		IRC::MessageNick const &nickMessage = dynamic_cast< IRC::MessageNick const & >(_message);
-		if(std::find(channelUsers.begin(), channelUsers.end(), nickMessage.getPrefix()->getNick()) != channelUsers.end()) {
-			rmChannelUser(nickMessage.getPrefix()->getNick());
-			addChannelUser(nickMessage.getNickname());
-			logSQLite.logNick(channelName, nickMessage.getPrefix()->getNick(), nickMessage.getNickname());
+		IRC::MessageNick const &nickMessage = dynamic_cast< IRC::MessageNick const & >( message );
+		if( std::find( channelUsers.begin(), channelUsers.end(), nickMessage.getPrefix()->getNick() ) != channelUsers.end() ) {
+			removeChannelUser( nickMessage.getPrefix()->getNick() );
+			addChannelUser( nickMessage.getNickname() );
+			logSQLite.logNick( channelName, nickMessage.getPrefix()->getNick(), nickMessage.getNickname() );
 		}
 	}
 	catch(std::bad_cast) {}
 	try {
-		IRC::MessageQuit const &quitMessage = dynamic_cast< IRC::MessageQuit const & >(_message);
-		if(std::find(channelUsers.begin(), channelUsers.end(), quitMessage.getPrefix()->getNick()) != channelUsers.end()) {
-			rmChannelUser(quitMessage.getPrefix()->getNick());
-			logSQLite.logQuit(channelName, quitMessage.getPrefix()->getNick(), quitMessage.getQuitMessage());
+		IRC::MessageQuit const &quitMessage = dynamic_cast< IRC::MessageQuit const & >( message );
+		if( std::find( channelUsers.begin(), channelUsers.end(), quitMessage.getPrefix()->getNick() ) != channelUsers.end() ) {
+			removeChannelUser( quitMessage.getPrefix()->getNick() );
+			logSQLite.logQuit( channelName, quitMessage.getPrefix()->getNick(), quitMessage.getQuitMessage() );
 		}
 	}
 	catch(std::bad_cast) {}
 	try {
-		IRC::MessageJoin const &joinMessage = dynamic_cast< IRC::MessageJoin const & >(_message);
-		if(joinMessage.getChannelName() == channelName && joinMessage.getPrefix() != NULL && joinMessage.getPrefix()->getNick() != "") {
-			addChannelUser(joinMessage.getPrefix()->getNick());
-			logSQLite.logJoin(channelName, joinMessage.getPrefix()->getNick());
+		IRC::MessageJoin const &joinMessage = dynamic_cast< IRC::MessageJoin const & >( message );
+		if( joinMessage.getChannelName() == channelName && joinMessage.getPrefix() != NULL && joinMessage.getPrefix()->getNick().size() > 0 ) {
+			addChannelUser( joinMessage.getPrefix()->getNick() );
+			logSQLite.logJoin( channelName, joinMessage.getPrefix()->getNick() );
 		}
 	}
 	catch(std::bad_cast) {}
 	try {
-		IRC::MessagePrivMsg const &privMsg = dynamic_cast< IRC::MessagePrivMsg const & >(_message);
-		if(privMsg.getReceiver() == channelName) {
-			logSQLite.logPrivMsg(channelName, privMsg.getPrefix()->getNick(), privMsg.getMessage());
+		IRC::MessagePrivMsg const &privMsg = dynamic_cast< IRC::MessagePrivMsg const & >( message );
+		if( privMsg.getReceiver() == channelName ) {
+			logSQLite.logPrivMsg( channelName, privMsg.getPrefix()->getNick(), privMsg.getMessage() );
 		}
 	}
 	catch(std::bad_cast) {}
 	try {
-		IRC::MessagePart const &partMessage = dynamic_cast< IRC::MessagePart const & >(_message);
-		if(std::find(channelUsers.begin(), channelUsers.end(), partMessage.getPrefix()->getNick()) != channelUsers.end()) {
-			rmChannelUser(partMessage.getPrefix()->getNick());
-			logSQLite.logQuit(channelName, partMessage.getPrefix()->getNick(), partMessage.getPartMessage());
+		IRC::MessagePart const &partMessage = dynamic_cast< IRC::MessagePart const & >( message );
+		if( std::find( channelUsers.begin(), channelUsers.end(), partMessage.getPrefix()->getNick() ) != channelUsers.end()) {
+			removeChannelUser( partMessage.getPrefix()->getNick() );
+			logSQLite.logQuit( channelName, partMessage.getPrefix()->getNick(), partMessage.getPartMessage() );
 		}
 	}
 	catch(std::bad_cast) {}
-	return std::auto_ptr< PlugInResult >(NULL);
+	return std::auto_ptr< PlugInResult >( NULL );
 }
 
-std::auto_ptr< PlugInResult > PlugInLog::onTimeTrigger(state_t _state) {
-	return std::auto_ptr< PlugInResult >(NULL);
+std::auto_ptr< PlugInResult > PlugInLog::onTimeTrigger( state_t state ) {
+	return std::auto_ptr< PlugInResult >( NULL );
 }
 
-std::auto_ptr< PlugInResult > PlugInLog::onDisconnect(state_t _state){
+std::auto_ptr< PlugInResult > PlugInLog::onDisconnect( state_t state ){
 	// reset this plug-in:
 	if( channelUsers.size() > 0 ) {
 		channelUsers.clear();
 	}
-	return std::auto_ptr< PlugInResult >(NULL);
+	return std::auto_ptr< PlugInResult >( NULL );
 }
 
-void PlugInLog::parseChannelUsers(std::string const &_channelUsersStr) {
+void PlugInLog::parseChannelUsers( std::string const &channelUsersStr ) {
 	std::stringstream sstrUsers;
-	sstrUsers << _channelUsersStr;
+	sstrUsers << channelUsersStr;
 	std::string lastUser, user;
 	do {
 		lastUser = user;
 		sstrUsers >> user;
-		if(user != lastUser && user.size() > 0) {
-			addChannelUser(user);
+		if( user != lastUser && user.size() > 0 ) {
+			addChannelUser( user );
 		}
 	}
-	while(user != lastUser && user.size() != 0);
+	while( user != lastUser && user.size() != 0 );
 }
 
-void PlugInLog::addChannelUser(std::string const &_user) {
-	if(std::find(channelUsers.begin(), channelUsers.end(), _user) == channelUsers.end()) {
-		channelUsers.push_back(_user);
+void PlugInLog::addChannelUser( std::string const &user ) {
+	if( std::find( channelUsers.begin(), channelUsers.end(), user ) == channelUsers.end() ) {
+		channelUsers.push_back( user );
 	}
 }
 
-void PlugInLog::rmChannelUser(std::string const &_user) {
-	std::list< std::string >::iterator it = std::find(channelUsers.begin(), channelUsers.end(), _user);
-	if(it != channelUsers.end()) {
-		channelUsers.erase(it);
+void PlugInLog::removeChannelUser( std::string const &user ) {
+	std::list< std::string >::iterator it = std::find( channelUsers.begin(), channelUsers.end(), user );
+	if( it != channelUsers.end() ) {
+		channelUsers.erase( it );
 	}
 }
 
