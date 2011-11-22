@@ -53,7 +53,7 @@ std::auto_ptr< PlugInResult > PlugInPingPong::onPacket(state_t _state, IRC::Mess
 
 std::auto_ptr< PlugInResult > PlugInPingPong::onTimeTrigger(state_t _state) {
 	std::auto_ptr< PlugInResult > result(NULL);
-	if((lastPing - lastPong) > 95) {
+	if((lastPing - lastPong) > 125) {
 		std::cerr << "PlugInPingPong: Connection timeouted." << std::endl;
 		result = std::auto_ptr< PlugInResult >(new PlugInResult);
 		result->newState = STATE_DISCONNECTING;
