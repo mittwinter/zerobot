@@ -24,13 +24,13 @@ namespace zerobot {
 
 class PlugInNickServ : public PlugIn {
 	public:
-		PlugInNickServ(int _priority) : PlugIn(_priority, "NickServ"), identified(false) {}
+		PlugInNickServ( int priority ) : PlugIn( priority, "NickServ" ), identified( false ) {}
 		virtual ~PlugInNickServ() {}
 
-		virtual std::auto_ptr< PlugInResult > onConnect(state_t _state);
-		virtual std::auto_ptr< PlugInResult > onPacket(state_t _state, IRC::Message const &_message);
-		virtual std::auto_ptr< PlugInResult > onTimeTrigger(state_t _state);
-		virtual std::auto_ptr< PlugInResult > onDisconnect(state_t _state);
+		virtual std::auto_ptr< PlugInResult > onConnect( state_t state );
+		virtual std::auto_ptr< PlugInResult > onPacket( state_t state, IRC::Message const &message );
+		virtual std::auto_ptr< PlugInResult > onTimeTrigger( state_t state );
+		virtual std::auto_ptr< PlugInResult > onDisconnect( state_t state );
 
 	protected:
 		bool identified;

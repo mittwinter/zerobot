@@ -22,33 +22,33 @@
 
 namespace zerobot {
 
-std::auto_ptr< PlugInResult > PlugInNickServ::onConnect(state_t _state) {
-	return std::auto_ptr< PlugInResult >(NULL);
+std::auto_ptr< PlugInResult > PlugInNickServ::onConnect( state_t state ) {
+	return std::auto_ptr< PlugInResult >( NULL );
 }
 
-std::auto_ptr< PlugInResult > PlugInNickServ::onPacket(state_t _state, IRC::Message const &_message) {
-	return std::auto_ptr< PlugInResult >(NULL);
+std::auto_ptr< PlugInResult > PlugInNickServ::onPacket( state_t state, IRC::Message const &message ) {
+	return std::auto_ptr< PlugInResult >( NULL );
 }
 
-std::auto_ptr< PlugInResult > PlugInNickServ::onTimeTrigger(state_t _state) {
-	std::auto_ptr< PlugInResult > result = std::auto_ptr< PlugInResult >(NULL);
-	if(_state == STATE_CONNECTED && !identified) {
+std::auto_ptr< PlugInResult > PlugInNickServ::onTimeTrigger( state_t state ) {
+	std::auto_ptr< PlugInResult > result = std::auto_ptr< PlugInResult >( NULL );
+	if( state == STATE_CONNECTED && !identified ) {
 		std::string password;
 		std::cout << "Please enter NickServ password: " << std::flush;
 		std::cin >> password;
-		result = std::auto_ptr< PlugInResult >(new PlugInResult);
-		result->messages.push_back(new IRC::MessagePrivMsg("NickServ", "IDENTIFY " + password));
+		result = std::auto_ptr< PlugInResult >( new PlugInResult );
+		result->messages.push_back( new IRC::MessagePrivMsg( "NickServ", "IDENTIFY " + password ) );
 		identified = true; // TODO: Really check for this!
 	}
 	return result;
 }
 
-std::auto_ptr< PlugInResult > PlugInNickServ::onDisconnect(state_t _state) {
+std::auto_ptr< PlugInResult > PlugInNickServ::onDisconnect( state_t state ) {
 	// reset this plug-in:
 	if( identified ) {
 		identified = false;
 	}
-	return std::auto_ptr< PlugInResult >(NULL);
+	return std::auto_ptr< PlugInResult >( NULL );
 }
 
 }
