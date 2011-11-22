@@ -25,6 +25,7 @@
 #include "log.hpp"
 #include "nickserv.hpp"
 #include "pingpong.hpp"
+#include "reconnect.hpp"
 #include "urltitle.hpp"
 
 #endif
