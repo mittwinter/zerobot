@@ -53,35 +53,37 @@ bool ZeroBot::unregisterPlugIn(std::string const &_name) {
 }
 
 void ZeroBot::run() {
-	while(isConnected()) {
-		// Run onConnect() triggers of plug-ins if appropiate:
-		if(getState() == STATE_CONNECTING) {
-			for(data::PriorityQueue< int, PlugIn * >::iterator it = plugIns.begin(); it != plugIns.end(); it++) {
-				processResult(it->second->onConnect(getState()));
+	while(isConnected()) { // outer loop ensures that we continue to run if we get connected somehow after we were disconnected (e. g. reconnect plug-in ... *hinthint*)
+		while(isConnected()) {
+			// Run onConnect() triggers of plug-ins if appropiate:
+			if(getState() == STATE_CONNECTING) {
+				for(data::PriorityQueue< int, PlugIn * >::iterator it = plugIns.begin(); it != plugIns.end(); it++) {
+					processResult(it->second->onConnect(getState()));
+				}
+			}
+			// Receive messages:
+			if(isConnected()) {
+				receiveMessages();
+			}
+			// Time-trigger plug-ins:
+			if(isConnected()) {
+				timeTriggerPlugins();
+			}
+			// Run onDisconnect() triggers of plug-ins if appropiate:
+			if(getState() == STATE_DISCONNECTING) {
+				for(data::PriorityQueue< int, PlugIn * >::reverse_iterator it = plugIns.rbegin(); it != plugIns.rend(); it++) {
+					processResult(it->second->onDisconnect(getState()));
+				}
+			}
+			if(isConnected()) {
+				sleep();
 			}
 		}
-		// Receive messages:
-		if(isConnected()) {
-			receiveMessages();
-		}
-		// Time-trigger plug-ins:
-		if(isConnected()) {
-			timeTriggerPlugins();
-		}
-		// Run onDisconnect() triggers of plug-ins if appropiate:
-		if(getState() == STATE_DISCONNECTING) {
-			for(data::PriorityQueue< int, PlugIn * >::reverse_iterator it = plugIns.rbegin(); it != plugIns.rend(); it++) {
+		// We were disconnected, so run onDisconnect() triggers one last time with this state:
+		if(getState() == STATE_DISCONNECTED) {
+			for(data::PriorityQueue< int, PlugIn * >::iterator it = plugIns.begin(); it != plugIns.end(); it++) {
 				processResult(it->second->onDisconnect(getState()));
 			}
-		}
-		if(isConnected()) {
-			sleep();
-		}
-	}
-	// We were disconnected, so run onDisconnect() triggers one last time with this state:
-	if(getState() == STATE_DISCONNECTED) {
-		for(data::PriorityQueue< int, PlugIn * >::iterator it = plugIns.begin(); it != plugIns.end(); it++) {
-			processResult(it->second->onDisconnect(getState()));
 		}
 	}
 }
