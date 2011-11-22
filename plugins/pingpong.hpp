@@ -27,13 +27,13 @@ namespace zerobot {
 
 class PlugInPingPong : public PlugIn {
 	public:
-		PlugInPingPong(int _priority, std::string const &_serverName);
+		PlugInPingPong( int priority, std::string const &serverName );
 		virtual ~PlugInPingPong() {}
 
-		virtual std::auto_ptr< PlugInResult > onConnect(state_t _state);
-		virtual std::auto_ptr< PlugInResult > onPacket(state_t _state, IRC::Message const &_message);
-		virtual std::auto_ptr< PlugInResult > onTimeTrigger(state_t _state);
-		virtual std::auto_ptr< PlugInResult > onDisconnect(state_t _state);
+		virtual std::auto_ptr< PlugInResult > onConnect( state_t state );
+		virtual std::auto_ptr< PlugInResult > onPacket( state_t state, IRC::Message const &message );
+		virtual std::auto_ptr< PlugInResult > onTimeTrigger( state_t state );
+		virtual std::auto_ptr< PlugInResult > onDisconnect( state_t state );
 
 	protected:
 		std::string serverName;

@@ -22,56 +22,57 @@
 
 namespace zerobot {
 
-PlugInPingPong::PlugInPingPong(int _priority, std::string const &_serverName) : PlugIn(_priority, "pingpong") {
-	serverName = _serverName;
-	lastPing = time(NULL);
-	lastPong = time(NULL);
+PlugInPingPong::PlugInPingPong( int priority, std::string const &serverName )
+		: PlugIn( priority, "pingpong" )
+		, serverName( serverName )
+		, lastPing( time( NULL ) )
+		, lastPong( time( NULL ) )
+		{
 }
 
-std::auto_ptr< PlugInResult > PlugInPingPong::onConnect(state_t _state) {
-	return std::auto_ptr< PlugInResult >(NULL);
+std::auto_ptr< PlugInResult > PlugInPingPong::onConnect( state_t state ) {
+	return std::auto_ptr< PlugInResult >( NULL );
 }
 
-std::auto_ptr< PlugInResult > PlugInPingPong::onPacket(state_t _state, IRC::Message const &_message) {
+std::auto_ptr< PlugInResult > PlugInPingPong::onPacket( state_t state, IRC::Message const &message ) {
 	try {
-		IRC::MessagePing const &ping = dynamic_cast< IRC::MessagePing const & >(_message);
-		lastPing = time(NULL);
-		std::auto_ptr< PlugInResult > result(new PlugInResult);
-		result->messages.push_back(new IRC::MessagePong(ping.getServerName()));
+		IRC::MessagePing const &ping = dynamic_cast< IRC::MessagePing const & >( message );
+		lastPing = time( NULL );
+		std::auto_ptr< PlugInResult > result( new PlugInResult );
+		result->messages.push_back( new IRC::MessagePong( ping.getServerName() ) );
 		return result;
 	}
-	catch(std::bad_cast e) {
-	}
+	catch( std::bad_cast const & ) {}
 	try {
-		IRC::MessagePong const &pong __attribute__((unused)) = dynamic_cast< IRC::MessagePong const & >(_message);
-		lastPong = time(NULL);
+		IRC::MessagePong const &pong __attribute__((unused)) = dynamic_cast< IRC::MessagePong const & >( message );
+		lastPong = time( NULL );
 	}
-	catch(std::bad_cast e) {
-	}
-	return std::auto_ptr< PlugInResult >(NULL);
+	catch( std::bad_cast const & ) {}
+	return std::auto_ptr< PlugInResult >( NULL );
 }
 
-std::auto_ptr< PlugInResult > PlugInPingPong::onTimeTrigger(state_t _state) {
-	std::auto_ptr< PlugInResult > result(NULL);
-	if((lastPing - lastPong) > 125) {
-		std::cerr << "PlugInPingPong: Connection timeouted." << std::endl;
-		result = std::auto_ptr< PlugInResult >(new PlugInResult);
+std::auto_ptr< PlugInResult > PlugInPingPong::onTimeTrigger( state_t state ) {
+	std::auto_ptr< PlugInResult > result( NULL );
+	if( (lastPing - lastPong) > 125 ) {
+		std::cerr << "PlugInPingPong: Connection timeout..." << std::endl;
+		result = std::auto_ptr< PlugInResult >( new PlugInResult );
 		result->newState = STATE_DISCONNECTING;
 	}
-	else if((time(NULL) - lastPing) > 60) {
-		std::clog << "PlugInPingPong: Last ping is more than 60 seconds in the past, pinging server ..." << std::endl;
-		lastPing = time(NULL);
-		result = std::auto_ptr< PlugInResult >(new PlugInResult);
-		result->messages.push_back(new IRC::MessagePing(serverName));
+	else if( (time( NULL ) - lastPing) > 60 ) {
+		std::clog << "PlugInPingPong: Last ping is more than 60 seconds in the past, pinging server ..."
+		          << std::endl;
+		lastPing = time( NULL );
+		result = std::auto_ptr< PlugInResult >( new PlugInResult );
+		result->messages.push_back( new IRC::MessagePing( serverName ) );
 	}
 	return result;
 }
 
-std::auto_ptr< PlugInResult > PlugInPingPong::onDisconnect(state_t _state) {
+std::auto_ptr< PlugInResult > PlugInPingPong::onDisconnect( state_t state ) {
 	// reset this plug-in:
-	lastPing = time(NULL);
-	lastPong = time(NULL);
-	return std::auto_ptr< PlugInResult >(NULL);
+	lastPing = time( NULL );
+	lastPong = time( NULL );
+	return std::auto_ptr< PlugInResult >( NULL );
 }
 
 }
