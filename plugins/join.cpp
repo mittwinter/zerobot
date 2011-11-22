@@ -78,6 +78,10 @@ std::auto_ptr< PlugInResult > PlugInJoin::onTimeTrigger(state_t _state) {
 }
 
 std::auto_ptr< PlugInResult > PlugInJoin::onDisconnect(state_t _state) {
+	// reset this plug-in:
+	if( joinState != STATE_JOIN_NOP ) {
+		joinState = STATE_JOIN_NOP;
+	}
 	return std::auto_ptr< PlugInResult >(NULL);
 }
 
