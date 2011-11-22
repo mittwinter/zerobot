@@ -119,9 +119,9 @@ int main(int argc, char *argv[]) {
 				logfileFound = true;
 				logfile = optarg;
 				break;
-//			case 't':
-//				optionsFlagTitle = 1;
-//				break;
+			case 't':
+				optionsFlagTitle = 1;
+				break;
 			case 'a':
 				admin = optarg;
 				break;
