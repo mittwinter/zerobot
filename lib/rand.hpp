@@ -20,7 +20,7 @@
 
 namespace util {
 
-double rand(double _high);
+double rand( double high );
 
 }
 

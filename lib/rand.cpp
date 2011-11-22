@@ -20,12 +20,12 @@
 
 #include "rand.hpp"
 
-double util::rand(double _high) {
+double util::rand( double high ) {
 	static bool initialized = false;
-	if(!initialized) {
-		srand(time(NULL));
+	if( !initialized ) {
+		srand( time( NULL ) );
 		initialized = true;
 	}
-	return _high * std::rand() / RAND_MAX;
+	return high * std::rand() / RAND_MAX;
 }
 
