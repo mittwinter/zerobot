@@ -19,13 +19,12 @@
 
 namespace zerobot {
 
-PlugInResult::PlugInResult() {
-	newState = STATE_NOP;
+PlugInResult::PlugInResult() : newState( STATE_NOP ) {
 }
 
 std::string const PlugIn::commandPrefix = "!";
 
-PlugIn::PlugIn(unsigned int _priority, std::string const &_name) : priority(_priority), name(_name) {
+PlugIn::PlugIn( unsigned int priority, std::string const &name ) : priority(priority), name(name) {
 }
 
 }

@@ -15,8 +15,8 @@
 	along with zerobot.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef ZEROBOT_PLUG_IN_HPP
-#define ZEROBOT_PLUG_IN_HPP
+#ifndef PLUGINS_BASE_HPP
+#define PLUGINS_BASE_HPP
 
 #include <list>
 #include <memory>
@@ -40,17 +40,17 @@ class PlugInResult {
 
 class PlugIn {
 	public:
-		PlugIn(unsigned int _priority, std::string const &_name);
+		PlugIn( unsigned int priority, std::string const &name );
 		virtual ~PlugIn() {}
 
 		unsigned int getPriority() const { return priority; }
 		std::string const &getName() const { return name; }
 		std::string const &getCommandPrefix() const { return commandPrefix; }
 
-		virtual std::auto_ptr< PlugInResult > onConnect(state_t _state) = 0;
-		virtual std::auto_ptr< PlugInResult > onPacket(state_t _state, IRC::Message const &_message) = 0;
-		virtual std::auto_ptr< PlugInResult > onTimeTrigger(state_t _state) = 0;
-		virtual std::auto_ptr< PlugInResult > onDisconnect(state_t _state) = 0;
+		virtual std::auto_ptr< PlugInResult > onConnect( state_t state ) = 0;
+		virtual std::auto_ptr< PlugInResult > onPacket( state_t state, IRC::Message const &message ) = 0;
+		virtual std::auto_ptr< PlugInResult > onTimeTrigger( state_t state ) = 0;
+		virtual std::auto_ptr< PlugInResult > onDisconnect( state_t state ) = 0;
 
 	protected:
 		const unsigned int priority;
