@@ -26,13 +26,13 @@ namespace zerobot {
 
 class PlugInConnect : public PlugIn {
 	public:
-		PlugInConnect(int _priority, std::string _botNickname);
+		PlugInConnect( int priority, std::string botNickname );
 		virtual ~PlugInConnect() {}
 
-		virtual std::auto_ptr< PlugInResult > onConnect(state_t _state);
-		virtual std::auto_ptr< PlugInResult > onPacket(state_t _state, IRC::Message const &_message);
-		virtual std::auto_ptr< PlugInResult > onTimeTrigger(state_t _state);
-		virtual std::auto_ptr< PlugInResult > onDisconnect(state_t _state);
+		virtual std::auto_ptr< PlugInResult > onConnect( state_t state );
+		virtual std::auto_ptr< PlugInResult > onPacket( state_t state, IRC::Message const &message );
+		virtual std::auto_ptr< PlugInResult > onTimeTrigger( state_t state );
+		virtual std::auto_ptr< PlugInResult > onDisconnect( state_t state );
 
 	protected:
 		typedef enum {
