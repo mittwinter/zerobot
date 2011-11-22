@@ -44,6 +44,10 @@ std::auto_ptr< PlugInResult > PlugInNickServ::onTimeTrigger(state_t _state) {
 }
 
 std::auto_ptr< PlugInResult > PlugInNickServ::onDisconnect(state_t _state) {
+	// reset this plug-in:
+	if( identified ) {
+		identified = false;
+	}
 	return std::auto_ptr< PlugInResult >(NULL);
 }
 
