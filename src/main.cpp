@@ -201,7 +201,7 @@ int main(int argc, char *argv[]) {
 		bot.registerPlugIn(plugIn);
 	}
 	if(optionsFlagReconnect) {
-		plugIn = new zerobot::PlugInReconnect(10);
+		plugIn = new zerobot::PlugInReconnect(-20);
 		bot.registerPlugIn(plugIn);
 	}
 	// Run bot:
