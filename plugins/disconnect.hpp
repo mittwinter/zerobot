@@ -27,13 +27,13 @@ namespace zerobot {
 
 class PlugInDisconnect : public PlugIn {
 	public:
-		PlugInDisconnect(int _priority);
+		PlugInDisconnect( int priority );
 		virtual ~PlugInDisconnect() {}
 
-		virtual std::auto_ptr< PlugInResult > onConnect(state_t _state);
-		virtual std::auto_ptr< PlugInResult > onPacket(state_t _state, IRC::Message const &_message);
-		virtual std::auto_ptr< PlugInResult > onTimeTrigger(state_t _state);
-		virtual std::auto_ptr< PlugInResult > onDisconnect(state_t _state);
+		virtual std::auto_ptr< PlugInResult > onConnect( state_t state );
+		virtual std::auto_ptr< PlugInResult > onPacket( state_t state, IRC::Message const &message );
+		virtual std::auto_ptr< PlugInResult > onTimeTrigger( state_t state );
+		virtual std::auto_ptr< PlugInResult > onDisconnect( state_t state );
 
 	protected:
 		static std::vector< std::string > quitMessages;
