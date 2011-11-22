@@ -68,6 +68,9 @@ std::auto_ptr< PlugInResult > PlugInPingPong::onTimeTrigger(state_t _state) {
 }
 
 std::auto_ptr< PlugInResult > PlugInPingPong::onDisconnect(state_t _state) {
+	// reset this plug-in:
+	lastPing = time(NULL);
+	lastPong = time(NULL);
 	return std::auto_ptr< PlugInResult >(NULL);
 }
 
