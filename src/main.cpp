@@ -91,7 +91,7 @@ int main(int argc, char *argv[]) {
 	std::list< std::string > joinChannels;
 	std::list< std::string > logChannels;
 	do {
-		getoptResult = getopt_long(argc, argv, "s:p:n:j:l:f:ta:", options, &optionIndex);
+		getoptResult = getopt_long(argc, argv, "s:p:n:j:l:f:ta:i", options, &optionIndex);
 		switch(getoptResult) {
 			case -1: // all options parsed...
 			case 0: // getopt() set flag...
@@ -124,6 +124,9 @@ int main(int argc, char *argv[]) {
 //				break;
 			case 'a':
 				admin = optarg;
+				break;
+			case 'i':
+				optionsFlagIdentify = 1;
 				break;
 			case '?':
 				// TODO: print more detailled error message here!
