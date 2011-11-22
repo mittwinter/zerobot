@@ -88,7 +88,7 @@ void ZeroBot::run() {
 		}
 		// We were disconnected, so run onDisconnect() triggers one last time with this state:
 		if( getState() == STATE_DISCONNECTED ) {
-			for( data::PriorityQueue< int, PlugIn * >::iterator it = plugIns.begin(); it != plugIns.end(); it++ ) {
+			for( data::PriorityQueue< int, PlugIn * >::iterator it = plugIns.rbegin(); it != plugIns.rend(); it++ ) {
 				processResult( it->second->onDisconnect( getState() ) );
 			}
 		}
