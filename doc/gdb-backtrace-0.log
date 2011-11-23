@@ -1,0 +1,53 @@
+$ gdb ./zerobot
+GNU gdb (GDB) 7.1-ubuntu
+Copyright (C) 2010 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "x86_64-linux-gnu".
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>...
+Reading symbols from /home/martin/Projects/zerobot/zerobot...done.
+(gdb) r
+Starting program: /home/martin/Projects/zerobot/zerobot
+Usage:   
+         /home/martin/Projects/zerobot/zerobot <server> <port>
+
+Program exited with code 01.
+(gdb) r irc.freenode.net 6667
+Starting program: /home/martin/Projects/zerobot/zerobot irc.freenode.net 6667
+ClientSocket: Successfully connected to irc.freenode.net on port 6667.
+:gibson.freenode.net NOTICE * :*** Looking up your hostname...
+Parser: Message with command 'NOTICE' not handled at the moment.
+:gibson.freenode.net NOTICE * :*** Checking Ident
+Parser: Message with command 'NOTICE' not handled at the moment.
+:gibson.freenode.net NOTICE * :*** Found your hostname
+Parser: Message with command 'NOTICE' not handled at the moment.
+:gibson.freenode.net NOTICE * :*** No Ident response
+Parser: Message with command 'NOTICE' not handled at the moment.
+:gibson.freenode.net 433 * Wechner :Nickname is already in use.
+PlugInConnect: 433: Nickname is already in use.
+
+terminate called after throwing an instance of 'std::out_of_range'
+  what():  vector::_M_range_check
+
+Program received signal SIGABRT, Aborted.
+0x00007ffff72dfa75 in raise () from /lib/libc.so.6
+(gdb) bt
+#0  0x00007ffff72dfa75 in raise () from /lib/libc.so.6
+#1  0x00007ffff72e35c0 in abort () from /lib/libc.so.6
+#2  0x00007ffff7b948e5 in __gnu_cxx::__verbose_terminate_handler() () from /usr/lib/libstdc++.so.6
+#3  0x00007ffff7b92d16 in ?? () from /usr/lib/libstdc++.so.6
+#4  0x00007ffff7b92d43 in std::terminate() () from /usr/lib/libstdc++.so.6
+#5  0x00007ffff7b92e3e in __cxa_throw () from /usr/lib/libstdc++.so.6
+#6  0x00007ffff7b2e667 in std::__throw_out_of_range(char const*) () from /usr/lib/libstdc++.so.6
+#7  0x000000000041990f in std::vector<std::string, std::allocator<std::string> >::_M_range_check (this=0x623800, __n=2)
+    at /usr/include/c++/4.4/bits/stl_vector.h:634
+#8  0x000000000041ae79 in std::vector<std::string, std::allocator<std::string> >::at (this=0x623800, __n=2)
+    at /usr/include/c++/4.4/bits/stl_vector.h:652
+#9  0x000000000041ace1 in zerobot::PlugInDisconnect::onDisconnect (this=0x625610, _state=zerobot::STATE_DISCONNECTING)
+    at /home/martin/Projects/zerobot/plugins/disconnect.cpp:34
+#10 0x0000000000410ab9 in zerobot::ZeroBot::run (this=0x7fffffffe020) at /home/martin/Projects/zerobot/src/zerobot.cpp:51
+#11 0x000000000040d71b in main (argc=3, argv=0x7fffffffe1d8) at /home/martin/Projects/zerobot/src/main.cpp:30
+(gdb) 

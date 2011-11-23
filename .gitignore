@@ -6,7 +6,6 @@ Makefile
 ToDo.txt
 cmake_install.cmake
 default
-doc/
 doxygen/
 local/
 release.sh
