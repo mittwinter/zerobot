@@ -94,17 +94,22 @@ CurlHTMLDownloader::~CurlHTMLDownloader() {
 }
 
 void CurlHTMLDownloader::perform() {
-	std::clog << "CurlHTMLDownloader: Fetching URL '" << url << "'..." << std::endl;
+	std::clog << "CurlHTMLDownloader: Fetching URL '" << url << "' (at most " << MAX_BUFFER_SIZE << " bytes)..."
+	          << std::endl;
 	if( curl_easy_perform( handle ) != 0 ) {
 		// TODO: Handle errors here in a better way!
 		//  We want to continue when we reached the buffer limit, but abort otherwise!
-		std::cerr << "**********************************************************" << std::endl;
-		std::cerr << "CurlHTMLDownloader: libcurl reported the following errors:" << std::endl;
-		std::cerr << errorBuffer << std::endl;
-		std::cerr << "**********************************************************" << std::endl;
+		std::cerr << "CurlHTMLDownloader: \t **********************************************************"
+		          << std::endl;
+		std::cerr << "CurlHTMLDownloader: \t libcurl reported the following errors:"
+		          << std::endl;
+		std::cerr << "CurlHTMLDownloader: \t " << errorBuffer
+		          << std::endl;
+		std::cerr << "CurlHTMLDownloader: \t **********************************************************"
+		          << std::endl;
 		//throw std::runtime_error( std::string( "CurlHTMLDownloader: curl_easy_perform() failed: " ) + curlErrorBuffer.get() );
 	}
-	std::clog << "... done." << std::endl;
+	std::clog << "CurlHTMLDownloader: ... done. [used buffer size: " << buffer.size() << " bytes] " << std::endl;
 }
 
 size_t CurlHTMLDownloader::writeDataCallback( void *data, size_t size, size_t nmemb ) {
@@ -116,7 +121,7 @@ size_t CurlHTMLDownloader::writeDataCallback( void *data, size_t size, size_t nm
 		writeSize = size * nmemb;
 	}
 	buffer.append( static_cast< char * > ( data ), writeSize );
-	std::clog << "CurlHTMLDownloader: Callback method was called and wrote "
+	std::clog << "CurlHTMLDownloader: \t writeDataCallback() method was called and wrote "
 	          << writeSize << " bytes to internal buffer." << std::endl;
 	return writeSize;
 }
