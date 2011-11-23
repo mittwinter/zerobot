@@ -284,13 +284,12 @@ std::auto_ptr< PlugInResult > PlugInURLTitle::onPacket( state_t state, IRC::Mess
 	try {
 		IRC::MessagePrivMsg const &privMessage = dynamic_cast< IRC::MessagePrivMsg const & >( message );
 		std::string const &messageText = privMessage.getMessage();
-		std::string::size_type urlPos = messageText.find( "http://" );
-		if( urlPos == std::string::npos ) {
-			urlPos = messageText.find( "ftp://" );
-		}
-		if( urlPos != std::string::npos ) {
-			std::string::size_type urlPosEnd = messageText.find_first_of( whitespace, urlPos );
-			std::string url = messageText.substr( urlPos, urlPosEnd - urlPos );
+		std::string::size_type urlIndicatorPos = messageText.find( "://" );
+		if( urlIndicatorPos != std::string::npos ) {
+			std::string::size_type urlPosBegin = messageText.find_last_of( whitespace, urlIndicatorPos );
+			std::string::size_type urlPosEnd = messageText.find_first_of( whitespace, urlIndicatorPos );
+			std::string url = messageText.substr( urlPosBegin + 1, urlPosEnd - (urlPosBegin + 1) );
+			std::clog << "PlugInURLTitle: Fetching title for '" << url << "'..." << std::endl;
 			try {
 				// * Fetch site with CurlHTMLDownloader:
 				std::auto_ptr< urltitle::CurlHTMLDownloader > curlDownloader = std::auto_ptr< urltitle::CurlHTMLDownloader >( new urltitle::CurlHTMLDownloader( url ) );
