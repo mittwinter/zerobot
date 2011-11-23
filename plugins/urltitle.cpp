@@ -305,12 +305,16 @@ std::auto_ptr< PlugInResult > PlugInURLTitle::onPacket( state_t state, IRC::Mess
 				titleParser->parse();
 				// If title is not empty:
 				if( titleParser->getTitle() != "") {
+					std::clog << "PlugInURLTitle: ... obtained title: '" << titleParser->getTitle() << "'." << std::endl;
 					// * Send message containing the title of the initial URL:
 					result = std::auto_ptr< PlugInResult >( new PlugInResult );
 					result->messages.push_back( new IRC::MessagePrivMsg( privMessage.getReceiver()
 					                                                   , "Title: " + titleParser->getTitle()
 					                                                   )
 					                          );
+				}
+				else {
+					std::clog << "PlugInURLTitle: ... unable to obtain title, ignoring URL." << std::endl;
 				}
 			}
 			catch( std::runtime_error const &e ) {
