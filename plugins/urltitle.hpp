@@ -32,25 +32,24 @@ namespace zerobot {
 
 namespace urltitle {
 
-size_t curlWriteDataCallback(void *_data, size_t _size, size_t _nmemb, void *_plugIn);
-void expatStartElementHandler(void *_parser, const XML_Char * _name, const XML_Char **_attributes);
-void expatEndElementHandler(void *_parser, const XML_Char *_name);
-void expatCharacterDataHandler(void *_parser, const XML_Char *_str, int _length);
+size_t curlWriteDataCallback( void *data, size_t size, size_t nmemb, void *userData );
+void expatStartElementHandler( void *userData, XML_Char const *name, XML_Char const **attributes );
+void expatEndElementHandler( void *userData, XML_Char const *name );
+void expatCharacterDataHandler( void *userData, XML_Char const *str, int length );
 
 class CurlHTMLDownloader {
 	public:
-		CurlHTMLDownloader(std::string const &_url) throw(std::runtime_error);
+		CurlHTMLDownloader( std::string const &_url ) throw( std::runtime_error );
 		~CurlHTMLDownloader();
 
 		std::string const &getBuffer() const { return buffer; }
 
 		void perform();
 
-		size_t writeDataCallback(void *_data, size_t _size, size_t _nmemb);
+		size_t writeDataCallback( void *data, size_t size, size_t nmemb );
 
 	private:
 		static unsigned int MAX_BUFFER_SIZE;
-
 		static bool curlInitialized;
 
 		std::string url;
@@ -62,12 +61,12 @@ class CurlHTMLDownloader {
 
 class HTMLTidy {
 	public:
-		HTMLTidy(std::string const &_document);
+		HTMLTidy( std::string const &document );
 		~HTMLTidy();
 
 		std::string const &getResultDocument() const { return resultDocument; }
 
-		void run() throw(std::runtime_error);
+		void run() throw( std::runtime_error );
 
 	private:
 		std::string const &document;
@@ -78,16 +77,16 @@ class HTMLTidy {
 
 class ExpatHTMLTitleParser {
 	public:
-		ExpatHTMLTitleParser(std::string const &_document);
+		ExpatHTMLTitleParser( std::string const &document );
 		~ExpatHTMLTitleParser();
 
 		std::string const &getTitle() const { return title; }
 
-		void parse() throw(std::runtime_error);
+		void parse() throw( std::runtime_error );
 
-		void startElementHandler(const XML_Char *_name, const XML_Char **_attributes);
-		void endElementHandler(const XML_Char *_name);
-		void characterDataHandler(const XML_Char *_str, int _length);
+		void startElementHandler( XML_Char const *name, XML_Char const **_attributes );
+		void endElementHandler( XML_Char const *name );
+		void characterDataHandler( XML_Char const *str, int length );
 
 	private:
 		XML_Parser expatParser;
@@ -103,13 +102,13 @@ class ExpatHTMLTitleParser {
 
 class PlugInURLTitle : public PlugIn {
 	public:
-		PlugInURLTitle(int _priority);
+		PlugInURLTitle( int priority );
 		virtual ~PlugInURLTitle();
 
-		virtual std::auto_ptr< PlugInResult > onConnect(state_t _state);
-		virtual std::auto_ptr< PlugInResult > onPacket(state_t _state, IRC::Message const &_message);
-		virtual std::auto_ptr< PlugInResult > onTimeTrigger(state_t _state);
-		virtual std::auto_ptr< PlugInResult > onDisconnect(state_t _state);
+		virtual std::auto_ptr< PlugInResult > onConnect( state_t state );
+		virtual std::auto_ptr< PlugInResult > onPacket( state_t state, IRC::Message const &message );
+		virtual std::auto_ptr< PlugInResult > onTimeTrigger( state_t state );
+		virtual std::auto_ptr< PlugInResult > onDisconnect( state_t state );
 
 	protected:
 		static char const *whitespace;
@@ -118,3 +117,4 @@ class PlugInURLTitle : public PlugIn {
 }
 
 #endif
+

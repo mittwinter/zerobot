@@ -29,66 +29,64 @@ namespace zerobot {
 
 namespace urltitle {
 
-size_t curlWriteDataCallback(void *_data, size_t _size, size_t _nmemb, void *_plugIn) {
-	CurlHTMLDownloader *downloader = static_cast< CurlHTMLDownloader * >(_plugIn);
-	return downloader->writeDataCallback(_data, _size, _nmemb);
+size_t curlWriteDataCallback( void *data, size_t size, size_t nmemb, void *userData ) {
+	CurlHTMLDownloader *downloader = static_cast< CurlHTMLDownloader * >( userData );
+	return downloader->writeDataCallback( data, size, nmemb );
 }
 
-void expatStartElementHandler(void *_parser, const XML_Char *_name, const XML_Char **_attributes) {
-	ExpatHTMLTitleParser *parser = static_cast< ExpatHTMLTitleParser * >(_parser);
-	parser->startElementHandler(_name, _attributes);
+void expatStartElementHandler( void *userData, XML_Char const *name, XML_Char const **attributes ) {
+	ExpatHTMLTitleParser *parser = static_cast< ExpatHTMLTitleParser * >( userData );
+	parser->startElementHandler( name, attributes );
 }
 
-void expatEndElementHandler(void *_parser, const XML_Char *_name) {
-	ExpatHTMLTitleParser *parser = static_cast< ExpatHTMLTitleParser * >(_parser);
-	parser->endElementHandler(_name);
+void expatEndElementHandler( void *userData, XML_Char const *name ) {
+	ExpatHTMLTitleParser *parser = static_cast< ExpatHTMLTitleParser * >( userData );
+	parser->endElementHandler( name );
 }
 
-void expatCharacterDataHandler(void *_parser, const XML_Char *_str, int _length) {
-	ExpatHTMLTitleParser *parser = static_cast< ExpatHTMLTitleParser * >(_parser);
-	parser->characterDataHandler(_str, _length);
+void expatCharacterDataHandler( void *userData, XML_Char const *str, int length ) {
+	ExpatHTMLTitleParser *parser = static_cast< ExpatHTMLTitleParser * >( userData );
+	parser->characterDataHandler( str, length );
 }
 
 bool CurlHTMLDownloader::curlInitialized = false;
 unsigned int CurlHTMLDownloader::MAX_BUFFER_SIZE = 10 * 1024;
 
-CurlHTMLDownloader::CurlHTMLDownloader(std::string const &_url) throw(std::runtime_error) {
-	url = _url;
-	errorBuffer = NULL;
-	if(!curlInitialized) {
-		curl_global_init(CURL_GLOBAL_ALL);
-		atexit(&curl_global_cleanup);
+CurlHTMLDownloader::CurlHTMLDownloader( std::string const &url ) throw( std::runtime_error ) : url( url ), errorBuffer( NULL ) {
+	if( !curlInitialized ) {
+		curl_global_init( CURL_GLOBAL_ALL );
+		atexit( &curl_global_cleanup );
 		curlInitialized = true;
 	}
 	std::clog << "CurlHTMLDownloader: Using libcurl version: " << curl_version() << std::endl;
 	std::clog << "CurlHTMLDownloader: Reserving " << MAX_BUFFER_SIZE << " bytes for buffer." << std::endl;
-	buffer.reserve(MAX_BUFFER_SIZE);
+	buffer.reserve( MAX_BUFFER_SIZE );
 
-	std::clog << "CurlHTMLDownloader: Setting up curl and the write callbacks ..." << std::endl;
-	errorBuffer = new char[CURL_ERROR_SIZE];
+	std::clog << "CurlHTMLDownloader: Setting up curl and the write callbacks..." << std::endl;
+	errorBuffer = new char[ CURL_ERROR_SIZE ];
 	handle = curl_easy_init();
-	if(handle == NULL) {
+	if( handle == NULL ) {
 		delete[] errorBuffer;
-		throw std::runtime_error("CurlHTMLDownloader: curl_easy_init() returned NULL.");
+		throw std::runtime_error( "CurlHTMLDownloader: curl_easy_init() returned NULL." );
 	}
-	curl_easy_setopt(handle, CURLOPT_URL, url.c_str());
+	curl_easy_setopt( handle, CURLOPT_URL, url.c_str() );
 	headers = NULL;
-	headers = curl_slist_append(headers, "Accept: text/html");
+	headers = curl_slist_append( headers, "Accept: text/html" );
 	// Set up options:
-	curl_easy_setopt(handle, CURLOPT_HTTPHEADER, headers);
-	curl_easy_setopt(handle, CURLOPT_FOLLOWLOCATION, 1);
-	//curl_easy_setopt(handle, CURLOPT_VERBOSE, 1);
-	curl_easy_setopt(handle, CURLOPT_ERRORBUFFER, errorBuffer);
+	curl_easy_setopt( handle, CURLOPT_HTTPHEADER, headers );
+	curl_easy_setopt( handle, CURLOPT_FOLLOWLOCATION, 1 );
+	//curl_easy_setopt( handle, CURLOPT_VERBOSE, 1 );
+	curl_easy_setopt( handle, CURLOPT_ERRORBUFFER, errorBuffer );
 	// Set up write callback over global callback wrapper:
-	curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, &urltitle::curlWriteDataCallback);
-	curl_easy_setopt(handle, CURLOPT_WRITEDATA, this);
+	curl_easy_setopt( handle, CURLOPT_WRITEFUNCTION, &urltitle::curlWriteDataCallback );
+	curl_easy_setopt( handle, CURLOPT_WRITEDATA, this );
 }
 
 CurlHTMLDownloader::~CurlHTMLDownloader() {
-	curl_slist_free_all(headers);
-	curl_easy_cleanup(handle);
+	curl_slist_free_all( headers );
+	curl_easy_cleanup( handle );
 	delete[] errorBuffer;
-/*	if(curlInitialized) {
+/*	if( curlInitialized ) {
 		curl_global_cleanup();
 		curlInitialized = false;
 	}
@@ -96,150 +94,165 @@ CurlHTMLDownloader::~CurlHTMLDownloader() {
 }
 
 void CurlHTMLDownloader::perform() {
-	std::clog << "CurlHTMLDownloader: Fetching URL '" << url << "' ..." << std::endl;
-	if(curl_easy_perform(handle) != 0) {
-		// TODO: Handle errors here in a better way! We want to continue when we reached buffer limit, but abort otherwise!
+	std::clog << "CurlHTMLDownloader: Fetching URL '" << url << "'..." << std::endl;
+	if( curl_easy_perform( handle ) != 0 ) {
+		// TODO: Handle errors here in a better way!
+		//  We want to continue when we reached the buffer limit, but abort otherwise!
+		std::cerr << "**********************************************************" << std::endl;
 		std::cerr << "CurlHTMLDownloader: libcurl reported the following errors:" << std::endl;
 		std::cerr << errorBuffer << std::endl;
-		//throw std::runtime_error(std::string("CurlHTMLDownloader: curl_easy_perform() failed: ") + curlErrorBuffer.get());
+		std::cerr << "**********************************************************" << std::endl;
+		//throw std::runtime_error( std::string( "CurlHTMLDownloader: curl_easy_perform() failed: " ) + curlErrorBuffer.get() );
 	}
 	std::clog << "... done." << std::endl;
 }
 
-size_t CurlHTMLDownloader::writeDataCallback(void *_data, size_t _size, size_t _nmemb) {
+size_t CurlHTMLDownloader::writeDataCallback( void *data, size_t size, size_t nmemb ) {
 	size_t writeSize = 0;
-	if((buffer.size() + (_size * _nmemb)) > MAX_BUFFER_SIZE) {
+	if( (buffer.size() + (size * nmemb)) > MAX_BUFFER_SIZE ) {
 		writeSize = MAX_BUFFER_SIZE - buffer.size();
 	}
 	else {
-		writeSize = _size * _nmemb;
+		writeSize = size * nmemb;
 	}
-	buffer.append(static_cast< char * > (_data), writeSize);
-	//std::clog << "CurlHTMLDownloader: Callback method was called and wrote " << writeSize << " bytes to internal buffer." << std::endl;
+	buffer.append( static_cast< char * > ( data ), writeSize );
+	std::clog << "CurlHTMLDownloader: Callback method was called and wrote "
+	          << writeSize << " bytes to internal buffer." << std::endl;
 	return writeSize;
 }
 
-HTMLTidy::HTMLTidy(std::string const &_document) : document(_document) {
+HTMLTidy::HTMLTidy( std::string const &document ) : document( document ) {
 	handle = tidyCreate();
 }
 
 HTMLTidy::~HTMLTidy() {
-	tidyRelease(handle);
+	tidyRelease( handle );
 }
 
-void HTMLTidy::run() throw(std::runtime_error) {
+void HTMLTidy::run() throw( std::runtime_error ) {
 	TidyBuffer outputBuffer = { 0 };
 	TidyBuffer errorBuffer = { 0 };
 	// try to create valid XHTML document for XML parser:
 	int tidyResult = -1;
-	if(tidyOptSetBool(handle, TidyXhtmlOut, yes)) {
-		tidyResult = tidySetErrorBuffer(handle, &errorBuffer);
+	if( tidyOptSetBool( handle, TidyXhtmlOut, yes ) ) {
+		tidyResult = tidySetErrorBuffer( handle, &errorBuffer );
 	}
-	if(tidyResult >= 0) {
-		tidyResult = tidyParseString(handle, document.c_str());
+	if( tidyResult >= 0 ) {
+		tidyResult = tidyParseString( handle, document.c_str() );
 	}
-	if(tidyResult >= 0) {
-		tidyResult = tidyCleanAndRepair(handle);
+	if( tidyResult >= 0 ) {
+		tidyResult = tidyCleanAndRepair( handle );
 	}
-	if(tidyResult >= 0) {
-		tidyResult = tidyRunDiagnostics(handle);
+	if( tidyResult >= 0 ) {
+		tidyResult = tidyRunDiagnostics( handle );
 	}
-	if(tidyResult > 1) {
-		if(!tidyOptSetBool(handle, TidyForceOutput, yes)) {
+	if( tidyResult > 1 ) {
+		if( !tidyOptSetBool( handle, TidyForceOutput, yes ) ) {
 			tidyResult = -1;
 		}
 	}
-	if(tidyResult >= 0) {
-		tidyResult = tidySaveBuffer(handle, &outputBuffer);
+	if( tidyResult >= 0 ) {
+		tidyResult = tidySaveBuffer( handle, &outputBuffer );
 	}
-	if(tidyResult > 0) {
+	if( tidyResult > 0 ) {
+		std::clog << "*********************************" << std::endl;
 		std::clog << "HTMLTidy: Diagnostics of libtidy:" << std::endl;
 		std::clog << errorBuffer.bp;
+		std::clog << "*********************************" << std::endl;
 	}
-	else if(tidyResult < 0) {
+	else if( tidyResult < 0 ) {
 		std::stringstream sstrTidyResult;
 		sstrTidyResult << tidyResult;
-		throw std::runtime_error("HTMLTidy: A severe error occured while tidying up the received document (" + sstrTidyResult.str() + ").");
+		throw std::runtime_error( "HTMLTidy: A severe error occured while tidying up the received document ("
+		                          + sstrTidyResult.str()
+		                          + ")."
+		                        );
 	}
-	resultDocument.reserve(outputBuffer.size); // avoid frequent (re-)allocations
-	for(unsigned int i = 0; i < outputBuffer.size; i++) {
-		resultDocument.insert(resultDocument.end(), static_cast< char >(*(outputBuffer.bp + i)));
+	resultDocument.reserve( outputBuffer.size ); // avoid frequent (re-)allocations
+	for( unsigned int i = 0; i < outputBuffer.size; i++ ) {
+		resultDocument.insert( resultDocument.end(), static_cast< char >( *(outputBuffer.bp + i) ) );
 	}
-	tidyBufFree(&outputBuffer);
-	tidyBufFree(&errorBuffer);
+	tidyBufFree( &outputBuffer );
+	tidyBufFree( &errorBuffer );
 }
 
-
-ExpatHTMLTitleParser::ExpatHTMLTitleParser(std::string const &_document) : document(_document) {
-	inTitle = false;
-	expatParser = XML_ParserCreate(NULL);
-	XML_SetElementHandler(expatParser, &expatStartElementHandler, &expatEndElementHandler);
-	XML_SetCharacterDataHandler(expatParser, &expatCharacterDataHandler);
-	XML_SetUserData(expatParser, this);
+ExpatHTMLTitleParser::ExpatHTMLTitleParser( std::string const &document)
+		: expatParser( XML_ParserCreate( NULL ) )
+		, document( document )
+		, inTitle( false )
+		{
+	// Set-up expat callbacks via global callback wrappers to this class:
+	XML_SetElementHandler( expatParser, &expatStartElementHandler, &expatEndElementHandler );
+	XML_SetCharacterDataHandler( expatParser, &expatCharacterDataHandler );
+	XML_SetUserData( expatParser, this );
 }
 
 ExpatHTMLTitleParser::~ExpatHTMLTitleParser() {
-	XML_ParserFree(expatParser);
+	XML_ParserFree( expatParser );
 }
 
-void ExpatHTMLTitleParser::parse() throw (std::runtime_error) {
-	if(XML_Parse(expatParser, document.c_str(), document.size(), true) != XML_STATUS_OK) {
+void ExpatHTMLTitleParser::parse() throw( std::runtime_error ) {
+	if( XML_Parse( expatParser, document.c_str(), document.size(), true ) != XML_STATUS_OK) {
 		std::stringstream sstrErrorCode;
-		sstrErrorCode << XML_GetErrorCode(expatParser);
-		throw std::runtime_error("ExpatHTMLTitleParser: expat error " + sstrErrorCode.str() + ": " + XML_ErrorString(XML_GetErrorCode(expatParser)));
+		sstrErrorCode << XML_GetErrorCode( expatParser );
+		throw std::runtime_error( "ExpatHTMLTitleParser: expat error "
+		                          + sstrErrorCode.str()
+		                          + ": "
+		                          + XML_ErrorString( XML_GetErrorCode( expatParser ) )
+		                        );
 	}
 	canonicalizeTitle();
 }
 
-void ExpatHTMLTitleParser::startElementHandler(const XML_Char *_name, const XML_Char **_attributes) {
-	if(strcmp(_name, "title") == 0) {
+void ExpatHTMLTitleParser::startElementHandler( XML_Char const *name, XML_Char const **attributes ) {
+	if( strcmp( name, "title" ) == 0 ) {
 		inTitle = true;
 	}
 }
 
-void ExpatHTMLTitleParser::endElementHandler(const XML_Char *_name) {
-	if(strcmp(_name, "title") == 0) {
+void ExpatHTMLTitleParser::endElementHandler( XML_Char const *name ) {
+	if( strcmp( name, "title" ) == 0 ) {
 		inTitle = false;
 	}
 }
 
-void ExpatHTMLTitleParser::characterDataHandler(const XML_Char *_str, int _length) {
-	if(inTitle) {
-		title.append(_str, _length);
+void ExpatHTMLTitleParser::characterDataHandler( XML_Char const *str, int length ) {
+	if( inTitle ) {
+		title.append( str, length );
 	}
 }
 
 void ExpatHTMLTitleParser::canonicalizeTitle() {
-	for(std::string::size_type i = 0; i < title.size(); i++) {
-		if(title.at(i) == '\r' || title.at(i) == '\n') {
+	for( std::string::size_type i = 0; i < title.size(); i++ ) {
+		if( title.at( i ) == '\r' || title.at( i ) == '\n' ) {
 			title.replace(i, 1, 1, ' ');
 		}
 	}
-	for(std::string::iterator it = title.begin(); it != title.end(); ) {
-		if(isspace(*it)) {
-			if(it != title.begin()) { // do not move over beginning when looking back
+	for( std::string::iterator it = title.begin(); it != title.end(); ) {
+		if( isspace( *it ) ) {
+			if( it != title.begin() ) { // do not move over beginning when looking back
 				std::string::const_iterator last = it;
 				last--;
-				if(isspace(*last)) {
-					it = title.erase(it);
+				if( isspace( *last ) ) {
+					it = title.erase( it );
 				}
 				else {
 					it++;
 				}
 			}
 			else {
-				it = title.erase(it);
+				it = title.erase( it );
 			}
 		}
-		else if(iscntrl(*it)) {
-			it = title.erase(it);
+		else if( iscntrl( *it ) ) {
+			it = title.erase( it );
 		}
 		else {
 			it++;
 		}
 	}
-	if(title.size() > 0 && isspace(title.at(title.size() - 1))) {
-		title.erase(title.size() - 1);
+	if(title.size() > 0 && isspace( title.at( title.size() - 1 ) ) ) {
+		title.erase( title.size() - 1 );
 	}
 }
 
@@ -247,58 +260,60 @@ void ExpatHTMLTitleParser::canonicalizeTitle() {
 
 char const *PlugInURLTitle::whitespace = "\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f\x7f";
 
-PlugInURLTitle::PlugInURLTitle(int _priority) : PlugIn(_priority, "urltitle") {
+PlugInURLTitle::PlugInURLTitle( int priority ) : PlugIn( priority, "urltitle" ) {
 }
 
 PlugInURLTitle::~PlugInURLTitle() {
 }
 
-std::auto_ptr< PlugInResult > PlugInURLTitle::onConnect(state_t _state) {
-	return std::auto_ptr< PlugInResult >(NULL);
+std::auto_ptr< PlugInResult > PlugInURLTitle::onConnect( state_t state ) {
+	return std::auto_ptr< PlugInResult >( NULL );
 }
 
-std::auto_ptr< PlugInResult > PlugInURLTitle::onDisconnect(state_t _state) {
-	return std::auto_ptr< PlugInResult >(NULL);
+std::auto_ptr< PlugInResult > PlugInURLTitle::onDisconnect( state_t state ) {
+	return std::auto_ptr< PlugInResult >( NULL );
 }
 
-std::auto_ptr< PlugInResult > PlugInURLTitle::onPacket(state_t _state, IRC::Message const &_message) {
-	std::auto_ptr< PlugInResult > result(NULL);
+std::auto_ptr< PlugInResult > PlugInURLTitle::onPacket( state_t state, IRC::Message const &message ) {
+	std::auto_ptr< PlugInResult > result( NULL );
 	try {
-		IRC::MessagePrivMsg const &privMessage = dynamic_cast< IRC::MessagePrivMsg const &>(_message);
+		IRC::MessagePrivMsg const &privMessage = dynamic_cast< IRC::MessagePrivMsg const & >( message );
 		std::string const &messageText = privMessage.getMessage();
-		std::string::size_type urlPos = messageText.find("http://");
-		if(urlPos == std::string::npos) {
-			urlPos = messageText.find("ftp://");
+		std::string::size_type urlPos = messageText.find( "http://" );
+		if( urlPos == std::string::npos ) {
+			urlPos = messageText.find( "ftp://" );
 		}
-		if(urlPos != std::string::npos) {
-			result = std::auto_ptr< PlugInResult >(new PlugInResult);
-			std::string::size_type urlPosEnd = messageText.find_first_of(whitespace, urlPos);
-			std::string url = messageText.substr(urlPos, urlPosEnd - urlPos);
+		if( urlPos != std::string::npos ) {
+			std::string::size_type urlPosEnd = messageText.find_first_of( whitespace, urlPos );
+			std::string url = messageText.substr( urlPos, urlPosEnd - urlPos );
 			try {
 				// fetch site with curl:
-				std::auto_ptr< urltitle::CurlHTMLDownloader > curlDownloader = std::auto_ptr< urltitle::CurlHTMLDownloader >(new urltitle::CurlHTMLDownloader(url));
+				std::auto_ptr< urltitle::CurlHTMLDownloader > curlDownloader = std::auto_ptr< urltitle::CurlHTMLDownloader >( new urltitle::CurlHTMLDownloader( url ) );
 				curlDownloader->perform();
 				// tidy up the fetched document and generate valid XHTML, so that the XML parser running afterwards won't fail for crappy HTML:
-				std::auto_ptr< urltitle::HTMLTidy > htmlTidy = std::auto_ptr< urltitle::HTMLTidy >(new urltitle::HTMLTidy(curlDownloader->getBuffer()));
+				std::auto_ptr< urltitle::HTMLTidy > htmlTidy = std::auto_ptr< urltitle::HTMLTidy >( new urltitle::HTMLTidy( curlDownloader->getBuffer() ) );
 				htmlTidy->run();
-				urltitle::ExpatHTMLTitleParser titleParser(htmlTidy->getResultDocument());
-				titleParser.parse();
-				if(titleParser.getTitle() != "") {
-					result->messages.push_back(new IRC::MessagePrivMsg(privMessage.getReceiver(), "Title: " + titleParser.getTitle()));
+				std::auto_ptr< urltitle::ExpatHTMLTitleParser > titleParser = std::auto_ptr< urltitle::ExpatHTMLTitleParser >( new urltitle::ExpatHTMLTitleParser( htmlTidy->getResultDocument() ) );
+				titleParser->parse();
+				if( titleParser->getTitle() != "") {
+					result = std::auto_ptr< PlugInResult >( new PlugInResult );
+					result->messages.push_back( new IRC::MessagePrivMsg( privMessage.getReceiver()
+					                                                   , "Title: " + titleParser->getTitle()
+					                                                   )
+					                          );
 				}
 			}
-			catch(std::runtime_error e) {
+			catch( std::runtime_error const &e ) {
 				std::cerr << "PlugInURLTitle: Exception while parsing title: " << e.what() << std::endl;
 			}
 		}
 	}
-	catch(std::bad_cast) {}
+	catch( std::bad_cast const & ) {}
 	return result;
 }
 
-std::auto_ptr< PlugInResult > PlugInURLTitle::onTimeTrigger(state_t _state) {
-	return std::auto_ptr< PlugInResult >(NULL);
+std::auto_ptr< PlugInResult > PlugInURLTitle::onTimeTrigger( state_t state ) {
+	return std::auto_ptr< PlugInResult >( NULL );
 }
-
 
 }
