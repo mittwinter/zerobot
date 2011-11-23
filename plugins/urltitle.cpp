@@ -78,6 +78,8 @@ CurlHTMLDownloader::CurlHTMLDownloader( std::string const &url ) throw( std::run
 	curl_easy_setopt( handle, CURLOPT_HTTPHEADER, headers );
 	// - follow Location: header:
 	curl_easy_setopt( handle, CURLOPT_FOLLOWLOCATION, 1 );
+	// - ignore invalid certificates:
+	curl_easy_setopt( handle, CURLOPT_SSL_VERIFYPEER, 0 );
 	// - be verbose:
 	//curl_easy_setopt( handle, CURLOPT_VERBOSE, 1 );
 	// - error buffer:
