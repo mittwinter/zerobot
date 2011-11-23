@@ -292,15 +292,20 @@ std::auto_ptr< PlugInResult > PlugInURLTitle::onPacket( state_t state, IRC::Mess
 			std::string::size_type urlPosEnd = messageText.find_first_of( whitespace, urlPos );
 			std::string url = messageText.substr( urlPos, urlPosEnd - urlPos );
 			try {
-				// fetch site with curl:
+				// * Fetch site with CurlHTMLDownloader:
 				std::auto_ptr< urltitle::CurlHTMLDownloader > curlDownloader = std::auto_ptr< urltitle::CurlHTMLDownloader >( new urltitle::CurlHTMLDownloader( url ) );
 				curlDownloader->perform();
-				// tidy up the fetched document and generate valid XHTML, so that the XML parser running afterwards won't fail for crappy HTML:
+				// * Tidy up the fetched document and generate valid XHTML,
+				//    so that the XML parser running afterwards won't fail due to crappy HTML:
 				std::auto_ptr< urltitle::HTMLTidy > htmlTidy = std::auto_ptr< urltitle::HTMLTidy >( new urltitle::HTMLTidy( curlDownloader->getBuffer() ) );
 				htmlTidy->run();
+				// * Parse the tidied document with ExpatHTMLTitleParser,
+				//    which parses the title of an XHTML document:
 				std::auto_ptr< urltitle::ExpatHTMLTitleParser > titleParser = std::auto_ptr< urltitle::ExpatHTMLTitleParser >( new urltitle::ExpatHTMLTitleParser( htmlTidy->getResultDocument() ) );
 				titleParser->parse();
+				// If title is not empty:
 				if( titleParser->getTitle() != "") {
+					// * Send message containing the title of the initial URL:
 					result = std::auto_ptr< PlugInResult >( new PlugInResult );
 					result->messages.push_back( new IRC::MessagePrivMsg( privMessage.getReceiver()
 					                                                   , "Title: " + titleParser->getTitle()
