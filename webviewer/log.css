@@ -1,0 +1,68 @@
+/* cs-studs-log Design, Copyright (C) 2006-2011 Martin Wegner. */
+
+body {
+	font-family: sans-serif;
+	font-size: 10pt;
+}
+
+h1, h2, h3, h4, h5 {
+	color: #2E8B57;
+}
+
+h3 {
+	text-align: center;
+}
+
+a, a:link, a:visited {
+	color: #9E4747;
+}
+
+a:hover, a:active, a:focus {
+	color: #CD5C5C;
+}
+
+div.navbar {
+	width: 100%;
+	border: 1px solid #aaa;
+	padding: 0.2em;
+}
+
+div.navbar p {
+	margin: 0em;
+}
+
+div.navbar p.left {
+	float: left;
+}
+
+div.navbar p.right {
+	float: right;
+	text-align: right;
+}
+
+p#log {
+	font-family: monospace;
+}
+
+p#log .time {
+	color: #303030;
+}
+
+p#log .system {
+	color: #666;
+}
+
+p#log .nick {
+	/*color: #000080;*/
+	color: #808080;
+	font-weight: bold;
+}
+
+p#log .nick span {
+	font-weight: normal;
+}
+
+#footer {
+	font-size: 0.8em;
+}
+
