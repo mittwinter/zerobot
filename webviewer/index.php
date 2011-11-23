@@ -20,6 +20,7 @@ $path = '/path/to/zerobot.sqlite';
 $network = 'Freenode';
 $channel = '#zerobot';
 $linesPerPage = 100;
+$numberOfDisplayedDays = 7;
 
 class IRCLogSQLite {
 	protected $channel;
@@ -220,7 +221,7 @@ if( isset( $_GET[ 'action' ] ) && $_GET[ 'action' ] == 'latest' ) {
 	exit;
 }
 else if( isset( $_GET[ 'action' ] ) && $_GET[ 'action' ] == 'view' && isset( $_GET[ 'date' ] ) ) {
-	if( strtotime( $_GET[ 'date' ] ) < (mktime( 0, 0, 0 ) - 7 * 24 * 3600) ) {
+	if( strtotime( $_GET[ 'date' ] ) < (mktime( 0, 0, 0 ) - $numberOfDisplayedDays * 24 * 3600) ) {
 		header('404 Not Found');
 		die('<h1>404 Not Found</h1>');
 	}
@@ -333,7 +334,7 @@ echo( '<?xml version="1.0" encoding="utf-8" ?>' );
 		</div>
 		<ul>
 			<?php
-				for( $timestamp = mktime( 0, 0, 0 ); $timestamp >= (mktime( 0, 0, 0 ) - 7 * 24 * 3600); $timestamp -= (24 * 3600) ) {
+				for( $timestamp = mktime( 0, 0, 0 ); $timestamp >= (mktime( 0, 0, 0 ) - $numberOfDisplayedDays * 24 * 3600); $timestamp -= (24 * 3600) ) {
 					if( $logDatabase->getLogLineCount( $timestamp, $timestamp + (24 * 3600) ) > 0) {
 						echo( '<li><a href="?action=view&#38;date=' . urlencode( strftime( '%Y-%m-%d', $timestamp ) ) . '" title="View logs for ' . strftime( '%Y-%m-%d', $timestamp ) . '">' . strftime( '%Y-%m-%d', $timestamp ) . '</a></li>' );
 					}
