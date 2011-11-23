@@ -25,10 +25,17 @@
 #include "../plugins/plugins.hpp"
 #include "zerobot.hpp"
 
-void showUsage(char const *_programName) {
-		std::clog << "Usage:" << "\t" << _programName << "\t --server=<server> --port=<port> --nick=<nickname>" << std::endl
-		          << "\t\t\t [--join=<channel> ...] [--log=<channel> ... --logfile=<file>] [--title] [--admin=<nickname>]" << std::endl
-		          << "\t\t\t [--identify] [--reconnect]" << std::endl;
+void showUsage( char const *programName ) {
+		std::clog << "Usage:" << std::endl
+		          << " " << programName << std::endl
+		          << "\t --server=<server> --port=<port>" << std::endl
+		          << "\t --nick=<nickname>" << std::endl
+		          << "\t [--join=<channel> ...]" << std::endl
+		          << "\t [--log=<channel> ... --logfile=<file>]" << std::endl
+		          << "\t [--title]" << std::endl
+		          << "\t [--admin=<nickname>]" << std::endl
+		          << "\t [--identify]" << std::endl
+		          << "\t [--reconnect]" << std::endl;
 }
 
 int optionsFlagTitle = 0;
@@ -89,7 +96,7 @@ struct option options[] = {
 		{ 0, 0, 0, 0 }
 	};
 
-int main(int argc, char *argv[]) {
+int main( int argc, char *argv[] ) {
 	int getoptResult = -1;
 	int optionIndex = 0;
 	bool serverNameFound = false, serverPortFound = false, nicknameFound = false, logfileFound = false;
@@ -97,10 +104,10 @@ int main(int argc, char *argv[]) {
 	std::list< std::string > joinChannels;
 	std::list< std::string > logChannels;
 	do {
-		getoptResult = getopt_long(argc, argv, "s:p:n:j:l:f:ta:i", options, &optionIndex);
-		switch(getoptResult) {
+		getoptResult = getopt_long( argc, argv, "s:p:n:j:l:f:ta:i", options, &optionIndex );
+		switch( getoptResult ) {
 			case -1: // all options parsed...
-			case 0: // getopt() set flag...
+			case  0: // getopt() set flag...
 				break;
 			case 's':
 				serverNameFound = true;
@@ -115,11 +122,11 @@ int main(int argc, char *argv[]) {
 				nickname = optarg;
 				break;
 			case 'j':
-				joinChannels.push_back(optarg);
+				joinChannels.push_back( optarg );
 				break;
 			case 'l':
-				joinChannels.push_back(optarg);
-				logChannels.push_back(optarg);
+				joinChannels.push_back( optarg );
+				logChannels.push_back( optarg );
 				break;
 			case 'f':
 				logfileFound = true;
@@ -142,67 +149,73 @@ int main(int argc, char *argv[]) {
 				return EXIT_FAILURE;
 				break;
 			default:
-				std::cerr << argv[0] << ": unknown option '" << optopt << "'" << std::endl;
-				showUsage(argv[0]);
+				std::cerr << argv[ 0 ] << ": unknown option '" << optopt << "'" << std::endl;
+				showUsage( argv[ 0 ] );
 				return EXIT_FAILURE;
 				break;
 		}
 	}
-	while(getoptResult != -1);
+	while( getoptResult != -1 );
 
-	if(!serverNameFound || !serverPortFound || !nicknameFound) {
-		std::clog << argv[0] << ": server, port and nickname are required" << std::endl;
-		showUsage(argv[0]);
+	if( !serverNameFound || !serverPortFound || !nicknameFound ) {
+		std::clog << argv[ 0 ] << ": server, port and nickname are required" << std::endl;
+		showUsage( argv[0] );
 		return EXIT_FAILURE;
 	}
-	if(logChannels.size() > 0 && !logfileFound) {
-		std::clog << argv[0] << ": logging facility needs a logfile" << std::endl;
-		showUsage(argv[0]);
+	if(logChannels.size() > 0 && !logfileFound ) {
+		std::clog << argv[ 0 ] << ": logging facility needs a logfile" << std::endl;
+		showUsage( argv[ 0 ] );
 		return EXIT_FAILURE;
 	}
 
-	// Parse port to integer via stringstream:
+	// Parse port to integer via std::stringstream:
 	std::stringstream sstrPort;
 	sstrPort << serverPort;
 	int serverPortInt = 0;
 	sstrPort >> serverPortInt;
 
 	// Start up bot:
-	zerobot::ZeroBot bot(serverName, serverPortInt);
+	zerobot::ZeroBot bot( serverName, serverPortInt );
 	// Plug-ins:
 	zerobot::PlugIn *plugIn = NULL;
 	// Register basic plug-ins:
 	// - Connect:
-	plugIn = new zerobot::PlugInConnect(-10, nickname);
-	bot.registerPlugIn(plugIn);
+	plugIn = new zerobot::PlugInConnect( -10, nickname );
+	bot.registerPlugIn( plugIn );
 	// - Disconnect:
-	plugIn = new zerobot::PlugInDisconnect(-10);
-	bot.registerPlugIn(plugIn);
+	plugIn = new zerobot::PlugInDisconnect( -10 );
+	bot.registerPlugIn( plugIn );
 	// - PingPong:
-	plugIn = new zerobot::PlugInPingPong(0, serverName);
-	bot.registerPlugIn(plugIn);
+	plugIn = new zerobot::PlugInPingPong( 0, serverName );
+	bot.registerPlugIn( plugIn );
 	// Register optional plug-ins, multiple definitions were allowed:
-	for(std::list< std::string >::const_iterator it = joinChannels.begin(); it != joinChannels.end(); it++) {
-		plugIn = new zerobot::PlugInJoin(-5, *it);
-		bot.registerPlugIn(plugIn);
+	// - Join:
+	for( std::list< std::string >::const_iterator it = joinChannels.begin(); it != joinChannels.end(); it++ ) {
+		plugIn = new zerobot::PlugInJoin( -5, *it );
+		bot.registerPlugIn( plugIn );
 	}
-	for(std::list< std::string >::const_iterator it = logChannels.begin(); it != logChannels.end(); it++) {
-		plugIn = new zerobot::PlugInLog(0, "log_" + *it, *it, logfile);
-		bot.registerPlugIn(plugIn);
+	// - Log:
+	for( std::list< std::string >::const_iterator it = logChannels.begin(); it != logChannels.end(); it++ ) {
+		plugIn = new zerobot::PlugInLog( 0, "log_" + *it, *it, logfile );
+		bot.registerPlugIn( plugIn );
 	}
-	if(optionsFlagTitle) {
-		plugIn = new zerobot::PlugInURLTitle(5);
-		bot.registerPlugIn(plugIn);
+	// Register URL title plug-in if requested:
+	if( optionsFlagTitle ) {
+		plugIn = new zerobot::PlugInURLTitle( 5 );
+		bot.registerPlugIn( plugIn );
 	}
-	plugIn = new zerobot::PlugInAdmin(0, admin); // it's not bad when admin's nickname was not specified
-	bot.registerPlugIn(plugIn);
-	if(optionsFlagIdentify) {
-		plugIn = new zerobot::PlugInNickServ(-5);
-		bot.registerPlugIn(plugIn);
+	// Register admin plug-in:
+	plugIn = new zerobot::PlugInAdmin( 0, admin ); // It's not bad if admin's nickname was not specified...
+	bot.registerPlugIn( plugIn );
+	// Register identify plug-in if requested:
+	if( optionsFlagIdentify ) {
+		plugIn = new zerobot::PlugInNickServ( -5 );
+		bot.registerPlugIn( plugIn );
 	}
-	if(optionsFlagReconnect) {
-		plugIn = new zerobot::PlugInReconnect(-20);
-		bot.registerPlugIn(plugIn);
+	// Register reconnect plug-in if requested:
+	if( optionsFlagReconnect ) {
+		plugIn = new zerobot::PlugInReconnect( -20 );
+		bot.registerPlugIn( plugIn );
 	}
 	// Run bot:
 	bot.run();
