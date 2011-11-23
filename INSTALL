@@ -1,0 +1,28 @@
+Installation instructions for zerobot
+*************************************
+
+  Dependencies
+  ************
+
+  Build-time:
+  - libcurl:          multiprotocol file transfer library                   - http://curl.haxx.se/libcurl/
+  - expat:            The Expat XML Parser                                  - http://expat.sourceforge.net/
+  - SQLite3:          Self-contained, serverless,
+                      zero-configuration, transactional SQL database engine - http://www.sqlite.org/
+  - HTML Tidy Library                                                       - http://tidy.sourceforge.net/
+
+  Build instructions
+  ******************
+
+    $ cd ./zerobot-<version>/
+    $ cmake .
+    $ make
+
+  Install instructions
+  ********************
+
+    Copy zerobot binary to your desired place, e. g. /usr/local/bin/:
+    $ cp ./zerobot /usr/local/bin/
+
+
+P.S.: More advanced use of cmake for installing may follow in the future.
