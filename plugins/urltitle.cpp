@@ -69,15 +69,20 @@ CurlHTMLDownloader::CurlHTMLDownloader( std::string const &url ) throw( std::run
 		delete[] errorBuffer;
 		throw std::runtime_error( "CurlHTMLDownloader: curl_easy_init() returned NULL." );
 	}
+	// Set up options:
+	// - URL:
 	curl_easy_setopt( handle, CURLOPT_URL, url.c_str() );
+	// - our headers (only accept text/html documents):
 	headers = NULL;
 	headers = curl_slist_append( headers, "Accept: text/html" );
-	// Set up options:
 	curl_easy_setopt( handle, CURLOPT_HTTPHEADER, headers );
+	// - follow Location: header:
 	curl_easy_setopt( handle, CURLOPT_FOLLOWLOCATION, 1 );
+	// - be verbose:
 	//curl_easy_setopt( handle, CURLOPT_VERBOSE, 1 );
+	// - error buffer:
 	curl_easy_setopt( handle, CURLOPT_ERRORBUFFER, errorBuffer );
-	// Set up write callback over global callback wrapper:
+	// - set up write callback over global callback wrapper:
 	curl_easy_setopt( handle, CURLOPT_WRITEFUNCTION, &urltitle::curlWriteDataCallback );
 	curl_easy_setopt( handle, CURLOPT_WRITEDATA, this );
 }
