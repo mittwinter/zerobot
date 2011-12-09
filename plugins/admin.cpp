@@ -47,48 +47,17 @@ std::auto_ptr< PlugInResult > PlugInAdmin::onConnect( state_t state ) {
 std::auto_ptr< PlugInResult > PlugInAdmin::onPacket( state_t state, IRC::Message const &message ) {
 	std::auto_ptr< PlugInResult > result( NULL );
 	try {
-		IRC::MessagePrivMsg const &privMessage = dynamic_cast< IRC::MessagePrivMsg const & >( message );
-		result = std::auto_ptr< PlugInResult >( new PlugInResult );
-		// Admin commands:
-		if( checkAdminNickname( privMessage.getPrefix()->getNick() ) ) {
-			if( trim( privMessage.getMessage() ) == (getCommandPrefix() + "quit") ) {
-				result->newState = STATE_DISCONNECTING;
-			}
-			else {
-				std::stringstream sstrWordParser;
-				sstrWordParser.str( privMessage.getMessage() );
-				std::string command;
-				sstrWordParser >> command;
-				if( command == (getCommandPrefix() + "join") ) {
-					std::string channel;
-					sstrWordParser >> channel;
-					PlugIn *plugIn = new PlugInJoin( -5, channel );
-					result->registerPlugIns.push_back( plugIn );
-				}
-				else if( command == (getCommandPrefix() + "leave") ) {
-					std::string channel;
-					sstrWordParser >> channel;
-					// Check for given channel, otherwise if command was given in channel:
-					if( (channel.size() == 0 || channel.at( 0 ) != '#') && (privMessage.getReceiver().size() > 1 && privMessage.getReceiver().at( 0 ) == '#') ) {
-						channel = privMessage.getReceiver();
-					}
-					if( channel.size() > 0 ) {
-						result->messages.push_back( new IRC::MessagePart( privMessage.getReceiver()
-						                                                , partPhrases.at( util::rand( partPhrases.size() - 1 ) )
-						                                                )
-						                          );
-						result->unregisterPlugins.push_back( "join_" + channel );
-					}
-				}
-			}
+		// Track our nickname:
+		IRC::MessageNick const &nickMessage = dynamic_cast< IRC::MessageNick const & >( message );
+		if( nickname.size() > 0 && nickMessage.getPrefix() != NULL && nickname == nickMessage.getPrefix()->getNick() ) {
+			nickname = nickMessage.getNickname();
 		}
-		// Other commands:
-		else if( trim( privMessage.getMessage() ) == (getCommandPrefix() + "version") ) {
-			result = std::auto_ptr< PlugInResult >( new PlugInResult );
-			result->messages.push_back( new IRC::MessagePrivMsg( privMessage.getPrefix()->getNick()
-			                                                   , zerobot::versionString
-			                                                   )
-			                          );
+	}
+	catch( std::bad_cast const & ) {}
+	try {
+		IRC::MessagePrivMsg const &privMessage = dynamic_cast< IRC::MessagePrivMsg const & >( message );
+		if( checkForCommand( privMessage.getMessage() ) ) {
+			result = parseCommandMessage( privMessage );
 		}
 	}
 	catch( std::bad_cast const & ) {}
@@ -96,6 +65,11 @@ std::auto_ptr< PlugInResult > PlugInAdmin::onPacket( state_t state, IRC::Message
 }
 
 std::auto_ptr< PlugInResult > PlugInAdmin::onPacketSent( state_t state, IRC::Message const &message ) {
+	try {
+		IRC::MessageNick const &nickMessage = dynamic_cast< IRC::MessageNick const & >( message );
+		nickname = nickMessage.getNickname();
+	}
+	catch( std::bad_cast const & ) {}
 	return std::auto_ptr< PlugInResult >( NULL );
 }
 
@@ -107,18 +81,73 @@ std::auto_ptr< PlugInResult > PlugInAdmin::onDisconnect( state_t state ) {
 	return std::auto_ptr< PlugInResult >( NULL );
 }
 
-std::string PlugInAdmin::trim( std::string str ) const {
-	while( str.size() > 0 && (isspace( str.at( 0 ) ) || iscntrl( str.at( 0 ) )) ) {
-		str.erase( 0, 1 );
-	}
-	while( str.size() > 0 && (isspace( str.at( str.size() - 1 ) ) || iscntrl( str.at( str.size() - 1 ) )) ) {
-		str.erase( str.size() - 1, 1 );
-	}
-	return str;
+bool PlugInAdmin::checkForCommand( std::string const &message ) const {
+	return (    message.substr( 0, nickname.size() + 1 ) == nickname + ':'
+	         || message.substr( 0, CommandParser::getCommandPrefix().size() ) == CommandParser::getCommandPrefix()
+	       );
 }
 
 bool PlugInAdmin::checkAdminNickname( std::string const &nickname ) const {
 	return (adminNickname.size() > 0 && adminNickname == nickname);
 }
 
+std::auto_ptr< PlugInResult > PlugInAdmin::parseCommandMessage( IRC::MessagePrivMsg const &privMessage ) {
+	std::auto_ptr< PlugInResult > result( NULL );
+	try {
+		CommandParser parser( nickname, privMessage.getMessage() );
+		parser.parse();
+		result = std::auto_ptr< PlugInResult >( new PlugInResult );
+		// *** Admin commands:
+		if( checkAdminNickname( privMessage.getPrefix()->getNick() ) ) {
+			// - !quit:
+			if( parser.getCommand() == "quit" ) {
+				result->newState = STATE_DISCONNECTING;
+			}
+			// - !join:
+			else if( parser.getCommand() == "join" ) {
+				for( std::vector< std::string >::const_iterator it = parser.getArguments().begin(); it != parser.getArguments().end(); it++ ) {
+					PlugIn *plugIn = new PlugInJoin( -5, *it );
+					result->registerPlugIns.push_back( plugIn );
+				}
+			}
+			// - !leave:
+			else if( parser.getCommand() == "leave" ) {
+				// Check for given channels:
+				if( parser.getArguments().size() > 0 ) {
+					for( std::vector< std::string >::const_iterator it = parser.getArguments().begin(); it != parser.getArguments().end(); it++ ) {
+						result->messages.push_back( new IRC::MessagePart( *it
+						                                                , partPhrases.at( util::rand( partPhrases.size() - 1 ) )
+						                                                )
+						                          );
+						result->unregisterPlugins.push_back( "join_" + *it );
+					}
+				}
+				// Otherwise use channel this message originated:
+				else if( privMessage.getReceiver().size() > 1 && privMessage.getReceiver().at( 0 ) == '#' ) {
+					result->messages.push_back( new IRC::MessagePart( privMessage.getReceiver()
+					                                                , partPhrases.at( util::rand( partPhrases.size() - 1 ) )
+					                                                )
+					                          );
+					result->unregisterPlugins.push_back( "join_" + privMessage.getReceiver() );
+				}
+			}
+		}
+		// *** Other commands:
+		// - !version:
+		if( parser.getCommand() == "version" ) {
+			std::clog << "!!!VERSION!!!" << std::endl;
+			result->messages.push_back( new IRC::MessagePrivMsg( privMessage.getPrefix()->getNick()
+			                                                   , zerobot::versionString
+			                                                   )
+			                          );
+		}
+	}
+	catch( std::runtime_error const &e ) {
+		std::cerr << "PlugInAdmin: CommandParser failed with:" << std::endl
+				  << "\t" << e.what() << std::endl;
+	}
+	return result;
 }
+
+}
+

@@ -37,11 +37,13 @@ class PlugInAdmin : public PlugIn {
 		virtual std::auto_ptr< PlugInResult > onDisconnect( state_t state );
 
 	protected:
+		std::string nickname;
 		std::string adminNickname;
 		static std::vector< std::string > partPhrases;
 
-		std::string trim( std::string str ) const;
+		bool checkForCommand( std::string const &message ) const;
 		bool checkAdminNickname( std::string const &nickname ) const;
+		std::auto_ptr< PlugInResult > parseCommandMessage( IRC::MessagePrivMsg const &privMessage );
 };
 
 }
