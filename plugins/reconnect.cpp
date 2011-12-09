@@ -32,6 +32,10 @@ std::auto_ptr< PlugInResult > PlugInReconnect::onPacket( state_t state, IRC::Mes
 	return std::auto_ptr< PlugInResult >( NULL );
 }
 
+std::auto_ptr< PlugInResult > PlugInReconnect::onPacketSent( state_t state, IRC::Message const &message ) {
+	return std::auto_ptr< PlugInResult >( NULL );
+}
+
 std::auto_ptr< PlugInResult > PlugInReconnect::onTimeTrigger( state_t state ) {
 	return std::auto_ptr< PlugInResult >( NULL );
 }

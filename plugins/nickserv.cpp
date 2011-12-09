@@ -30,6 +30,10 @@ std::auto_ptr< PlugInResult > PlugInNickServ::onPacket( state_t state, IRC::Mess
 	return std::auto_ptr< PlugInResult >( NULL );
 }
 
+std::auto_ptr< PlugInResult > PlugInNickServ::onPacketSent( state_t state, IRC::Message const &message ) {
+	return std::auto_ptr< PlugInResult >( NULL );
+}
+
 std::auto_ptr< PlugInResult > PlugInNickServ::onTimeTrigger( state_t state ) {
 	std::auto_ptr< PlugInResult > result = std::auto_ptr< PlugInResult >( NULL );
 	if( state == STATE_CONNECTED && !identified ) {

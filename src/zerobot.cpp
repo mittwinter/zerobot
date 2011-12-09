@@ -165,6 +165,9 @@ void ZeroBot::sendMessage( IRC::Message const &message ) {
 	std::cout << ">>> " << sstrMessage.str() << std::flush;
 	try {
 		socket->send( sstrMessage.str() );
+		for( data::PriorityQueue< int, PlugIn * >::iterator it = plugIns.begin(); it != plugIns.end(); it++ ) {
+			processResult( it->second->onPacketSent( getState(), message ) );
+		}
 	}
 	// Socket was closed or some other error occured:
 	catch( std::exception const &e ) {

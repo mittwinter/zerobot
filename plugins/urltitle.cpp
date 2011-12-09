@@ -332,6 +332,10 @@ std::auto_ptr< PlugInResult > PlugInURLTitle::onPacket( state_t state, IRC::Mess
 	return result;
 }
 
+std::auto_ptr< PlugInResult > PlugInURLTitle::onPacketSent( state_t state, IRC::Message const &message ) {
+	return std::auto_ptr< PlugInResult >( NULL );
+}
+
 std::auto_ptr< PlugInResult > PlugInURLTitle::onTimeTrigger( state_t state ) {
 	return std::auto_ptr< PlugInResult >( NULL );
 }

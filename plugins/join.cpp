@@ -69,6 +69,10 @@ std::auto_ptr< PlugInResult > PlugInJoin::onPacket( state_t state, IRC::Message 
 	return result;
 }
 
+std::auto_ptr< PlugInResult > PlugInJoin::onPacketSent( state_t state, IRC::Message const &message ) {
+	return std::auto_ptr< PlugInResult >( NULL );
+}
+
 std::auto_ptr< PlugInResult > PlugInJoin::onTimeTrigger( state_t state ) {
 	std::auto_ptr< PlugInResult > result( NULL );
 	if( state == STATE_CONNECTED && joinState == STATE_JOIN_NOP ) {

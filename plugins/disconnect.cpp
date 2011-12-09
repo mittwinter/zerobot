@@ -38,6 +38,10 @@ std::auto_ptr< PlugInResult > PlugInDisconnect::onPacket( state_t state, IRC::Me
 	return std::auto_ptr< PlugInResult >( NULL );
 }
 
+std::auto_ptr< PlugInResult > PlugInDisconnect::onPacketSent( state_t state, IRC::Message const &message ) {
+	return std::auto_ptr< PlugInResult >( NULL );
+}
+
 std::auto_ptr< PlugInResult > PlugInDisconnect::onTimeTrigger( state_t state ) {
 	return std::auto_ptr< PlugInResult >( NULL );
 }

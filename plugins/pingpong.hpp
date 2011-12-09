@@ -32,6 +32,7 @@ class PlugInPingPong : public PlugIn {
 
 		virtual std::auto_ptr< PlugInResult > onConnect( state_t state );
 		virtual std::auto_ptr< PlugInResult > onPacket( state_t state, IRC::Message const &message );
+		virtual std::auto_ptr< PlugInResult > onPacketSent( state_t state, IRC::Message const &message );
 		virtual std::auto_ptr< PlugInResult > onTimeTrigger( state_t state );
 		virtual std::auto_ptr< PlugInResult > onDisconnect( state_t state );
 

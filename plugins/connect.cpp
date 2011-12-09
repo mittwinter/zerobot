@@ -80,6 +80,10 @@ std::auto_ptr< PlugInResult > PlugInConnect::onPacket( state_t state, IRC::Messa
 	return result;
 }
 
+std::auto_ptr< PlugInResult > PlugInConnect::onPacketSent( state_t state, IRC::Message const &message ) {
+	return std::auto_ptr< PlugInResult >( NULL );
+}
+
 std::auto_ptr< PlugInResult > PlugInConnect::onTimeTrigger( state_t state ) {
 	return std::auto_ptr< PlugInResult >( NULL );
 }
