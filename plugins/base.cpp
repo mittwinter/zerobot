@@ -19,12 +19,60 @@
 
 namespace zerobot {
 
-PlugInResult::PlugInResult() : newState( STATE_NOP ) {
+CommandParser::CommandParser( std::string const &nickname, std::string const &message )
+		: nickname( nickname )
+		, message( message ) {
+}
+
+void CommandParser::parse() throw( std::runtime_error ) {
+	trim( message );
+	std::string word;
+	while( (word = extractWord( message )).size() > 0 ) {
+		if( command.size() == 0 ) {
+			if( word.at( word.size() - 1 ) == ':' && word != nickname + ':' ) {
+				throw std::runtime_error( "CommandParser::parse(): Message not directed to us, ignoring..." );
+			}
+			else if( word.substr( 0, getCommandPrefix().size() ) == getCommandPrefix() ) {
+				command = word.substr( getCommandPrefix().size() );
+			}
+		}
+		else {
+			arguments.push_back( word );
+		}
+	}
+}
+
+char const *CommandParser::whitespace = "\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x20\x1a\x1b\x1c\x1d\x1e\x1f\x7f";
+std::string const CommandParser::commandPrefix = "!";
+
+void CommandParser::trim( std::string &str ) const {
+	while( str.size() > 0 && (isspace( str.at( 0 ) ) || iscntrl( str.at( 0 ) )) ) {
+		str.erase( 0, 1 );
+	}
+	while( str.size() > 0 && (isspace( str.at( str.size() - 1 ) ) || iscntrl( str.at( str.size() - 1 ) )) ) {
+		str.erase( str.size() - 1, 1 );
+	}
+}
+
+std::string CommandParser::extractWord( std::string &str ) const {
+	if( str.size() > 0 ) {
+		std::string::size_type whitespacePos = str.find_first_of( whitespace );
+		for( unsigned int i = 0; i < str.size(); i++ ) {
+		}
+		std::string word = str.substr( 0, whitespacePos );
+		str.erase( 0, ( whitespacePos == std::string::npos ? std::string::npos : whitespacePos + 1 ) );
+		return word;
+	}
+	else {
+		return std::string();
+	}
 }
 
 std::string const PlugIn::commandPrefix = "!";
+PlugInResult::PlugInResult() : newState( STATE_NOP ) {
+}
 
-PlugIn::PlugIn( unsigned int priority, std::string const &name ) : priority(priority), name(name) {
+PlugIn::PlugIn( unsigned int priority, std::string const &name ) : priority( priority ), name( name ) {
 }
 
 }

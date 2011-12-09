@@ -20,12 +20,37 @@
 
 #include <list>
 #include <memory>
+#include <stdexcept>
 #include <string>
 
 #include "../lib/irc/message.hpp"
 #include "../lib/zerobot_state.hpp"
 
 namespace zerobot {
+
+class CommandParser {
+	public:
+		CommandParser( std::string const &nickname, std::string const &message );
+		virtual ~CommandParser() {}
+
+		static std::string const &getCommandPrefix() { return commandPrefix; }
+
+		virtual void parse() throw( std::runtime_error );
+
+		std::string const &getCommand() const { return command; }
+		std::vector< std::string > const &getArguments() const { return arguments; }
+
+	protected:
+		static char const *whitespace;
+		static std::string const commandPrefix;
+		std::string nickname;
+		std::string message;
+		std::string command;
+		std::vector< std::string > arguments;
+
+		void trim( std::string &str ) const;
+		std::string extractWord( std::string &str ) const;
+};
 
 class PlugIn; // forward declaration of class PlugIn for PlugInResult
 class PlugInResult {
