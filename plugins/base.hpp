@@ -70,7 +70,6 @@ class PlugIn {
 
 		unsigned int getPriority() const { return priority; }
 		std::string const &getName() const { return name; }
-		std::string const &getCommandPrefix() const { return commandPrefix; }
 
 		virtual std::auto_ptr< PlugInResult > onConnect( state_t state ) = 0;
 		virtual std::auto_ptr< PlugInResult > onPacket( state_t state, IRC::Message const &message ) = 0;
@@ -81,8 +80,6 @@ class PlugIn {
 	protected:
 		const unsigned int priority;
 		const std::string name;
-
-		static std::string const commandPrefix;
 };
 
 }

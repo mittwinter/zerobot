@@ -68,7 +68,6 @@ std::string CommandParser::extractWord( std::string &str ) const {
 	}
 }
 
-std::string const PlugIn::commandPrefix = "!";
 PlugInResult::PlugInResult() : newState( STATE_NOP ) {
 }
 
