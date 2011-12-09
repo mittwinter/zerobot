@@ -36,6 +36,7 @@ add_executable(${PROJECT_NAME}
 	lib/irc/log_sqlite.cpp
 	lib/irc/message.cpp
 	lib/irc/parser.cpp
+	lib/SecretStorage.cpp
 	lib/rand.cpp
 	lib/version.cpp
 	plugins/base.cpp

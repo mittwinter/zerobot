@@ -18,6 +18,9 @@
 #ifndef PLUGINS_NICKSERV_HPP
 #define PLUGINS_NICKSERV_HPP
 
+#include <memory>
+
+#include "../lib/SecretStorage.hpp"
 #include "base.hpp"
 
 namespace zerobot {
@@ -34,6 +37,7 @@ class PlugInNickServ : public PlugIn {
 		virtual std::auto_ptr< PlugInResult > onDisconnect( state_t state );
 
 	protected:
+		std::auto_ptr< memory::SecretStorage > passwordStorage;
 		bool identified;
 };
 

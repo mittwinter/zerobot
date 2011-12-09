@@ -40,8 +40,10 @@ std::auto_ptr< PlugInResult > PlugInNickServ::onTimeTrigger( state_t state ) {
 		std::string password;
 		std::cout << "Please enter NickServ password: " << std::flush;
 		std::cin >> password;
+		passwordStorage = std::auto_ptr< memory::SecretStorage >( new memory::SecretStorage( password.size() + 1 ) );
+		passwordStorage->set( password.c_str(), password.size() + 1 );
 		result = std::auto_ptr< PlugInResult >( new PlugInResult );
-		result->messages.push_back( new IRC::MessagePrivMsg( "NickServ", "IDENTIFY " + password ) );
+		result->messages.push_back( new IRC::MessagePrivMsg( "NickServ", std::string( "IDENTIFY " ) + reinterpret_cast< char const * >( passwordStorage->get() ) ) );
 		identified = true; // TODO: Really check for this!
 	}
 	return result;
