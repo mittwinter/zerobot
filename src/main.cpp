@@ -38,11 +38,17 @@ void showUsage( char const *programName ) {
 		          << "\t [--reconnect]" << std::endl;
 }
 
+int optionsFlagHelp = 0;
 int optionsFlagTitle = 0;
 int optionsFlagIdentify = 0;
 int optionsFlagReconnect = 0;
 
 struct option options[] = {
+		{ "help"
+		, no_argument
+		, &optionsFlagHelp
+		, 'h'
+		},
 		{ "server"
 		, required_argument
 		, 0
@@ -104,10 +110,13 @@ int main( int argc, char *argv[] ) {
 	std::list< std::string > joinChannels;
 	std::list< std::string > logChannels;
 	do {
-		getoptResult = getopt_long( argc, argv, "s:p:n:j:l:f:ta:i", options, &optionIndex );
+		getoptResult = getopt_long( argc, argv, "hs:p:n:j:l:f:ta:i", options, &optionIndex );
 		switch( getoptResult ) {
 			case -1: // all options parsed...
 			case  0: // getopt() set flag...
+				break;
+			case 'h':
+				optionsFlagHelp = 1;
 				break;
 			case 's':
 				serverNameFound = true;
@@ -145,7 +154,7 @@ int main( int argc, char *argv[] ) {
 				optionsFlagReconnect = 1;
 				break;
 			case '?':
-				// TODO: print more detailled error message here!
+				showUsage( argv[ 0 ] );
 				return EXIT_FAILURE;
 				break;
 			default:
@@ -156,6 +165,11 @@ int main( int argc, char *argv[] ) {
 		}
 	}
 	while( getoptResult != -1 );
+
+	if( optionsFlagHelp ) {
+		showUsage( argv[ 0 ] );
+		return EXIT_SUCCESS;
+	}
 
 	if( !serverNameFound || !serverPortFound || !nicknameFound ) {
 		std::clog << argv[ 0 ] << ": server, port and nickname are required" << std::endl;
